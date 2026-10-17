@@ -30,13 +30,13 @@ compatibility. The same fields accept FxServe paths. See
 | Notes box | A place for temporary notes. It is not sent to listeners. |
 | Clear Notes | Empties the notes box. |
 | DJ Name | The name shown to listeners. |
-| Showtitle | The current programme or show name. |
+| Showtitle | The current content or show name. |
 | Event | A name for a live event or loopback source. |
 | Title | A description of the current live activity. |
 | Set DJ and Showtitle | Publishes the entered names, event information, and selected logo. |
 | Logo | Shows the current broadcast image. Double-click it to choose another image. |
 
-When a normal audio track is playing, its artist and title are shown to listeners. While any loopback deck is capturing, the operator-entered **Event** and **Title** always take priority. Artist/title metadata from a playlist or channel deck cannot overwrite the loopback programme information; normal track metadata resumes after loopback capture stops.
+When a normal audio track is playing, its artist and title are shown to listeners. While any loopback deck is capturing, the operator-entered **Event** and **Title** always take priority. Artist/title metadata from a playlist or channel deck cannot overwrite the loopback capture content information; normal track metadata resumes after loopback capture stops.
 
 ## Setup
 
@@ -340,7 +340,7 @@ Use **3-Band EQ**, **Compressor Limiter**, and **Flanger / Echo** to switch betw
 | Control | What it does |
 |---|---|
 | Filename | Sets the name of the MP4 recording. |
-| Video Only | Records video without the programme audio. |
+| Video Only | Records video without the loopback content audio. |
 | Start | Starts or stops MP4 recording. |
 | REC and recorded time | Show whether recording is active and how long it has run. |
 
