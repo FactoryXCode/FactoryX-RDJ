@@ -56,10 +56,10 @@ Use the three buttons on the left to switch between **General**, **Broadcast**, 
 | Microphone input | Chooses the microphone or input device. |
 | Audio Recordings | Chooses where audio recordings are saved. |
 | Database | Chooses where the RDJ Pro music database is stored. |
-| Artwork | Shows the compatibility artwork location. Caddy Artwork is the public browser location. |
+| Artwork | Shows the compatibility artwork location. "Artwork" is the public browser location. |
 | Video Recordings | Chooses where video recordings are saved. |
-| `...` buttons | Browse for the folder beside the button. |
-| Override System Sleep | Tries to keep the computer awake while RDJ Pro is running. |
+| `...` (elips)buttons | Browse for the folder beside the button. |
+| Override System Sleep | Keeps the computer awake while RDJ Pro is running, when for example a laptop lid is closed. |
 
 ### Broadcast
 
@@ -73,12 +73,12 @@ Use the three buttons on the left to switch between **General**, **Broadcast**, 
 | Camera | Chooses the camera used for video broadcasting. |
 | Refresh Cameras | Searches again for connected cameras. |
 | Video Path | Chooses where live video files are published. |
-| Content Type URL | Sets the video type sent to the browser. Normally this can stay unchanged. |
-| MP4 Segment size | Changes the length of each small live-video part. Normally this can stay unchanged. |
+| Content Type URL | Sets the video type sent to the browser. This can stay unchanged. |
+| MP4 Segment size | Changes the length of each small live-video part. This can stay unchanged. |
 | Local network list | Shows this computer's available local IPv4 addresses. |
 | Refresh | Searches again for local network addresses. |
-| Use address | Adds the selected local address to the managed Caddy configuration. |
-| Remove LAN | Removes the managed local address from the Caddy configuration. |
+| Use address | Adds the selected local address to the managed FxServe/Caddy configuration. |
+| Remove LAN | Removes the managed local address from the FxServe/Caddy configuration. |
 
 ### Audio Recorder
 
@@ -134,7 +134,7 @@ Each channel deck plays an audio file or playlist.
 | EQ Gain | Raises or lowers the selected tone area. |
 | EQ Frequency | Chooses the centre of the tone area. |
 | EQ Q | Makes the adjusted tone area wider or narrower. |
-| BPM and beat light | Show the detected tempo and beat. |
+| BPM and beat light | Show the detected tempo/beat. |
 | Status, Played, and Duration | Show the loaded item and playback times. |
 
 ## Microphone deck
