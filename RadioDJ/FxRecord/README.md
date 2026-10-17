@@ -1,6 +1,6 @@
 # FxRecord
 
-Version: 4.0.1
+Version: 4.2.0
 
 **Notes:**
 
@@ -12,6 +12,34 @@ Version: 4.0.1
 FxRecord is the FactoryX compliance recorder for RDJ Pro broadcasts. It runs
 on the broadcast server beside FxServe or Caddy and monitors the local
 published stream folder. Please check your local laws for public broadcasting.
+
+FxRecord can also run on a separate PC and record the public FxServe stream
+over HTTP/HTTPS. Choose **Local folder** or **HTTP/HTTPS stream (HLS)** in FxRecord
+or FxRecord Admin. Both inputs work in desktop and Windows-service mode.
+HTTP input uses standard HLS master/media playlists and fMP4 segments from any
+HTTP server. It does not read a server-specific JSON API or local stream files.
+Connection failures keep the current hourly recording open; recovered fragments
+are fetched when available, and expired intervals are logged. Choose
+`SourceCopy` to save MP4 without conversion. A public outage is logged rather
+than represented as uninterrupted coverage. Compatible broadcast restarts also
+continue in the same hourly file. A codec, track or timebase incompatibility
+starts a new file to preserve playable output.
+
+See the [server and remote-recorder setup guide](Docs/FxServe-and-FxRecord-Setup.md)
+for FxServe setup, home-PC recording, service installation, Admin targeting,
+configuration examples, interruptions and troubleshooting.
+
+See [HTTP/HLS recording](Docs/HTTP-HLS-Recording.md) for the independent reader,
+port-80 setup, supported formats and reconnect behavior.
+
+## Building from source
+
+Open `FxRecord.dproj` and build for Win32 or Win64. The project needs its own
+source files and the MfPack core units in `../../src`; it no longer searches
+the RDJ Pro source, Controls or Shared directories. `FxRecord.Fmp4` owns the
+timestamp rebasing used by the archive writer. No RDJ recorder or recovery
+units, subscriptions, spool or historical rebuild worker are included.
+Both LocalFolder and PublicUrl record the available published stream.
 
 ## Recording and monitoring
 
@@ -125,6 +153,37 @@ C:\FxRecord\Uninstall-FxRecord.cmd
 
 ## Logging and troubleshooting
 
+### CPU and memory diagnostics
+
+Desktop recording and Windows service recording automatically start an independent
+resource sampler. It writes `FxRecord.diagnostics.log` beside the selected INI,
+with PID, executable path/build timestamp, machine-normalized process CPU,
+system CPU, private memory, working set/peak, thread/handle counts, monitor
+operation and heartbeat age, and conversion count/phase/age/file snapshots.
+The sampler does not enumerate the archive or modify recording settings.
+
+Resources are sampled every five seconds. Baselines are logged every minute;
+CPU at or above 70% of total machine capacity, monitor heartbeat delays of at
+least five seconds, and private-memory increases of 64 MiB trigger additional
+entries. Sustained CPU/stall entries are limited to once every 15 seconds.
+The heartbeat age measures time since the monitor's last activity snapshot,
+not the age of `live.json`. Conversion phases distinguish H.264/MP3 encoding,
+AVI muxing, AAC encoding, finalization and Media Foundation shutdown. The
+regular log also includes conversion elapsed time and remaining conversions.
+
+The diagnostic file rotates at 10 MiB, retaining one `.previous` file. After a
+spike, collect both diagnostic files and the regular recorder log; PID and build
+timestamp identify restarts/builds. This instrumentation gathers evidence and
+does not throttle encoders or change conversion concurrency.
+
+Deploy an updated binary during a planned interruption: stop the service and
+allow it to finish closing/converting its current recording, replace only
+`FxRecord.exe`, then start the service with its existing INI. No service
+uninstall/reinstall is needed for replacing the executable at the same path.
+The build in `Win64\Diagnostics\FxRecord.exe` includes this instrumentation.
+`Tests\DiagnosticsSmoke.dpr` verifies sampling, memory growth, heartbeat
+snapshots and clean sampler shutdown without running a recorder service.
+
 Desktop mode, service mode and installation diagnostics write to the log
 beside the selected INI. `C:\FxRecord\FxRecord.ini` produces
 `C:\FxRecord\FxRecord.log`. The desktop user and service account need write
@@ -214,3 +273,31 @@ First release date: 09/07/2023
 Final release date: 10/10/2026
  
 Copyright © FactoryX. All rights reserved.
+
+### Conversion load reduction (11 October 2026)
+
+The AVI-H264-MP3 converter now copies original H.264 packets directly into AVI and encodes
+only the audio. Source video dimensions, frame rate and quality are preserved;
+the previous fixed 25 fps / 1.2 Mbps video re-encode is removed. Windows sink
+writer throttling remains enabled, and the sample loop calls Sleep(1) after
+every four decoded audio samples. The actual pause depends on Windows timer resolution;
+this is cooperative pacing, not a guaranteed CPU percentage limit. The AAC
+profile retains its existing conversion path.
+
+New binaries are in Win64\ConversionLoad and Win32\ConversionLoad. The
+diagnostic phase for AVI preparation is now MP3-encode; AVI-mux then copies the original video and encoded audio. The diagnostic
+heartbeat age is clamped to zero when an activity update is newer than the
+resource sample timestamp, preventing spurious negative ages.
+
+Tests\ConversionLoadSmoke.dpr runs the converter on a disposable source copy
+(the production converter removes that copy after success). Local validation
+covered all nine MP3 settings, audio-first input, 29.97 fps AVI headers, full
+audio/video decode and decoded video frame hashes. No FFmpeg dependency is
+added to FxRecord: the bundled FFmpeg was used only for test fixtures and
+independent output verification. Confirm CPU usage with the next full-hour
+conversion on the server after deploying the new binary.
+
+The work MP4 contains MP3 audio only. Video bypasses the MP4 writer so reordered
+H.264 frames are preserved. AVI muxing merges the two packet streams with a
+bounded one-packet lookahead per stream. Tests include H.264 B frames and a
+source with a nonzero start timestamp; all 150 decoded frames matched.

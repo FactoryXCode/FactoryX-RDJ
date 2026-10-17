@@ -768,7 +768,7 @@ object frmSetup: TfrmSetup
       TabOrder = 14
       Color = 5850948
       ParentColor = False
-      Minimum = 500
+      Minimum = 2000
       Maximum = 9000
       Position = 2000
       ThumbWidth = 50

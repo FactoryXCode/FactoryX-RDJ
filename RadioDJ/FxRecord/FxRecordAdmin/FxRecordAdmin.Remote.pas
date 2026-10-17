@@ -302,6 +302,8 @@ begin
                                       'Enabled',
                                       ASettings.Enabled);
 
+    ASettings.SourceMode := Ini.ReadString('Recorder', 'SourceMode', ASettings.SourceMode);
+    ASettings.StreamUrl := Ini.ReadString('Recorder', 'StreamUrl', ASettings.StreamUrl);
     ASettings.StreamPath := Ini.ReadString('Recorder',
                                            'StreamPath',
                                            ASettings.StreamPath);
@@ -366,8 +368,9 @@ end;
 procedure ValidateSettings(const ASettings: TFxRecordSettings);
 begin
 
-  if (Trim(ASettings.StreamPath) = '') or (Trim(ASettings.ArchivePath) = '') then
-    raise Exception.Create('Stream and archive folders are required.');
+  ValidateFxRecordSource(ASettings);
+  if Trim(ASettings.ArchivePath) = '' then
+    raise Exception.Create('The archive folder on the recorder computer is required.');
 
   if (ASettings.FragmentDuration < 1) or (ASettings.FragmentDuration > 1440) then
     raise Exception.Create('Fragment duration must be between 1 and 1440 minutes.');
@@ -429,6 +432,8 @@ begin
     Ini.WriteBool('Recorder',
                   'Enabled',
                   ASettings.Enabled);
+    Ini.WriteString('Recorder', 'SourceMode', ASettings.SourceMode);
+    Ini.WriteString('Recorder', 'StreamUrl', ASettings.StreamUrl);
 
     Ini.WriteString('Recorder',
                     'StreamPath',
@@ -554,13 +559,18 @@ end;
 
 procedure WaitForState(AService: SC_HANDLE;
                        AState: DWORD;
-                       AResult: TFxAdminResult);
+                       AResult: TFxAdminResult;
+                       AAllowPendingStop: Boolean = False);
 var
-  StartTick: DWORD;
+  StartTick, TimeoutMs: DWORD;
 
 begin
 
   StartTick := GetTickCount;
+  TimeoutMs := 120000;
+  // Restart/apply must finish stopping before issuing the next command.
+  if (AState = SERVICE_STOPPED) and not AAllowPendingStop then
+    TimeoutMs := 30 * 60 * 1000;
 
   repeat
     ReadServiceStatus(AService,
@@ -573,9 +583,16 @@ begin
       raise Exception.CreateFmt('FxRecord stopped during startup (exit codes %d / %d).',
                                 [AResult.ExitCode, AResult.SpecificExitCode]);
 
-    if (DWORD(GetTickCount - StartTick) >= 120000) then
-      raise Exception.Create('FxRecord is still ' + LowerCase(ServiceStateText(AResult.State)) +
-                             ' after two minutes. Refresh its status before another command.');
+    if (DWORD(GetTickCount - StartTick) >= TimeoutMs) then
+    begin
+      if AAllowPendingStop and (AResult.State = SERVICE_STOP_PENDING) then
+      begin
+        AResult.Notice := 'Stop request accepted. FxRecord is still finalizing recordings; status will refresh automatically.';
+        Exit;
+      end;
+      raise Exception.CreateFmt('FxRecord is still %s after %d minutes. Refresh its status before another command.',
+                                [LowerCase(ServiceStateText(AResult.State)), TimeoutMs div 60000]);
+    end;
 
     Sleep(250);
   until False;
@@ -619,7 +636,8 @@ end;
 
 
 procedure StopRecorder(AService: SC_HANDLE;
-                       AResult: TFxAdminResult);
+                       AResult: TFxAdminResult;
+                       AAllowPendingStop: Boolean = False);
 var
   Status: TServiceStatus;
 
@@ -638,7 +656,8 @@ begin
 
   WaitForState(AService,
                SERVICE_STOPPED,
-               AResult);
+               AResult,
+               AAllowPendingStop);
 end;
 
 
@@ -759,6 +778,8 @@ begin
 
     StatusFile := TPath.Combine(ExtractFileDir(ExcludeTrailingPathDelimiter(StreamPath)),
                                'FxAlert\status.json');
+    if SameText(Settings.SourceMode, 'PublicUrl') then
+      StatusFile := TPath.Combine(ExtractFileDir(AConnection.ServerConfigFile), 'FxAlert\status.json');
 
 
     AResult.StatusText := ReadSharedText(SharePathForServerFile(AConnection,
@@ -890,7 +911,8 @@ begin
                                AResult);
 
         aaStop: StopRecorder(Service,
-                             AResult);
+                             AResult,
+                             True);
 
         aaRestart:
           begin

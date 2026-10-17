@@ -67,7 +67,9 @@ uses
   WinApi.Windows,
   {System}
   System.Classes,
-  System.SysUtils;
+  System.SysUtils,
+  {Application}
+  FxRecord.Diagnostics;
 
 type
 
@@ -88,21 +90,27 @@ type
     FOutputProfile: string;
     FSampleRate: Integer;
     FBitRateKbps: Integer;
+    FStartedTick: UInt64;
+    FPhase: Longint;
 
   protected
     procedure Execute(); override;
 
   public
-    constructor Create(const AInputFileName, APartialFileName,
-                             AFinalFileName: string;
-                             const AOutputProfile: string = 'AVI-H264-MP3';
-                             const ASampleRate: Integer = 44100;
-                             const ABitRateKbps: Integer = 192);
+    constructor Create(const AInputFileName: string;
+                       const APartialFileName: string;
+                       const AFinalFileName: string;
+                       const AOutputProfile: string = 'AVI-H264-MP3';
+                       const ASampleRate: Integer = 44100;
+                       const ABitRateKbps: Integer = 192);
+
+    function DiagnosticText(): string;
 
     property ErrorText: string read FErrorText;
     property FinalFileName: string read FFinalFileName;
     property InputFileName: string read FInputFileName;
     property Succeeded: Boolean read FSucceeded;
+    property StartedTick: UInt64 read FStartedTick;
   end;
 
 
@@ -111,18 +119,22 @@ implementation
 uses
 
   {WinApi}
-  WinApi.ActiveX.ObjBase,
   WinApi.ComBaseApi,
   WinApi.WinApiTypes,
   {ActiveX}
   WinApi.ActiveX.PropIdl,
+  WinApi.ActiveX.ObjBase,
   {WinMM}
   WinApi.WinMM.MMeApi,
   {MediaFoundationApi}
   WinApi.MediaFoundationApi.MfApi,
   WinApi.MediaFoundationApi.MfIdl,
   WinApi.MediaFoundationApi.MfObjects,
-  WinApi.MediaFoundationApi.MfReadWrite;
+  WinApi.MediaFoundationApi.MfReadWrite,
+  System.SyncObjs;
+
+var
+  ConversionLock: TCriticalSection;
 
 
 procedure CheckHR(const AResult: HRESULT;
@@ -137,36 +149,69 @@ end;
 
 function FourCC(const AText: AnsiString): DWORD;
 begin
-  if Length(AText) <> 4 then
+
+  if (Length(AText) <> 4) then
     raise Exception.Create('Invalid AVI chunk identifier.');
-  Move(AText[1], Result, SizeOf(Result));
+
+  Move(AText[1],
+       Result,
+       SizeOf(Result));
 end;
+
 
 // The Windows AVI sink does not accept the H.264 format on all systems.
 // Mux the Windows-encoded packets here; no external codecs or tools are used.
-procedure MuxNativePacketsToAvi(const AEncodedFile, AOutputFile: string);
+procedure MuxNativePacketsToAvi(const AVideoFile: string;
+                                const AEncodedFile: string;
+                                const AOutputFile: string);
 var
   Reader: IMFSourceReader;
-  VideoType, AudioType, StreamType: IMFMediaType;
+  VideoReader: IMFSourceReader;
+  VideoType: IMFMediaType;
+  AudioType: IMFMediaType;
+  StreamType: IMFMediaType;
   MajorType: TGUID;
-  VideoIndex, AudioIndex: DWORD;
+  VideoIndex: DWORD;
+  AudioIndex: DWORD;
+  NativeVideoIndex: DWORD;
   Sample: IMFSample;
+  PendingVideo: IMFSample;
+  PendingAudio: IMFSample;
   Buffer: IMFMediaBuffer;
   Wave: PWAVEFORMATEX;
-  WaveSize, Width, Height, RateN, RateD, StreamIndex, Flags: DWORD;
+  WaveSize: DWORD;
+  Width: DWORD;
+  Height: DWORD;
+  RateN: DWORD;
+  RateD: DWORD;
+  StreamIndex: DWORD;
   Data: PByte;
-  DataLength, CleanPoint: DWORD;
-  Timestamp: Int64;
+  DataLength: DWORD;
+  CleanPoint: DWORD;
+  VideoTimestamp,
+  AudioTimestamp,
+  VideoOrigin,
+  AudioOrigin: Int64;
+  VideoFlags,
+  AudioFlags: DWORD;
   Output: TFileStream;
   Index: TMemoryStream;
   Entry: TFxAviIndex;
-  RiffStart, HeaderStart, StreamStart, ChunkStart, MoviStart: Int64;
-  TotalFramesPosition, VideoLengthPosition, AudioLengthPosition: Int64;
-  VideoFrames, AudioBytes: DWORD;
+  RiffStart: Int64;
+  HeaderStart: Int64;
+  StreamStart: Int64;
+  ChunkStart: Int64;
+  MoviStart: Int64;
+  TotalFramesPosition,
+  VideoLengthPosition,
+  AudioLengthPosition: Int64;
+  VideoFrames: DWORD;
+  AudioBytes: DWORD;
   MainHeader: array[0..13] of DWORD;
   StreamHeader: array[0..13] of DWORD;
   BitmapHeader: array[0..9] of DWORD;
-  VideoEnded, AudioEnded: Boolean;
+  VideoEnded: Boolean;
+  AudioEnded: Boolean;
   PaddingByte: Byte;
 
   // Helpers
@@ -201,7 +246,8 @@ var
   procedure EndChunk(const AStart: Int64);
   begin
 
-    PatchDWord(AStart, DWORD(Output.Position - AStart - 4));
+    PatchDWord(AStart,
+               DWORD(Output.Position - AStart - 4));
 
     if Odd(Output.Position) then
       Output.WriteBuffer(PaddingByte,
@@ -209,48 +255,61 @@ var
   end;
 
 begin
-
+  StreamIndex := 0;
   PaddingByte := 0;
+
   CheckHR(MFCreateSourceReaderFromURL(PWideChar(AEncodedFile),
                                       nil,
                                       Reader),
                                       'Open encoded packets');
 
-  CheckHR(Reader.GetNativeMediaType(0,
-                                    0,
-                                    @StreamType),
-          'Read first encoded stream');
+  // The work MP4 contains only MP3 audio. Copy video from the original source,
+  // avoiding a second MP4 sink that can discard reordered H.264 frames.
+  AudioIndex := 0;
+  VideoIndex := 1;
+
+  CheckHR(MFCreateSourceReaderFromURL(PWideChar(AVideoFile),
+                                      nil,
+                                      VideoReader),
+          'Open original H.264 packets');
+
+  CheckHR(VideoReader.GetNativeMediaType(0,
+                                         0,
+                                         @StreamType),
+          'Read first original stream');
 
   CheckHR(StreamType.GetGUID(MF_MT_MAJOR_TYPE,
                              MajorType),
-          'Read first stream type');
+    'Read original stream type');
 
   if IsEqualGUID(MajorType,
                  MFMediaType_Video) then
-    begin
-      VideoIndex := 0;
-      AudioIndex := 1;
-    end
+    NativeVideoIndex := 0
   else
-    begin
-      VideoIndex := 1;
-      AudioIndex := 0;
-    end;
+    NativeVideoIndex := 1;
 
-  CheckHR(Reader.GetNativeMediaType(VideoIndex,
-                                    0,
-                                    @VideoType),
-          'Read encoded video');
+  CheckHR(VideoReader.SetStreamSelection(MF_SOURCE_READER_ALL_STREAMS,
+                                         False),
+          'Deselect original streams');
+
+  CheckHR(VideoReader.SetStreamSelection(NativeVideoIndex,
+                                         True),
+          'Select original video');
+
+  CheckHR(VideoReader.GetNativeMediaType(NativeVideoIndex,
+                                         0,
+                                         @VideoType),
+          'Read original H.264 format');
+
+  CheckHR(VideoReader.SetCurrentMediaType(NativeVideoIndex,
+                                          0,
+                                          VideoType),
+          'Select original H.264 packets');
 
   CheckHR(Reader.GetNativeMediaType(AudioIndex,
                                     0,
                                     @AudioType),
-          'Read encoded audio');
-
-  CheckHR(Reader.SetCurrentMediaType(VideoIndex,
-                                     0,
-                                     VideoType),
-          'Select H.264 packets');
+          'Read encoded MP3 format');
 
   CheckHR(Reader.SetCurrentMediaType(AudioIndex,
                                      0,
@@ -269,8 +328,8 @@ begin
                               RateD),
           'Read encoded frame rate');
 
-  if (RateN <> 25 * RateD) then
-    raise Exception.Create('The Windows encoder did not produce 25 fps.');
+  if (RateN = 0) or (RateD = 0) then
+    raise Exception.Create('Invalid source video frame rate.');
 
   Wave := nil;
   CheckHR(MFCreateWaveFormatExFromMFMediaType(AudioType,
@@ -292,7 +351,7 @@ begin
         ChunkStart := BeginChunk('avih');
         FillChar(MainHeader,
                  SizeOf(MainHeader), 0);
-        MainHeader[0] := 40000;
+        MainHeader[0] := DWORD((UInt64(1000000) * RateD) div RateN);
         MainHeader[1] := 150000 + Wave.nAvgBytesPerSec;
         MainHeader[3] := $10; // AVIF_HASINDEX
         MainHeader[6] := 2;
@@ -313,8 +372,8 @@ begin
 
         StreamHeader[0] := FourCC('vids');
         StreamHeader[1] := FourCC('H264');
-        StreamHeader[5] := 1;
-        StreamHeader[6] := 25;
+        StreamHeader[5] := RateD;
+        StreamHeader[6] := RateN;
         StreamHeader[10] := DWORD(-1);
         StreamHeader[13] := (Height shl 16) or Width;
 
@@ -375,29 +434,60 @@ begin
         AudioBytes := 0;
         VideoEnded := False;
         AudioEnded := False;
+        PendingVideo := nil; PendingAudio := nil;
+        VideoOrigin := -1; AudioOrigin := -1;
 
         repeat
           Sample := nil;
-          CheckHR(Reader.ReadSample(MF_SOURCE_READER_ANY_STREAM,
-                                    0,
-                                    @StreamIndex,
-                                    @Flags,
-                                    @Timestamp,
-                                    @Sample),
-                  'Read AVI packet');
 
-          if ((Flags and DWORD(MF_SOURCE_READERF_ENDOFSTREAM)) <> 0) then
+          if (PendingVideo = nil) and not VideoEnded then
             begin
-              if (StreamIndex = VideoIndex) then
-                VideoEnded := True
-              else
-                if (StreamIndex = AudioIndex) then
-                  AudioEnded := True;
+              CheckHR(VideoReader.ReadSample(NativeVideoIndex,
+                                             0,
+                                             nil,
+                                             @VideoFlags,
+                                             @VideoTimestamp,
+                                             @PendingVideo),
+                      'Read original AVI video packet');
 
-              CheckHR(Reader.SetStreamSelection(StreamIndex,
-                                                False),
-                      'Finish packet stream');
+              VideoEnded := ((VideoFlags and DWORD(MF_SOURCE_READERF_ENDOFSTREAM)) <> 0);
+
+              if ((VideoFlags and DWORD(MF_SOURCE_READERF_CURRENTMEDIATYPECHANGED)) <> 0) then
+                raise Exception.Create('Original video type changed during AVI muxing.');
+
+              if (PendingVideo <> nil) and (VideoOrigin < 0) then
+                VideoOrigin := VideoTimestamp;
             end;
+
+          if (PendingAudio = nil) and not AudioEnded then
+            begin
+              CheckHR(Reader.ReadSample(AudioIndex,
+                                        0,
+                                        nil,
+                                        @AudioFlags,
+                                        @AudioTimestamp,
+                                        @PendingAudio),
+                      'Read AVI MP3 packet');
+
+              AudioEnded := ((AudioFlags and DWORD(MF_SOURCE_READERF_ENDOFSTREAM)) <> 0);
+
+             if (PendingAudio <> nil) and (AudioOrigin < 0) then
+               AudioOrigin := AudioTimestamp;
+            end;
+
+          if (PendingVideo <> nil) and ((PendingAudio = nil) or (VideoTimestamp - VideoOrigin <= AudioTimestamp - AudioOrigin)) then
+            begin
+              Sample := PendingVideo;
+              PendingVideo := nil;
+              StreamIndex := VideoIndex;
+            end
+          else
+            if (PendingAudio <> nil) then
+              begin
+                Sample := PendingAudio;
+                PendingAudio := nil;
+                StreamIndex := AudioIndex;
+              end;
 
           if (Sample <> nil) then
             begin
@@ -454,7 +544,7 @@ begin
 
             Buffer := nil;
           end;
-        until VideoEnded and AudioEnded;
+        until VideoEnded and AudioEnded and (PendingVideo = nil) and (PendingAudio = nil);
 
         if (VideoFrames = 0) or (AudioBytes = 0) then
           raise Exception.Create('The AVI recording requires both video and audio packets.');
@@ -491,351 +581,486 @@ begin
 end;
 
 
-procedure EncodeNativePackets(const AInputFile, AOutputFile: string;
-                              const ASampleRate, ABitRateKbps: Integer);
+procedure EncodeMp3Audio(const AInputFile, AOutputFile: string;
+                         const ASampleRate, ABitRateKbps: Integer);
 var
-  Resolver: IMFSourceResolver;
-  SourceObject: IUnknown;
-  Source: IMFMediaSource;
   Reader: IMFSourceReader;
-  InputVideo: IMFMediaType;
-  AudioType: IMFMediaType;
-  Profile: IMFTranscodeProfile;
-  Video: IMFAttributes;
-  Audio: IMFAttributes;
-  Container: IMFAttributes;
-  SessionAttributes: IMFAttributes;
+  Writer: IMFSinkWriter;
+  VideoType, PcmType, Mp3Type, FirstType: IMFMediaType;
+  Attributes: IMFAttributes;
+  MajorType: TGUID;
   AudioTypes: IMFCollection;
   AudioObject: IUnknown;
-  Topology: IMFTopology;
-  Session: IMFMediaSession;
-  MediaEvent: IMFMediaEvent;
-  EventType: MediaEventType;
-  ObjectType: MF_OBJECT_TYPE;
-  Status: HRESULT;
-  StartPosition: PROPVARIANT;
-  Width: DWORD;
-  Height: DWORD;
-  Count: DWORD;
-  Channels: DWORD;
-  Rate: DWORD;
-  BytesPerSecond: DWORD;
-  I: Integer;
+  Count, Channels, Rate, BytesPerSecond, I: DWORD;
   AudioFound: Boolean;
+  AudioSamples: DWORD;
+  Sample: IMFSample;
+  VideoIn, AudioIn, AudioOut, StreamIndex, Flags: DWORD;
+  TimeStamp: Int64;
+  AudioStart: Int64;
+  AudioEnded: Boolean;
 
 begin
 
-  CheckHR(MFCreateSourceResolver(Resolver),
-          'Create source resolver');
+  CheckHR(MFCreateSourceReaderFromURL(PWideChar(AInputFile),
+                                      nil,
+                                      Reader),
+                                      'Open MP3 source recording');
 
-  CheckHR(Resolver.CreateObjectFromURL(PWideChar(AInputFile),
-                                       MF_RESOLUTION_MEDIASOURCE,
-                                       nil,
-                                       ObjectType,
-                                       SourceObject),
-          'Open source MP4');
+  CheckHR(Reader.GetNativeMediaType(0,
+                                    0,
+                                    @FirstType),
+          'Read first source stream');
 
-  Source := SourceObject as IMFMediaSource;
+  CheckHR(FirstType.GetGUID(MF_MT_MAJOR_TYPE,
+                            MajorType),
+          'Read source stream type');
 
-  try
-    CheckHR(MFCreateSourceReaderFromURL(PWideChar(AInputFile),
-                                        nil,
-                                        Reader),
-            'Read source format');
+  if IsEqualGUID(MajorType,
+                 MFMediaType_Video) then
+    begin
+      VideoIn := 0;
+      AudioIn := 1;
+    end
+  else
+    begin
+      VideoIn := 1;
+      AudioIn := 0;
+    end;
 
-    CheckHR(Reader.GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM,
-                                      0,
-                                      @InputVideo),
-            'Read video format');
+  CheckHR(Reader.SetStreamSelection(MF_SOURCE_READER_ALL_STREAMS,
+                                    False),
+          'Deselect source streams');
 
-    CheckHR(MFGetAttributeSize(InputVideo,
-                               MF_MT_FRAME_SIZE,
-                               Width,
-                               Height),
-            'Read video dimensions');
+  CheckHR(Reader.SetStreamSelection(AudioIn,
+                                    True),
+          'Select source audio');
 
-    Reader := nil;
+  CheckHR(Reader.GetNativeMediaType(VideoIn,
+                                    0,
+                                    @VideoType),
+          'Read H.264 source format');
 
-    CheckHR(MFCreateTranscodeProfile(Profile),
-            'Create H.264/MP3 profile');
+  CheckHR(VideoType.GetGUID(MF_MT_SUBTYPE,
+                            MajorType),
+          'Read source video subtype');
 
-    CheckHR(MFCreateAttributes(Video,
-                               8),
-            'Create video attributes');
+  if not IsEqualGUID(MajorType,
+                     MFVideoFormat_H264) then
+    raise Exception.Create('AVI-H264-MP3 requires H.264 source video.');
 
-    CheckHR(Video.SetGUID(MF_MT_MAJOR_TYPE,
-                          MFMediaType_Video),
-            'Set video type');
+  CheckHR(Reader.SetCurrentMediaType(VideoIn, 0, VideoType), 'Preserve H.264 source packets');
 
-    CheckHR(Video.SetGUID(MF_MT_SUBTYPE,
-                          MFVideoFormat_H264),
-            'Set H.264 encoding');
+  CheckHR(MFCreateMediaType(PcmType),
+          'Create PCM input type');
 
-    CheckHR(MFSetAttributeSize(Video,
-                               MF_MT_FRAME_SIZE,
-                               Width,
-                               Height),
-            'Set dimensions');
+  CheckHR(PcmType.SetGUID(MF_MT_MAJOR_TYPE,
+                          MFMediaType_Audio),
+          'Set PCM major type');
 
-    CheckHR(MFSetAttributeRatio(Video,
-                                MF_MT_FRAME_RATE,
-                                25,
-                                1),
-            'Set 25 fps');
+  CheckHR(PcmType.SetGUID(MF_MT_SUBTYPE,
+                          MFAudioFormat_PCM),
+          'Set PCM subtype');
 
-    CheckHR(MFSetAttributeRatio(Video,
-                                MF_MT_PIXEL_ASPECT_RATIO,
-                                1,
-                                1),
-            'Set pixel aspect');
+  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE,
+                            16),
+          'Set 16-bit PCM');
 
-    CheckHR(Video.SetUINT32(MF_MT_INTERLACE_MODE,
-                            2),
-            'Set progressive video');
+  CheckHR(Reader.SetCurrentMediaType(AudioIn,
+                                     0,
+                                     PcmType),
+          'Decode native PCM audio');
 
-    CheckHR(Video.SetUINT32(MF_MT_AVG_BITRATE,
-                            1200000),
-            'Set video bitrate');
+  CheckHR(Reader.GetCurrentMediaType(AudioIn,
+                                     @PcmType),
+          'Read negotiated PCM type');
 
-    CheckHR(Video.SetUINT32(MF_MT_MPEG2_PROFILE,
-                            66),
-            'Set H.264 baseline profile');
+  CheckHR(MFTranscodeGetAudioOutputAvailableTypes(MFAudioFormat_MP3,
+                                                  DWORD(MFT_ENUM_FLAG_SYNCMFT),
+                                                  nil,
+                                                  AudioTypes),
+          'Enumerate MP3 formats');
 
-    CheckHR(Profile.SetVideoAttributes(Video),
-            'Set video profile');
+  CheckHR(AudioTypes.GetElementCount(Count),
+          'Count MP3 formats');
 
-    // Use a complete media type advertised by the Windows MP3 encoder.
-    CheckHR(MFTranscodeGetAudioOutputAvailableTypes(MFAudioFormat_MP3,
-                                                    DWORD(MFT_ENUM_FLAG_SYNCMFT),
-                                                    nil,
-                                                    AudioTypes),
-            'Enumerate Windows MP3 formats');
+  AudioFound := False;
+  I := 0;
 
-    CheckHR(AudioTypes.GetElementCount(Count),
-            'Count MP3 formats');
+  while (I < Count) do
+    begin
+      CheckHR(AudioTypes.GetElement(I,
+                                    AudioObject),
+              'Read MP3 format');
 
-    AudioFound := False;
+      Mp3Type := AudioObject as IMFMediaType;
 
-    for I := 0 to Integer(Count) - 1 do
-      begin
-        CheckHR(AudioTypes.GetElement(I,
-                                      AudioObject),
-                'Read MP3 format');
+      CheckHR(Mp3Type.GetUINT32(MF_MT_AUDIO_NUM_CHANNELS,
+                                Channels),
+              'Read MP3 channels');
 
-        AudioType := AudioObject as IMFMediaType;
+      CheckHR(Mp3Type.GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND,
+                                Rate),
+              'Read MP3 rate');
 
-      if Succeeded(AudioType.GetUINT32(MF_MT_AUDIO_NUM_CHANNELS,
-                                       Channels)) and
-         Succeeded(AudioType.GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND,
-                                       Rate)) and
-         Succeeded(AudioType.GetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND,
-                                       BytesPerSecond)) and
-         (Channels = 2) and
-         (Rate = DWORD(ASampleRate)) and
-         (BytesPerSecond = DWORD(ABitRateKbps * 1000 div 8)) then
+      CheckHR(Mp3Type.GetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND,
+                                BytesPerSecond),
+              'Read MP3 bitrate');
+
+      if (Channels = 2) and (Rate = DWORD(ASampleRate)) and (BytesPerSecond = DWORD(ABitRateKbps * 1000 div 8)) then
         begin
           AudioFound := True;
           Break;
         end;
-      end;
 
-    // Windows supports this format. A missing enumeration match describes
-    // this system's lookup result, not the encoder's supported formats.
-    if not AudioFound then
-      raise Exception.CreateFmt('Media Foundation did not enumerate stereo MP3 at %d Hz and %d kbps on this system.', [ASampleRate, ABitRateKbps]);
-
-    CheckHR(MFCreateAttributes(Audio,
-                               8),
-            'Create audio attributes');
-
-    CheckHR(AudioType.CopyAllItems(Audio),
-            'Copy MP3 format');
-
-    CheckHR(Profile.SetAudioAttributes(Audio),
-            'Set audio profile');
-
-    CheckHR(MFCreateAttributes(Container,
-                               2),
-            'Create container attributes');
-
-    CheckHR(Container.SetGUID(MF_TRANSCODE_CONTAINERTYPE,
-                              MFTranscodeContainerType_MPEG4),
-            'Set encoded MP4 work container');
-
-    CheckHR(Container.SetUINT32(MF_TRANSCODE_ADJUST_PROFILE,
-                                DWORD(MF_TRANSCODE_ADJUST_PROFILE_DEFAULT)),
-            'Set profile policy');
-
-    CheckHR(Profile.SetContainerAttributes(Container),
-            'Set container profile');
-
-    CheckHR(MFCreateTranscodeTopology(Source,
-                                      PWideChar(AOutputFile),
-                                      Profile,
-                                      Topology),
-            'Build Windows encoder topology');
-
-    // Run the Windows transcode pipeline on a background thread.
-    CheckHR(MFCreateAttributes(SessionAttributes,
-                               1),
-            'Create session attributes');
-
-    CheckHR(SessionAttributes.SetUINT32(MF_SESSION_GLOBAL_TIME,
-                                        0),
-            'Set transcode clock');
-
-    CheckHR(MFCreateMediaSession(SessionAttributes,
-                                 Session),
-            'Create transcode session');
-
-    try
-      CheckHR(Session.SetTopology(0,
-                                  Topology),
-              'Set encoder topology');
-
-      ZeroMemory(@StartPosition,
-                 SizeOf(StartPosition));
-
-      repeat
-        CheckHR(Session.GetEvent(0,
-                                 MediaEvent),
-                'Read transcode event');
-
-        CheckHR(MediaEvent.GetStatus(Status),
-                'Read transcode status');
-
-        CheckHR(Status,
-                'AVI transcode');
-
-        CheckHR(MediaEvent.GetType(EventType),
-                'Read transcode event type');
-
-        case EventType of
-          MESessionTopologySet: CheckHR(Session.Start(GUID_NULL,
-                                                      StartPosition),
-                                        'Start AVI transcode');
-
-          MESessionEnded: CheckHR(Session.Close(),
-                                  'Finalize encoded packets');
-        end;
-
-        MediaEvent := nil;
-
-      until EventType = MESessionClosed;
-
-    finally
-      Session.Shutdown();
-      Session := nil;
-      Topology := nil;
+      Inc(I);
     end;
 
-  finally
-    Reader := nil;
-    Source.Shutdown();
-  end;
+  if not AudioFound then
+    raise Exception.CreateFmt('Windows did not enumerate stereo MP3 at %d Hz and %d kbps.',
+                              [ASampleRate, ABitRateKbps]);
+
+  CheckHR(MFCreateAttributes(Attributes,
+                             2),
+          'Create MP4 writer attributes');
+
+  CheckHR(Attributes.SetGUID(MF_TRANSCODE_CONTAINERTYPE,
+                             MFTranscodeContainerType_MPEG4),
+          'Set MP4 output');
+
+  CheckHR(Attributes.SetUINT32(MF_SINK_WRITER_DISABLE_THROTTLING,
+                               0),
+          'Enable writer throttling');
+
+  CheckHR(MFCreateSinkWriterFromURL(PWideChar(AOutputFile),
+                                    nil,
+                                    Attributes,
+                                    Writer),
+          'Create MP4 writer');
+
+  CheckHR(Writer.AddStream(Mp3Type,
+                           AudioOut),
+          'Add selected MP3 stream');
+
+  CheckHR(Writer.SetInputMediaType(AudioOut,
+                                   PcmType,
+                                   nil),
+          'Set MP3 PCM input');
+
+  CheckHR(Writer.BeginWriting(),
+          'Begin MP3 recording');
+
+  AudioSamples := 0;
+  AudioStart := -1;
+
+  repeat
+    Sample := nil;
+
+    CheckHR(Reader.ReadSample(AudioIn,
+                              0,
+                              @StreamIndex,
+                              @Flags,
+                              @TimeStamp,
+                              @Sample),
+            'Read audio conversion sample');
+
+    AudioEnded := ((Flags and DWORD(MF_SOURCE_READERF_ENDOFSTREAM)) <> 0);
+
+    if ((Flags and DWORD(MF_SOURCE_READERF_CURRENTMEDIATYPECHANGED)) <> 0) then
+      raise Exception.Create('Source audio type changed during MP3 conversion.');
+
+    if (Sample <> nil) then
+      begin
+        if (AudioStart < 0) then
+          AudioStart := TimeStamp;
+
+        CheckHR(Sample.SetSampleTime(TimeStamp - AudioStart),
+                'Rebase MP3 timestamp');
+
+        CheckHR(Writer.WriteSample(AudioOut,
+                                   Sample),
+                'Encode MP3 sample');
+
+      // Yield in the audio sample loop; H.264 will be copied directly into AVI.
+      Inc(AudioSamples);
+
+      if ((AudioSamples mod 4) = 0) then
+        Sleep(1);
+    end;
+
+  until AudioEnded;
+
+  CheckHR(Writer.Finalize(),
+          'Finalize MP3 MP4 recording');
+
+  Writer := nil;
+  Reader := nil;
 end;
 
 
-procedure EncodeAacToMp4(const AInputFile, AOutputFile: string;
-                        const ASampleRate, ABitRateKbps: Integer);
+procedure EncodeAacToMp4(const AInputFile: string;
+                         const AOutputFile: string;
+                         const ASampleRate: Integer;
+                         const ABitRateKbps: Integer);
 var
   Reader: IMFSourceReader;
   Writer: IMFSinkWriter;
-  VideoType, PcmType, AacType, FirstType: IMFMediaType;
+  VideoType: IMFMediaType;
+  PcmType: IMFMediaType;
+  AacType: IMFMediaType;
+  FirstType: IMFMediaType;
   Attributes: IMFAttributes;
   MajorType: TGUID;
   Sample: IMFSample;
-  VideoIn, AudioIn, VideoOut, AudioOut, StreamIndex, Flags: DWORD;
+  VideoIn: DWORD;
+  AudioIn: DWORD;
+  VideoOut: DWORD;
+  AudioOut: DWORD;
+  StreamIndex: DWORD;
+  Flags: DWORD;
   TimeStamp: Int64;
-  VideoStart, AudioStart: Int64;
-  VideoEnded, AudioEnded: Boolean;
+  VideoStart: Int64;
+  AudioStart: Int64;
+  VideoEnded: Boolean;
+  AudioEnded: Boolean;
+
 begin
-  CheckHR(MFCreateSourceReaderFromURL(PWideChar(AInputFile), nil, Reader),
+
+  CheckHR(MFCreateSourceReaderFromURL(PWideChar(AInputFile),
+                                      nil,
+                                      Reader),
           'Open AAC source recording');
-  CheckHR(Reader.GetNativeMediaType(0, 0, @FirstType), 'Read first source stream');
-  CheckHR(FirstType.GetGUID(MF_MT_MAJOR_TYPE, MajorType), 'Read source stream type');
-  if IsEqualGUID(MajorType, MFMediaType_Video) then
-  begin
-    VideoIn := 0;
-    AudioIn := 1;
-  end
+
+  CheckHR(Reader.GetNativeMediaType(0,
+                                    0,
+                                    @FirstType),
+          'Read first source stream');
+
+  CheckHR(FirstType.GetGUID(MF_MT_MAJOR_TYPE,
+                            MajorType),
+          'Read source stream type');
+
+  if IsEqualGUID(MajorType,
+                 MFMediaType_Video) then
+    begin
+      VideoIn := 0;
+      AudioIn := 1;
+    end
   else
-  begin
-    VideoIn := 1;
-    AudioIn := 0;
-  end;
-  CheckHR(Reader.SetStreamSelection(MF_SOURCE_READER_ALL_STREAMS, False), 'Deselect source streams');
-  CheckHR(Reader.SetStreamSelection(VideoIn, True), 'Select source video');
-  CheckHR(Reader.SetStreamSelection(AudioIn, True), 'Select source audio');
-  CheckHR(Reader.GetNativeMediaType(VideoIn, 0, @VideoType), 'Read H.264 source format');
-  CheckHR(VideoType.GetGUID(MF_MT_SUBTYPE, MajorType), 'Read source video subtype');
-  if not IsEqualGUID(MajorType, MFVideoFormat_H264) then
+    begin
+      VideoIn := 1;
+      AudioIn := 0;
+    end;
+
+  CheckHR(Reader.SetStreamSelection(MF_SOURCE_READER_ALL_STREAMS,
+                                    False),
+          'Deselect source streams');
+
+  CheckHR(Reader.SetStreamSelection(VideoIn,
+                                    True),
+          'Select source video');
+
+  CheckHR(Reader.SetStreamSelection(AudioIn,
+                                    True),
+          'Select source audio');
+
+  CheckHR(Reader.GetNativeMediaType(VideoIn,
+                                    0,
+                                    @VideoType),
+          'Read H.264 source format');
+
+  CheckHR(VideoType.GetGUID(MF_MT_SUBTYPE,
+                            MajorType),
+          'Read source video subtype');
+
+  if not IsEqualGUID(MajorType,
+                    MFVideoFormat_H264) then
     raise Exception.Create('MP4-H264-AAC requires H.264 source video.');
-  CheckHR(Reader.SetCurrentMediaType(VideoIn, 0, VideoType), 'Preserve H.264 source packets');
 
-  CheckHR(MFCreateMediaType(PcmType), 'Create PCM input type');
-  CheckHR(PcmType.SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio), 'Set PCM major type');
-  CheckHR(PcmType.SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM), 'Set PCM subtype');
-  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, 2), 'Set stereo PCM');
-  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, ASampleRate), 'Set PCM sample rate');
-  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 16), 'Set 16-bit PCM');
-  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 4), 'Set PCM block alignment');
-  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, ASampleRate * 4), 'Set PCM byte rate');
-  CheckHR(Reader.SetCurrentMediaType(AudioIn, 0, PcmType), 'Decode and resample source audio');
-  CheckHR(Reader.GetCurrentMediaType(AudioIn, @PcmType), 'Read negotiated PCM type');
+  CheckHR(Reader.SetCurrentMediaType(VideoIn,
+                                     0,
+                                     VideoType),
+          'Preserve H.264 source packets');
 
-  CheckHR(MFCreateMediaType(AacType), 'Create AAC output type');
-  CheckHR(AacType.SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio), 'Set AAC major type');
-  CheckHR(AacType.SetGUID(MF_MT_SUBTYPE, MFAudioFormat_AAC), 'Set AAC subtype');
-  CheckHR(AacType.SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, 2), 'Set stereo AAC');
-  CheckHR(AacType.SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, ASampleRate), 'Set AAC sample rate');
-  CheckHR(AacType.SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 16), 'Set AAC sample format');
-  CheckHR(AacType.SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, ABitRateKbps * 1000 div 8), 'Set AAC bitrate');
-  CheckHR(AacType.SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0), 'Set raw AAC payload');
+  CheckHR(MFCreateMediaType(PcmType),
+          'Create PCM input type');
 
-  CheckHR(MFCreateAttributes(Attributes, 2), 'Create MP4 writer attributes');
-  CheckHR(Attributes.SetGUID(MF_TRANSCODE_CONTAINERTYPE, MFTranscodeContainerType_MPEG4), 'Set MP4 output');
-  CheckHR(Attributes.SetUINT32(MF_SINK_WRITER_DISABLE_THROTTLING, 1), 'Disable writer throttling');
-  CheckHR(MFCreateSinkWriterFromURL(PWideChar(AOutputFile), nil, Attributes, Writer), 'Create MP4 writer');
-  CheckHR(Writer.AddStream(VideoType, VideoOut), 'Add H.264 copy stream');
-  CheckHR(Writer.SetInputMediaType(VideoOut, VideoType, nil), 'Set H.264 copy input');
-  CheckHR(Writer.AddStream(AacType, AudioOut), 'Add selected AAC stream');
-  CheckHR(Writer.SetInputMediaType(AudioOut, PcmType, nil), 'Set AAC PCM input');
-  CheckHR(Writer.BeginWriting(), 'Begin AAC recording');
+  CheckHR(PcmType.SetGUID(MF_MT_MAJOR_TYPE,
+                          MFMediaType_Audio),
+          'Set PCM major type');
+
+
+  CheckHR(PcmType.SetGUID(MF_MT_SUBTYPE,
+                          MFAudioFormat_PCM),
+          'Set PCM subtype');
+
+  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_NUM_CHANNELS,
+                            2),
+          'Set stereo PCM');
+
+  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND,
+                            ASampleRate),
+          'Set PCM sample rate');
+
+  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE,
+                            16),
+          'Set 16-bit PCM');
+
+  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT,
+                            4),
+          'Set PCM block alignment');
+
+  CheckHR(PcmType.SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND,
+                            ASampleRate * 4),
+          'Set PCM byte rate');
+
+  CheckHR(Reader.SetCurrentMediaType(AudioIn,
+                                     0,
+                                     PcmType),
+          'Decode and resample source audio');
+
+  CheckHR(Reader.GetCurrentMediaType(AudioIn,
+                                     @PcmType),
+          'Read negotiated PCM type');
+
+
+  CheckHR(MFCreateMediaType(AacType),
+          'Create AAC output type');
+
+  CheckHR(AacType.SetGUID(MF_MT_MAJOR_TYPE,
+                          MFMediaType_Audio),
+          'Set AAC major type');
+
+  CheckHR(AacType.SetGUID(MF_MT_SUBTYPE,
+                          MFAudioFormat_AAC),
+          'Set AAC subtype');
+
+  CheckHR(AacType.SetUINT32(MF_MT_AUDIO_NUM_CHANNELS,
+                            2),
+          'Set stereo AAC');
+
+  CheckHR(AacType.SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND,
+                            ASampleRate),
+          'Set AAC sample rate');
+
+  CheckHR(AacType.SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE,
+                            16),
+          'Set AAC sample format');
+
+  CheckHR(AacType.SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND,
+                            ABitRateKbps * 1000 div 8),
+          'Set AAC bitrate');
+
+  CheckHR(AacType.SetUINT32(MF_MT_AAC_PAYLOAD_TYPE,
+                            0),
+          'Set raw AAC payload');
+
+
+  CheckHR(MFCreateAttributes(Attributes,
+                             2),
+          'Create MP4 writer attributes');
+
+  CheckHR(Attributes.SetGUID(MF_TRANSCODE_CONTAINERTYPE,
+                             MFTranscodeContainerType_MPEG4),
+          'Set MP4 output');
+
+  CheckHR(Attributes.SetUINT32(MF_SINK_WRITER_DISABLE_THROTTLING,
+                               1),
+          'Disable writer throttling');
+
+  CheckHR(MFCreateSinkWriterFromURL(PWideChar(AOutputFile),
+                                    nil,
+                                    Attributes,
+                                    Writer),
+          'Create MP4 writer');
+
+  CheckHR(Writer.AddStream(VideoType,
+                           VideoOut),
+          'Add H.264 copy stream');
+
+  CheckHR(Writer.SetInputMediaType(VideoOut,
+                                   VideoType,
+                                   nil),
+          'Set H.264 copy input');
+
+  CheckHR(Writer.AddStream(AacType,
+                           AudioOut),
+          'Add selected AAC stream');
+
+  CheckHR(Writer.SetInputMediaType(AudioOut,
+                                   PcmType,
+                                   nil),
+          'Set AAC PCM input');
+
+  CheckHR(Writer.BeginWriting(),
+          'Begin AAC recording');
+
   VideoStart := -1;
   AudioStart := -1;
   VideoEnded := False;
   AudioEnded := False;
+
   repeat
     Sample := nil;
-    CheckHR(Reader.ReadSample(MF_SOURCE_READER_ANY_STREAM, 0, @StreamIndex,
-            @Flags, @TimeStamp, @Sample), 'Read AAC conversion sample');
-    if (Flags and DWORD(MF_SOURCE_READERF_ENDOFSTREAM)) <> 0 then
-    begin
-      if StreamIndex = VideoIn then VideoEnded := True
-      else if StreamIndex = AudioIn then AudioEnded := True;
-      CheckHR(Reader.SetStreamSelection(StreamIndex, False), 'Finish source stream');
-    end;
-    if Sample <> nil then
-    begin
-      if StreamIndex = VideoIn then
+
+    CheckHR(Reader.ReadSample(MF_SOURCE_READER_ANY_STREAM,
+                              0,
+                              @StreamIndex,
+                              @Flags,
+                              @TimeStamp,
+                              @Sample),
+            'Read AAC conversion sample');
+
+    if ((Flags and DWORD(MF_SOURCE_READERF_ENDOFSTREAM)) <> 0) then
       begin
-        if VideoStart < 0 then VideoStart := TimeStamp;
-        CheckHR(Sample.SetSampleTime(TimeStamp - VideoStart), 'Rebase H.264 timestamp');
-        CheckHR(Writer.WriteSample(VideoOut, Sample), 'Copy H.264 sample');
-      end
-      else
-      begin
-        if AudioStart < 0 then AudioStart := TimeStamp;
-        CheckHR(Sample.SetSampleTime(TimeStamp - AudioStart), 'Rebase AAC timestamp');
-        CheckHR(Writer.WriteSample(AudioOut, Sample), 'Encode AAC sample');
+        if (StreamIndex = VideoIn) then
+          VideoEnded := True
+        else
+          if (StreamIndex = AudioIn) then
+            AudioEnded := True;
+
+        CheckHR(Reader.SetStreamSelection(StreamIndex,
+                                          False),
+                'Finish source stream');
       end;
-    end;
+
+    if (Sample <> nil) then
+      begin
+        if (StreamIndex = VideoIn) then
+          begin
+            if (VideoStart < 0) then
+              VideoStart := TimeStamp;
+
+            CheckHR(Sample.SetSampleTime(TimeStamp - VideoStart),
+                    'Rebase H.264 timestamp');
+
+            CheckHR(Writer.WriteSample(VideoOut,
+                                   Sample),
+                    'Copy H.264 sample');
+         end
+      else
+        begin
+          if (AudioStart < 0) then
+            AudioStart := TimeStamp;
+
+          CheckHR(Sample.SetSampleTime(TimeStamp - AudioStart),
+                  'Rebase AAC timestamp');
+
+          CheckHR(Writer.WriteSample(AudioOut,
+                                     Sample),
+                  'Encode AAC sample');
+        end;
+      end;
+
   until VideoEnded and AudioEnded;
-  CheckHR(Writer.Finalize(), 'Finalize AAC MP4 recording');
+
+  CheckHR(Writer.Finalize(),
+          'Finalize AAC MP4 recording');
+
   Writer := nil;
   Reader := nil;
 end;
+
 
 constructor TFxConversionThread.Create(const AInputFileName: string;
                                        const APartialFileName: string;
@@ -854,6 +1079,37 @@ begin
   FOutputProfile := AOutputProfile;
   FSampleRate := ASampleRate;
   FBitRateKbps := ABitRateKbps;
+  FStartedTick := FxDiagnosticTick;
+  FPhase := 0;
+end;
+
+
+function TFxConversionThread.DiagnosticText: string;
+var
+  Phase: Longint;
+  PhaseName: string;
+
+begin
+
+  Phase := InterlockedCompareExchange(FPhase,
+                                      0,
+                                      0);
+
+  case Phase of
+    0: PhaseName := 'queued';
+    1: PhaseName := 'initializing';
+    2: PhaseName := 'MP3-encode';
+    3: PhaseName := 'AVI-mux';
+    4: PhaseName := 'AAC-encode';
+    5: PhaseName := 'finalizing';
+    6: PhaseName := 'MF-shutdown';
+    7: PhaseName := 'finished';
+  else
+    PhaseName := 'unknown';
+  end;
+
+  Result := Format('thread=%d phase=%s ageMs=%d file=%s',
+                   [ThreadID, PhaseName, Int64(FxDiagnosticTick - FStartedTick), FFinalFileName]);
 end;
 
 
@@ -863,8 +1119,14 @@ var
 
 begin
 
+  ConversionLock.Enter;
+  try
+
   FSucceeded := False;
   FErrorText := '';
+
+  InterlockedExchange(FPhase,
+                      1);
 
   try
     CheckHR(CoInitializeEx(nil,
@@ -882,27 +1144,63 @@ begin
           raise Exception.Create('Recording output already exists; it has been preserved.');
 
         EncodedFile := '';
-        if SameText(FOutputProfile, 'AVI-H264-MP3') then
-        begin
-          if not ((FSampleRate = 32000) or (FSampleRate = 44100) or (FSampleRate = 48000)) or
-             not ((FBitRateKbps = 128) or (FBitRateKbps = 160) or (FBitRateKbps = 192)) then
-            raise Exception.Create('Invalid MP3 sample rate or bitrate.');
-          EncodedFile := FPartialFileName + '.encoded.mp4';
-          if FileExists(EncodedFile) then
-            raise Exception.Create('Encoded work file already exists; it has been preserved.');
-          EncodeNativePackets(FInputFileName, EncodedFile, FSampleRate, FBitRateKbps);
-          MuxNativePacketsToAvi(EncodedFile, FPartialFileName);
-        end
-        else if SameText(FOutputProfile, 'MP4-H264-AAC') then
-        begin
-          if not ((FSampleRate = 44100) or (FSampleRate = 48000)) or
-             not ((FBitRateKbps = 96) or (FBitRateKbps = 128) or
-                  (FBitRateKbps = 160) or (FBitRateKbps = 192)) then
-            raise Exception.Create('Invalid AAC sample rate or bitrate (96-192 kbps).');
-          EncodeAacToMp4(FInputFileName, FPartialFileName, FSampleRate, FBitRateKbps);
-        end
+
+        if SameText(FOutputProfile,
+                    'AVI-H264-MP3') then
+          begin
+            if not ((FSampleRate = 32000) or
+               (FSampleRate = 44100) or
+               (FSampleRate = 48000)) or not
+               ((FBitRateKbps = 128) or
+               (FBitRateKbps = 160) or
+               (FBitRateKbps = 192)) then
+              raise Exception.Create('Invalid MP3 sample rate or bitrate.');
+
+            EncodedFile := FPartialFileName + '.encoded.mp4';
+            if FileExists(EncodedFile) then
+              raise Exception.Create('Encoded work file already exists; it has been preserved.');
+
+            InterlockedExchange(FPhase,
+                                2);
+
+            EncodeMp3Audio(FInputFileName,
+                           EncodedFile,
+                           FSampleRate,
+                           FBitRateKbps);
+
+            InterlockedExchange(FPhase,
+                                3);
+
+            MuxNativePacketsToAvi(FInputFileName,
+                                  EncodedFile,
+                                  FPartialFileName);
+          end
         else
-          raise Exception.Create('Unsupported conversion profile.');
+          if SameText(FOutputProfile,
+                      'MP4-H264-AAC') then
+            begin
+              if not ((FSampleRate = 44100) or
+                      (FSampleRate = 48000)) or not
+                     ((FBitRateKbps = 96) or
+                      (FBitRateKbps = 128) or
+                     (FBitRateKbps = 160) or
+                     (FBitRateKbps = 192)) then
+                raise Exception.Create('Invalid AAC sample rate or bitrate (96-192 kbps).');
+
+              InterlockedExchange(FPhase,
+                                  4);
+
+              EncodeAacToMp4(FInputFileName,
+                             FPartialFileName,
+                             FSampleRate,
+                             FBitRateKbps);
+            end
+          else
+            raise Exception.Create('Unsupported conversion profile.');
+
+        InterlockedExchange(FPhase,
+                             5);
+
 
         if not FileExists(FPartialFileName) then
           raise Exception.Create('The native converter did not create an output file.');
@@ -912,11 +1210,16 @@ begin
                           MOVEFILE_WRITE_THROUGH) then
           raise Exception.Create('Cannot finalize recording. ' + SysErrorMessage(GetLastError()));
 
-        if EncodedFile <> '' then DeleteFile(PChar(EncodedFile));
+        if (EncodedFile <> '') then
+          DeleteFile(PChar(EncodedFile));
+
         DeleteFile(PChar(FInputFileName));
+
         FSucceeded := True;
 
       finally
+        InterlockedExchange(FPhase,
+                            6);
         MFShutdown();
       end;
 
@@ -928,6 +1231,14 @@ begin
     on E: Exception do
       FErrorText := E.Message;
   end;
+
+  InterlockedExchange(FPhase,
+                      7);
+  finally ConversionLock.Leave end;
 end;
 
+initialization
+  ConversionLock := TCriticalSection.Create;
+finalization
+  ConversionLock.Free;
 end.

@@ -74,6 +74,8 @@ type
 
   TFxRecordSettings = record
     Enabled: Boolean;
+    SourceMode: string;
+    StreamUrl: string;
     StreamPath: string;
     ArchivePath: string;
     PollIntervalMs: Integer;
@@ -92,12 +94,95 @@ type
 
   procedure SetDefaultFxRecordSettings(out ASettings: TFxRecordSettings;
                                        const ABasePath: string);
+
   procedure LoadFxRecordSettings(const AFileName: string;
                                  out ASettings: TFxRecordSettings);
+
   procedure SaveFxRecordSettings(const AFileName: string;
                                  const ASettings: TFxRecordSettings);
 
+  function NormalizeFxRecordStreamUrl(const AValue: string): string;
+  procedure ValidateFxRecordSource(const ASettings: TFxRecordSettings);
+
 implementation
+
+function NormalizeFxRecordStreamUrl(const AValue: string): string;
+var
+  Value, Authority, Host, PortText, Path, Name, Query: string;
+  P, Q, Port: Integer;
+  C: Char;
+begin
+  Value := Trim(AValue);
+  if not SameText(Copy(Value, 1, 7), 'http://') and
+     not SameText(Copy(Value, 1, 8), 'https://') then
+    raise Exception.Create('Enter an http:// or https:// HLS playlist URL.');
+  for C in Value do
+    if (Ord(C) <= 32) or CharInSet(C, ['\', '#']) then
+      raise Exception.Create('The stream URL must not contain spaces, backslashes or a fragment.');
+  P := Pos('://', Value) + 3;
+  Q := P;
+  while (Q <= Length(Value)) and not CharInSet(Value[Q], ['/', '?']) do Inc(Q);
+  Authority := Copy(Value, P, Q - P);
+  if Pos('@', Authority) > 0 then raise Exception.Create('Embedded HTTP credentials are not supported.');
+  Host := Authority;
+  PortText := '';
+  if Copy(Host, 1, 1) = '[' then
+    begin
+      P := Pos(']', Host);
+      if P < 3 then raise Exception.Create('Invalid IPv6 broadcast host.');
+      if Length(Host) > P then
+        begin
+          if Host[P + 1] <> ':' then raise Exception.Create('Invalid broadcast port.');
+          PortText := Copy(Host, P + 2, MaxInt);
+          if PortText = '' then raise Exception.Create('Invalid broadcast port.');
+        end;
+      Host := Copy(Host, 1, P);
+    end
+  else
+    begin
+      P := Pos(':', Host);
+      if P > 0 then
+        begin
+          PortText := Copy(Host, P + 1, MaxInt);
+          Host := Copy(Host, 1, P - 1);
+          if PortText = '' then raise Exception.Create('Invalid broadcast port.');
+        end;
+    end;
+  if Host = '' then raise Exception.Create('The broadcast URL needs a host name.');
+  if (PortText <> '') and (not TryStrToInt(PortText, Port) or (Port < 1) or (Port > 65535)) then
+    raise Exception.Create('The broadcast port must be between 1 and 65535.');
+  Path := Copy(Value, Q, MaxInt);
+  Query := '';
+  P := Pos('?', Path);
+  if P > 0 then
+    begin
+      Query := Copy(Path, P, MaxInt);
+      SetLength(Path, P - 1);
+    end;
+  Name := Copy(Path, LastDelimiter('/', Path) + 1, MaxInt);
+  if (Path = '') or (Path = '/') then Path := '/stream/live.m3u8'
+  else if SameText(Name, 'live.json') then
+    Path := Copy(Path, 1, Length(Path) - Length(Name)) + 'live.m3u8'
+  else if not SameText(ExtractFileExt(Name), '.m3u8') and
+          not ((Query <> '') and (Name <> '') and (Pos('.', Name) = 0)) then
+    begin
+      if Pos('.', Name) > 0 then
+        raise Exception.Create('Use the stream .m3u8 playlist URL.');
+      if Copy(Path, Length(Path), 1) <> '/' then Path := Path + '/';
+      Path := Path + 'live.m3u8';
+    end;
+  Result := Copy(Value, 1, Pos('://', Value) + 2) + Authority + Path + Query;
+end;
+
+procedure ValidateFxRecordSource(const ASettings: TFxRecordSettings);
+begin
+  if SameText(ASettings.SourceMode, 'PublicUrl') then
+    NormalizeFxRecordStreamUrl(ASettings.StreamUrl)
+  else if not SameText(ASettings.SourceMode, 'LocalFolder') then
+    raise Exception.Create('Select LocalFolder or PublicUrl recording input.')
+  else if Trim(ASettings.StreamPath) = '' then
+    raise Exception.Create('The local stream folder is required.');
+end;
 
 
 function ResolvePath(const ABasePath, AValue: string): string;
@@ -116,6 +201,8 @@ procedure SetDefaultFxRecordSettings(out ASettings: TFxRecordSettings;
 begin
 
   ASettings.Enabled := False;
+  ASettings.SourceMode := 'LocalFolder';
+  ASettings.StreamUrl := '';
   ASettings.StreamPath := TPath.Combine(ABasePath,
                                         'www\Stream');
 
@@ -156,6 +243,10 @@ begin
                             TEncoding.UTF8);
 
   try
+    ASettings.SourceMode := Ini.ReadString('Recorder', 'SourceMode', ASettings.SourceMode);
+    ASettings.StreamUrl := Ini.ReadString('Recorder', 'StreamUrl', ASettings.StreamUrl);
+    if SameText(ASettings.SourceMode, 'PublicUrl') then
+      ASettings.StreamUrl := NormalizeFxRecordStreamUrl(ASettings.StreamUrl);
     ASettings.Enabled := Ini.ReadBool('Recorder',
                                       'Enabled',
                                       ASettings.Enabled);
@@ -247,6 +338,9 @@ begin
                             TEncoding.UTF8);
 
   try
+    ValidateFxRecordSource(ASettings);
+    Ini.WriteString('Recorder', 'SourceMode', ASettings.SourceMode);
+    Ini.WriteString('Recorder', 'StreamUrl', ASettings.StreamUrl);
     Ini.WriteBool('Recorder',
                   'Enabled',
                   ASettings.Enabled);
@@ -306,6 +400,7 @@ begin
     Ini.WriteInteger('Audio',
                      'AacBitRateKbps',
                      ASettings.AacBitRateKbps);
+
     Ini.UpdateFile();
 
   finally

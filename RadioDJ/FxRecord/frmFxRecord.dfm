@@ -2,7 +2,7 @@ object frmFxRecord: TfrmFxRecord
   Left = 0
   Top = 0
   Caption = 'FxRecord'
-  ClientHeight = 440
+  ClientHeight = 480
   ClientWidth = 726
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,13 +20,16 @@ object frmFxRecord: TfrmFxRecord
     Left = 0
     Top = 0
     Width = 726
-    Height = 393
+    Height = 433
     ActivePage = tabStatus
     Align = alClient
     TabOrder = 0
     ExplicitHeight = 394
     object tabStatus: TTabSheet
       Caption = 'Status'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
       ExplicitHeight = 362
       object memLog: TMemo
         Left = 0
@@ -120,26 +123,44 @@ object frmFxRecord: TfrmFxRecord
     object tabRecorder: TTabSheet
       Caption = 'Recorder'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
       ExplicitHeight = 362
       object Panel1: TPanel
         Left = 0
         Top = 0
         Width = 718
-        Height = 361
+        Height = 401
         Align = alClient
         Color = 5850948
         ParentBackground = False
         TabOrder = 0
         ExplicitHeight = 362
+        object lblSourceMode: TLabel
+          Left = 6
+          Top = 20
+          Width = 126
+          Height = 17
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Recording input'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -13
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
         object Bevel1: TBevel
           Left = 8
-          Top = 100
+          Top = 140
           Width = 705
           Height = 131
         end
         object lblStreamPath: TLabel
           Left = 6
-          Top = 20
+          Top = 60
           Width = 126
           Height = 17
           Hint = 'Select stream folder'
@@ -157,7 +178,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblArchivePath: TLabel
           Left = 6
-          Top = 58
+          Top = 98
           Width = 126
           Height = 17
           Hint = 'Select archive folder'
@@ -175,7 +196,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblProfile: TLabel
           Left = 16
-          Top = 122
+          Top = 162
           Width = 116
           Height = 17
           Hint = 'Select an output profile'
@@ -193,7 +214,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblFragmentduration: TLabel
           Left = 3
-          Top = 258
+          Top = 298
           Width = 129
           Height = 17
           Hint = 'Fragment duration in minutes'
@@ -211,7 +232,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblRetentionDays: TLabel
           Left = 239
-          Top = 258
+          Top = 298
           Width = 106
           Height = 17
           Alignment = taRightJustify
@@ -226,7 +247,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblWarningGB: TLabel
           Left = 3
-          Top = 292
+          Top = 332
           Width = 129
           Height = 17
           Alignment = taRightJustify
@@ -241,7 +262,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblCriticalGB: TLabel
           Left = 208
-          Top = 292
+          Top = 332
           Width = 137
           Height = 17
           Alignment = taRightJustify
@@ -256,7 +277,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblPollingInterval: TLabel
           Left = 429
-          Top = 258
+          Top = 298
           Width = 106
           Height = 17
           Hint = 'Polling interval in milliseconds'
@@ -274,7 +295,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblMp3Rate: TLabel
           Left = 16
-          Top = 157
+          Top = 197
           Width = 116
           Height = 17
           Alignment = taRightJustify
@@ -289,7 +310,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblMp3BitRate: TLabel
           Left = 251
-          Top = 157
+          Top = 197
           Width = 94
           Height = 17
           Alignment = taRightJustify
@@ -304,7 +325,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblAacRate: TLabel
           Left = 16
-          Top = 192
+          Top = 232
           Width = 116
           Height = 17
           Alignment = taRightJustify
@@ -319,7 +340,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblAacBitRate: TLabel
           Left = 251
-          Top = 192
+          Top = 232
           Width = 94
           Height = 17
           Alignment = taRightJustify
@@ -334,7 +355,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object lblAacLimits: TLabel
           Left = 450
-          Top = 192
+          Top = 232
           Width = 198
           Height = 17
           Caption = 'Minimum 96 / maximum 192 kbps'
@@ -347,7 +368,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object Label1: TLabel
           Left = 16
-          Top = 90
+          Top = 130
           Width = 145
           Height = 17
           Hint = 'Select output profile'
@@ -364,9 +385,28 @@ object frmFxRecord: TfrmFxRecord
           ShowHint = True
           Transparent = False
         end
+        object cbSourceMode: TComboBox
+          Left = 138
+          Top = 16
+          Width = 300
+          Height = 25
+          Style = csDropDownList
+          Color = 9216
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -13
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 15
+          OnChange = SourceModeChanged
+          Items.Strings = (
+            'Local folder (on recorder computer)'
+            'HTTP/HTTPS stream (HLS)')
+        end
         object edStreamPath: TEdit
           Left = 138
-          Top = 20
+          Top = 60
           Width = 534
           Height = 25
           Color = 9216
@@ -381,7 +421,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object btnBrowseStream: TButton
           Left = 678
-          Top = 20
+          Top = 60
           Width = 32
           Height = 25
           Caption = '...'
@@ -390,7 +430,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object edArchivePath: TEdit
           Left = 138
-          Top = 55
+          Top = 95
           Width = 534
           Height = 25
           Hint = 'Select archive folder'
@@ -408,7 +448,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object btnBrowseArchive: TButton
           Left = 678
-          Top = 55
+          Top = 95
           Width = 32
           Height = 25
           Caption = '...'
@@ -417,7 +457,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object cbOutputProfile: TComboBox
           Left = 138
-          Top = 119
+          Top = 159
           Width = 298
           Height = 25
           Hint = 'Select output profile'
@@ -440,7 +480,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object edFragmentduration: TEdit
           Left = 138
-          Top = 255
+          Top = 295
           Width = 60
           Height = 25
           Hint = 'Fragment duration in minutes'
@@ -460,7 +500,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object edRetentionDays: TEdit
           Left = 351
-          Top = 255
+          Top = 295
           Width = 60
           Height = 25
           Color = 9216
@@ -477,7 +517,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object edWarningGB: TEdit
           Left = 138
-          Top = 289
+          Top = 329
           Width = 60
           Height = 25
           Color = 9216
@@ -494,7 +534,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object edCriticalGB: TEdit
           Left = 351
-          Top = 289
+          Top = 329
           Width = 60
           Height = 25
           Color = 9216
@@ -511,7 +551,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object chkRequireLive: TCheckBox
           Left = 138
-          Top = 322
+          Top = 362
           Width = 337
           Height = 21
           Caption = 'Warn when no live stream is present'
@@ -529,7 +569,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object edPollingInterval: TEdit
           Left = 541
-          Top = 255
+          Top = 295
           Width = 60
           Height = 25
           Hint = 'Polling interval in milliseconds'
@@ -549,7 +589,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object cbMp3Rate: TComboBox
           Left = 138
-          Top = 154
+          Top = 194
           Width = 106
           Height = 25
           Style = csDropDownList
@@ -568,7 +608,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object cbMp3BitRate: TComboBox
           Left = 351
-          Top = 154
+          Top = 194
           Width = 85
           Height = 25
           Style = csDropDownList
@@ -587,7 +627,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object cbAacRate: TComboBox
           Left = 138
-          Top = 189
+          Top = 229
           Width = 106
           Height = 25
           Style = csDropDownList
@@ -605,7 +645,7 @@ object frmFxRecord: TfrmFxRecord
         end
         object cbAacBitRate: TComboBox
           Left = 351
-          Top = 189
+          Top = 229
           Width = 85
           Height = 25
           Style = csDropDownList
@@ -628,7 +668,7 @@ object frmFxRecord: TfrmFxRecord
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 393
+    Top = 433
     Width = 726
     Height = 47
     Align = alBottom

@@ -81,6 +81,7 @@ const
 implementation
 
 uses
+
   {Application}
   FxRecord.Log,
   FxRecord.Config,
@@ -94,12 +95,18 @@ var
   GCheckPoint: DWORD;
 
 
-procedure CheckServiceCall(const ASucceeded: Boolean; const AOperation: string);
+procedure CheckServiceCall(const ASucceeded: Boolean;
+                           const AOperation: string);
 var
   ErrorCode: DWORD;
+
 begin
-  if ASucceeded then Exit;
+
+  if ASucceeded then
+    Exit;
+
   ErrorCode := GetLastError();
+
   raise EOSError.CreateFmt('%s failed (Windows error %d): %s',
                            [AOperation, ErrorCode, SysErrorMessage(ErrorCode)]);
 end;
@@ -175,8 +182,9 @@ begin
                                                @ServiceControlHandler);
   if (GStatusHandle = 0) then
     begin
-      AppendFxRecordLog(GConfigFileName, 'ERROR',
-        'RegisterServiceCtrlHandler failed: ' + SysErrorMessage(GetLastError()));
+      AppendFxRecordLog(GConfigFileName,
+                        'ERROR',
+                        'RegisterServiceCtrlHandler failed: ' + SysErrorMessage(GetLastError()));
       Exit;
     end;
 
@@ -193,7 +201,9 @@ begin
       Exit;
     end;
 
-  AppendFxRecordLog(GConfigFileName, 'INFO', 'Service starting. Configuration: ' + GConfigFileName);
+  AppendFxRecordLog(GConfigFileName,
+                    'INFO',
+                    'Service starting. Configuration: ' + GConfigFileName);
   Monitor := nil;
   ExitCode := NO_ERROR;
 
@@ -205,8 +215,12 @@ begin
    try
       if not FileExists(GConfigFileName) then
         raise Exception.Create('Configuration file not found: ' + GConfigFileName);
-      if not AppendFxRecordLog(GConfigFileName, 'INFO', 'Loading service configuration.') then
+
+      if not AppendFxRecordLog(GConfigFileName,
+                               'INFO',
+                               'Loading service configuration.') then
         raise Exception.Create('Cannot write service log: ' + ChangeFileExt(GConfigFileName, '.log'));
+
       LoadFxRecordSettings(GConfigFileName,
                            Settings);
 
@@ -243,8 +257,12 @@ begin
 
       on E: Exception do
         begin
-          AppendFxRecordLog(GConfigFileName, 'ERROR', E.ClassName + ': ' + E.Message);
+          AppendFxRecordLog(GConfigFileName,
+                            'ERROR',
+                            E.ClassName + ': ' + E.Message);
+
           OutputDebugString(PChar('FxRecord service error: ' + E.Message));
+
           ExitCode := ERROR_SERVICE_SPECIFIC_ERROR;
           GStatus.dwServiceSpecificExitCode := 1;
         end;
@@ -277,7 +295,7 @@ begin
   ServiceTable[0].lpServiceProc := @FxRecordServiceMain;
 
   CheckServiceCall(StartServiceCtrlDispatcher(ServiceTable[0]),
-    'StartServiceCtrlDispatcher (start the installed service through Services or sc.exe)');
+                   'StartServiceCtrlDispatcher (start the installed service through Services or sc.exe)');
 end;
 
 
@@ -299,9 +317,18 @@ var
 
 begin
 
-  FillChar(DelayedInfo, SizeOf(DelayedInfo), 0);
-  FillChar(FailureFlag, SizeOf(FailureFlag), 0);
-  FillChar(Actions, SizeOf(Actions), 0);
+  FillChar(DelayedInfo,
+           SizeOf(DelayedInfo),
+           0);
+
+  FillChar(FailureFlag,
+           SizeOf(FailureFlag),
+           0);
+
+  FillChar(Actions,
+           SizeOf(Actions),
+           0);
+
   // Delphi LongBool True is -1. SCM validates these flags as Windows TRUE (1).
   PLongInt(@DelayedInfo.fDelayedAutostart)^ := 1;
 
@@ -310,13 +337,16 @@ begin
                               @DelayedInfo) then
     begin
       ErrorCode := GetLastError();
-      AppendFxRecordLog(AConfigFileName, 'WARNING',
-        Format('Delayed automatic startup was not configured (Windows error %d): %s. ' +
-          'Service remains configured for automatic startup.',
-          [ErrorCode, SysErrorMessage(ErrorCode)]));
+      AppendFxRecordLog(AConfigFileName,
+                        'WARNING',
+                        Format('Delayed automatic startup was not configured (Windows error %d): %s. ' +
+                               'Service remains configured for automatic startup.',
+                               [ErrorCode, SysErrorMessage(ErrorCode)]));
     end
   else
-    AppendFxRecordLog(AConfigFileName, 'INFO', 'Delayed automatic startup configured.');
+    AppendFxRecordLog(AConfigFileName,
+                      'INFO',
+                      'Delayed automatic startup configured.');
 
   Actions[0].&Type := SC_ACTION_RESTART;
   Actions[0].Delay := 60000;
@@ -335,13 +365,15 @@ begin
 
   CheckServiceCall(ChangeServiceConfig2(AService,
                               SERVICE_CONFIG_FAILURE_ACTIONS,
-                              @FailureActions), 'Configure service restart actions');
+                              @FailureActions),
+                   'Configure service restart actions');
 
   PLongInt(@FailureFlag.fFailureActionsOnNonCrashFailures)^ := 1;
 
   CheckServiceCall(ChangeServiceConfig2(AService,
                               SERVICE_CONFIG_FAILURE_ACTIONS_FLAG,
-                              @FailureFlag), 'Configure failure recovery flag');
+                              @FailureFlag),
+                   'Configure failure recovery flag');
 end;
 
 
@@ -355,10 +387,15 @@ var
 
 begin
 
-  if (Copy(ExpandFileName(ParamStr(0)), 1, 2) = #92#92) or
-     (Copy(ExpandFileName(AConfigFileName), 1, 2) = #92#92) then
+  if (Copy(ExpandFileName(ParamStr(0)),
+           1,
+           2) = #92#92) or
+     (Copy(ExpandFileName(AConfigFileName),
+           1,
+           2) = #92#92) then
     raise Exception.Create('Install FxRecord on the server using its local drive paths, ' +
-      'not a UNC share path. Use the share path only in FxRecordAdmin.');
+                           'not a UNC share path. Use the share path only in FxRecordAdmin.');
+
   if not FileExists(AConfigFileName) then
     raise Exception.CreateFmt('Configuration file not found: %s',
                               [ExpandFileName(AConfigFileName)]);
@@ -367,10 +404,15 @@ begin
                            nil,
                            SC_MANAGER_CONNECT or SC_MANAGER_CREATE_SERVICE);
 
-  CheckServiceCall(Manager <> 0, 'Open local Service Control Manager');
+  CheckServiceCall(Manager <> 0,
+                   'Open local Service Control Manager');
+
   try
     CommandLine := ServiceBinaryCommand(AConfigFileName);
-    AppendFxRecordLog(AConfigFileName, 'INFO', 'Installing service: ' + CommandLine);
+
+    AppendFxRecordLog(AConfigFileName,
+                      'INFO',
+                      'Installing service: ' + CommandLine);
 
     Service := CreateService(Manager,
                              FX_RECORD_SERVICE_NAME,
@@ -386,31 +428,54 @@ begin
                              nil,
                              nil);
 
-    if Service = 0 then
-    begin
-      ErrorCode := GetLastError();
-      if ErrorCode <> ERROR_SERVICE_EXISTS then
-        raise EOSError.CreateFmt('Create FxRecord service failed (Windows error %d): %s',
-          [ErrorCode, SysErrorMessage(ErrorCode)]);
-      Service := OpenService(Manager, FX_RECORD_SERVICE_NAME,
-        SERVICE_QUERY_STATUS or SERVICE_CHANGE_CONFIG or SERVICE_START);
-      CheckServiceCall(Service <> 0, 'Open existing FxRecord service');
-      try
-        CheckServiceCall(QueryServiceStatus(Service, Status), 'Query existing FxRecord service');
-        if Status.dwCurrentState <> SERVICE_STOPPED then
-          raise Exception.Create('Stop the FxRecord service before repairing its installation.');
-        CheckServiceCall(ChangeServiceConfig(Service, SERVICE_NO_CHANGE,
-          SERVICE_AUTO_START, SERVICE_NO_CHANGE, PChar(CommandLine), nil,
-          nil, nil, nil, nil, FX_RECORD_DISPLAY_NAME), 'Update FxRecord service command');
-      except
-        CloseServiceHandle(Service);
-        raise;
+    if (Service = 0) then
+      begin
+        ErrorCode := GetLastError();
+
+        if (ErrorCode <> ERROR_SERVICE_EXISTS) then
+          raise EOSError.CreateFmt('Create FxRecord service failed (Windows error %d): %s',
+                                   [ErrorCode, SysErrorMessage(ErrorCode)]);
+        Service := OpenService(Manager,
+                               FX_RECORD_SERVICE_NAME,
+                               SERVICE_QUERY_STATUS or SERVICE_CHANGE_CONFIG or SERVICE_START);
+
+        CheckServiceCall((Service <> 0),
+                         'Open existing FxRecord service');
+
+        try
+          CheckServiceCall(QueryServiceStatus(Service,
+                                              Status),
+                           'Query existing FxRecord service');
+
+          if (Status.dwCurrentState <> SERVICE_STOPPED) then
+            raise Exception.Create('Stop the FxRecord service before repairing its installation.');
+
+          CheckServiceCall(ChangeServiceConfig(Service,
+                                               SERVICE_NO_CHANGE,
+                                               SERVICE_AUTO_START,
+                                               SERVICE_NO_CHANGE,
+                                               PChar(CommandLine),
+                                               nil,
+                                               nil,
+                                               nil,
+                                               nil,
+                                               nil,
+                                               FX_RECORD_DISPLAY_NAME),
+                           'Update FxRecord service command');
+
+        except
+          CloseServiceHandle(Service);
+          raise;
+        end;
       end;
-    end;
 
     try
-      ConfigureServiceResilience(Service, AConfigFileName);
-      AppendFxRecordLog(AConfigFileName, 'INFO', 'Service installation completed.');
+      ConfigureServiceResilience(Service,
+                                 AConfigFileName);
+
+      AppendFxRecordLog(AConfigFileName,
+                        'INFO',
+                        'Service installation completed.');
     finally
       CloseServiceHandle(Service);
     end;
@@ -433,13 +498,17 @@ begin
                            nil,
                            SC_MANAGER_CONNECT);
 
-  CheckServiceCall(Manager <> 0, 'Open local Service Control Manager');
+  CheckServiceCall((Manager <> 0),
+                   'Open local Service Control Manager');
 
   try
     Service := OpenService(Manager,
                            FX_RECORD_SERVICE_NAME,
                            $00010000 or SERVICE_STOP or SERVICE_QUERY_STATUS);
-    CheckServiceCall(Service <> 0, 'Create/open FxRecord service');
+
+    CheckServiceCall((Service <> 0),
+                     'Create/open FxRecord service');
+
     try
       if QueryServiceStatus(Service,
                             Status) and (Status.dwCurrentState <> SERVICE_STOPPED) then

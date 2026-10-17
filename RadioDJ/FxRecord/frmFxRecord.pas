@@ -105,6 +105,8 @@ type
     lblWarningGB: TLabel;
     lblCriticalGB: TLabel;
     edStreamPath: TEdit;
+    lblSourceMode: TLabel;
+    cbSourceMode: TComboBox;
     btnBrowseStream: TButton;
     edArchivePath: TEdit;
     btnBrowseArchive: TButton;
@@ -129,6 +131,7 @@ type
     Label1: TLabel;
 
     procedure cbOutputProfileChange(Sender: TObject);
+    procedure SourceModeChanged(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -173,9 +176,9 @@ uses
 
   {WinApi}
   WinApi.ShellApi,
+  Vcl.FileCtrl,
   {Application}
-  FxRecord.Log,
-  LWFileBrowserExDlg;
+  FxRecord.Log;
 
 
 procedure TfrmFxRecord.BrowseForFolder(AEdit: TEdit;
@@ -187,10 +190,7 @@ begin
 
   Directory := Trim(AEdit.Text);
 
-  if BrowseLWFolderEx(Self,
-                      Directory,
-                      Directory,
-                      ACaption) then
+  if SelectDirectory(ACaption, '', Directory, [sdNewUI, sdNewFolder]) then
     AEdit.Text := Directory;
 end;
 
@@ -217,8 +217,7 @@ var
 begin
 
   FMonitor := nil;
-  FConfigFileName := ChangeFileExt(ParamStr(0),
-                                   '.ini');
+  FConfigFileName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + 'FxRecord.ini';
   for I := 1 to ParamCount - 1 do
     if SameText(ParamStr(I), '--config') then
       FConfigFileName := ExpandFileName(ParamStr(I + 1));
@@ -271,7 +270,20 @@ end;
 procedure TfrmFxRecord.GetSettings();
 begin
 
-  edStreamPath.Text := FSettings.StreamPath;
+  if SameText(FSettings.SourceMode, 'PublicUrl') then
+    begin
+      cbSourceMode.ItemIndex := 1;
+      lblStreamPath.Caption := 'HLS playlist URL';
+      edStreamPath.Text := FSettings.StreamUrl;
+      btnBrowseStream.Enabled := False;
+    end
+  else
+    begin
+      cbSourceMode.ItemIndex := 0;
+      lblStreamPath.Caption := 'Stream folder';
+      edStreamPath.Text := FSettings.StreamPath;
+      btnBrowseStream.Enabled := True;
+    end;
   edArchivePath.Text := FSettings.ArchivePath;
   cbOutputProfile.ItemIndex := cbOutputProfile.Items.IndexOf(FSettings.OutputProfile);
 
@@ -316,7 +328,21 @@ begin
 
   Result := False;
   AError := '';
-  FSettings.StreamPath := Trim(edStreamPath.Text);
+  if cbSourceMode.ItemIndex = 1 then
+    begin
+      FSettings.SourceMode := 'PublicUrl';
+      FSettings.StreamUrl := Trim(edStreamPath.Text);
+    end
+  else
+    begin
+      FSettings.SourceMode := 'LocalFolder';
+      FSettings.StreamPath := Trim(edStreamPath.Text);
+    end;
+  try
+    ValidateFxRecordSource(FSettings);
+    if SameText(FSettings.SourceMode, 'PublicUrl') then
+      FSettings.StreamUrl := NormalizeFxRecordStreamUrl(FSettings.StreamUrl);
+  except on E: Exception do begin AError := E.Message; Exit end end;
   FSettings.ArchivePath := Trim(edArchivePath.Text);
   FSettings.OutputProfile := cbOutputProfile.Text;
 
@@ -372,7 +398,7 @@ begin
 
   FSettings.RequireLiveStream := chkRequireLive.Checked;
 
-  if (FSettings.StreamPath = '') then
+  if SameText(FSettings.SourceMode, 'LocalFolder') and (FSettings.StreamPath = '') then
     AError := 'Stream folder is required.'
   else
     if (FSettings.ArchivePath = '') then
@@ -418,8 +444,7 @@ begin
     end;
 
   FSettings.Enabled := True;
-  FMonitor := TFxRecordMonitor.Create(Handle,
-                                      FSettings);
+  FMonitor := TFxRecordMonitor.Create(Handle, FSettings, FConfigFileName);
   FMonitor.Start();
   lblState.Caption := 'MONITORING';
   UpdateButtons();
@@ -461,6 +486,26 @@ begin
   UpdateAudioControls();
 end;
 
+
+procedure TfrmFxRecord.SourceModeChanged(Sender: TObject);
+begin
+  if SameText(FSettings.SourceMode, 'PublicUrl') then FSettings.StreamUrl := Trim(edStreamPath.Text)
+  else FSettings.StreamPath := Trim(edStreamPath.Text);
+  if cbSourceMode.ItemIndex = 1 then
+    begin
+      FSettings.SourceMode := 'PublicUrl';
+      lblStreamPath.Caption := 'HLS playlist URL';
+      edStreamPath.Text := FSettings.StreamUrl;
+      if edStreamPath.Text = '' then edStreamPath.Text := 'https://factoryxradio.asuscomm.com/';
+    end
+  else
+    begin
+      FSettings.SourceMode := 'LocalFolder';
+      lblStreamPath.Caption := 'Stream folder';
+      edStreamPath.Text := FSettings.StreamPath;
+    end;
+  btnBrowseStream.Enabled := cbSourceMode.ItemIndex = 0;
+end;
 
 procedure TfrmFxRecord.UpdateAudioControls();
 var
@@ -564,7 +609,8 @@ end;
 procedure TfrmFxRecord.btnOpenArchiveClick(Sender: TObject);
 begin
 
-  if not DirectoryExists(FSettings.ArchivePath) and not ForceDirectories(FSettings.ArchivePath) then
+  if not System.SysUtils.DirectoryExists(FSettings.ArchivePath) and
+     not System.SysUtils.ForceDirectories(FSettings.ArchivePath) then
     begin
       ShowMessage('The archive folder cannot be created:' + sLineBreak + FSettings.ArchivePath);
       Exit;

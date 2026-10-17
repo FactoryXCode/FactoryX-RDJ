@@ -73,8 +73,7 @@ uses
   {Application}
   FxRecord.Config,
   FxRecord.Converter,
-  {RdjPro}
-  RDJ.RdjPro.CastFmp4Rebaser;
+  FxRecord.Fmp4;
 
 type
   TFxRecorderEventLevel = (relInfo,
@@ -84,13 +83,15 @@ type
 
   TFxRecorderEvent = procedure(const ALevel: TFxRecorderEventLevel;
                                const AText: string) of object;
+  TFxReadSourceEvent = function(const AFileName: string; out ABytes: TBytes): Boolean of object;
 
   TFxSourceRecorder = class
   private
     FSettings: TFxRecordSettings;
     FOnEvent: TFxRecorderEvent;
+    FOnReadSource: TFxReadSourceEvent;
     FFileHandle: THandle;
-    FRebaser: TRdjProCastFmp4Rebaser;
+    FRebaser: TFxFmp4Rebaser;
     FActivePartialName: string;
     FActiveFinalName: string;
     FActiveStarted: TDateTime;
@@ -102,16 +103,20 @@ type
     FLastSequence: Int64;
     FLastProgressTick: UInt64;
     FHadWriteError: Boolean;
+    FSourceInterrupted: Boolean;
+    FActiveInitialization: TBytes;
     FConversions: TObjectList<TFxConversionThread>;
 
     procedure Event(const ALevel: TFxRecorderEventLevel;
                     const AText: string);
 
     function StartSegment(const AInitFile: string): Boolean;
+    function ReadSourceBytes(const AFileName: string; out ABytes: TBytes): Boolean;
     procedure CloseSegment(const AReason: string);
 
     function AppendFragment(const AFileName: string;
-                            const ASequence: Int64): Boolean;
+                            const ASequence: Int64;
+                            const APrepared: TBytes = nil): Boolean;
 
     function BuildFragmentName(const APrefix, AExtension: string;
                                const ADigits: Integer;
@@ -133,15 +138,20 @@ type
 
     constructor Create(const ASettings: TFxRecordSettings;
                        const AOnEvent: TFxRecorderEvent);
+
     destructor Destroy(); override;
 
     procedure ProcessManifest(const AManifest: TJSONObject);
     procedure Stop();
+    procedure SourceInterrupted();
+    procedure RotateIfDue();
+    property OnReadSource: TFxReadSourceEvent read FOnReadSource write FOnReadSource;
 
     property ActiveFileName: string read FActivePartialName;
     property BytesWritten: Int64 read FBytesWritten;
     property LastSequence: Int64 read FLastSequence;
     function IsRecording(): Boolean;
+    function DiagnosticText: string;
   end;
 
 
@@ -151,7 +161,9 @@ uses
 
   {System}
   System.DateUtils,
-  System.IOUtils;
+  System.IOUtils,
+  {Application}
+  FxRecord.Diagnostics;
 
 function JsonText(const AObject: TJSONObject;
                   const AName: string): string;
@@ -357,7 +369,7 @@ begin
 
   FSettings := ASettings;
   FOnEvent := AOnEvent;
-  FRebaser := TRdjProCastFmp4Rebaser.Create();
+  FRebaser := TFxFmp4Rebaser.Create();
   FConversions := TObjectList<TFxConversionThread>.Create(True);
   FFileHandle := INVALID_HANDLE_VALUE;
   FNextSequence := -1;
@@ -477,6 +489,7 @@ begin
 
   if not DirectoryExists(FSettings.ArchivePath) then
     Exit;
+
   if (FindFirst(TPath.Combine(FSettings.ArchivePath,
                               '*.mp4.partial'),
                 faAnyFile,
@@ -560,8 +573,10 @@ begin
       if ((Search.Attr and faDirectory) <> 0) then
         Continue;
 
-      if not SameText(ExtractFileExt(Search.Name), '.mp4') and not SameText(ExtractFileExt(Search.Name),
-                                                                            '.avi') then
+      if not SameText(ExtractFileExt(Search.Name),
+                      '.mp4') and not
+             SameText(ExtractFileExt(Search.Name),
+                                     '.avi') then
         Continue;
 
       FileName := TPath.Combine(FSettings.ArchivePath,
@@ -587,6 +602,31 @@ begin
 end;
 
 
+function TFxSourceRecorder.ReadSourceBytes(const AFileName: string; out ABytes: TBytes): Boolean;
+begin
+  if Assigned(FOnReadSource) then Result := FOnReadSource(AFileName, ABytes)
+  else Result := TryReadSharedBytes(AFileName, ABytes);
+end;
+
+procedure TFxSourceRecorder.SourceInterrupted();
+begin
+  if not IsRecording then Exit;
+  if not SameText(FSettings.SourceMode, 'PublicUrl') then
+    begin
+      CloseSegment('source interrupted');
+      Exit;
+    end;
+  if not FSourceInterrupted then
+    Event(relWarning, 'Public stream interrupted; keeping the hourly recording open. Missing intervals will be logged.');
+  FSourceInterrupted := True;
+end;
+
+procedure TFxSourceRecorder.RotateIfDue();
+begin
+  if IsRecording and (Now >= FNextBoundary) then
+    CloseSegment('scheduled rotation');
+end;
+
 function TFxSourceRecorder.StartSegment(const AInitFile: string): Boolean;
 var
   InitBytes: TBytes;
@@ -601,7 +641,7 @@ begin
       Exit;
     end;
 
-  if not TryReadSharedBytes(AInitFile, InitBytes) then
+  if not ReadSourceBytes(AInitFile, InitBytes) then
     begin
       Event(relWarning, 'Waiting for readable initialization file: ' + AInitFile);
       Exit;
@@ -624,6 +664,8 @@ begin
     FActivePartialName := FActiveFinalName + '.partial';
 
   FRebaser.Reset();
+  FRebaser.SetInitialization(InitBytes);
+  FActiveInitialization := Copy(InitBytes);
   FFileHandle := CreateFile(PChar(FActivePartialName),
                             GENERIC_WRITE,
                             FILE_SHARE_READ,
@@ -649,6 +691,7 @@ begin
   FlushFileBuffers(FFileHandle);
   FBytesWritten := Length(InitBytes);
   FHadWriteError := False;
+  FSourceInterrupted := False;
 
   FLastProgressTick := GetTickCount();
 
@@ -669,16 +712,27 @@ var
 
 begin
 
-  if SameText(ExtractFileExt(AFinalFile), '.avi') then
-    Conversion := TFxConversionThread.Create(ASourceFile, AFinalFile + '.partial',
-                    AFinalFile, 'AVI-H264-MP3', FSettings.Mp3SampleRate, FSettings.Mp3BitRateKbps)
+  if SameText(ExtractFileExt(AFinalFile),
+              '.avi') then
+    Conversion := TFxConversionThread.Create(ASourceFile,
+                                             AFinalFile + '.partial',
+                                             AFinalFile,
+                                             'AVI-H264-MP3',
+                                             FSettings.Mp3SampleRate,
+                                             FSettings.Mp3BitRateKbps)
   else
-    Conversion := TFxConversionThread.Create(ASourceFile, AFinalFile + '.partial',
-                    AFinalFile, 'MP4-H264-AAC', FSettings.AacSampleRate, FSettings.AacBitRateKbps);
+    Conversion := TFxConversionThread.Create(ASourceFile,
+                                             AFinalFile + '.partial',
+                                             AFinalFile, 'MP4-H264-AAC',
+                                             FSettings.AacSampleRate,
+                                             FSettings.AacBitRateKbps);
+
   FConversions.Add(Conversion);
   Event(relInfo,
         'Audio conversion started: ' + AFinalFile);
 
+  Event(relInfo,
+        'Conversion diagnostics: count=' + IntToStr(FConversions.Count) + ' ' + Conversion.DiagnosticText);
   Conversion.Start();
 end;
 
@@ -702,9 +756,16 @@ begin
           Continue;
 
       if Conversion.Succeeded then
-        Event(relInfo, 'Recording finalized: ' + Conversion.FinalFileName)
+        Event(relInfo,
+              'Recording finalized: ' + Conversion.FinalFileName)
       else
-        Event(relCritical, 'Audio conversion failed for ' + Conversion.InputFileName + '. ' + Conversion.ErrorText + ' The source MP4 has been kept.');
+        Event(relCritical,
+              'Audio conversion failed for ' + Conversion.InputFileName + '. ' + Conversion.ErrorText + ' The source MP4 has been kept.');
+
+      Event(relInfo,
+            'Conversion completed: elapsedMs=' +
+            IntToStr(Int64(FxDiagnosticTick - Conversion.StartedTick)) +
+            ' remaining=' + IntToStr(FConversions.Count - 1) + ' ' + Conversion.DiagnosticText);
 
       FConversions.Delete(I);
     end;
@@ -777,7 +838,8 @@ end;
 
 
 function TFxSourceRecorder.AppendFragment(const AFileName: string;
-                                          const ASequence: Int64): Boolean;
+                                          const ASequence: Int64;
+                                          const APrepared: TBytes): Boolean;
 var
   FragmentBytes: TBytes;
   RebasedBytes: TBytes;
@@ -786,15 +848,17 @@ begin
 
   Result := False;
 
-  if not TryReadSharedBytes(AFileName,
-                            FragmentBytes) then
+  if Length(APrepared) > 0 then
+    FragmentBytes := APrepared
+  else if not ReadSourceBytes(AFileName,
+                                 FragmentBytes) then
     Exit;
 
   if not FRebaser.Rebase(FragmentBytes,
                          RebasedBytes) then
     begin
-      Event(relCritical, 'Fragment has no usable fMP4 timeline: ' +
-                         AFileName);
+      Event(relCritical,
+            'Fragment has no usable fMP4 timeline: ' + AFileName);
       Exit;
     end;
 
@@ -802,7 +866,10 @@ begin
                   RebasedBytes) then
     begin
       FHadWriteError := True;
-      Event(relCritical, 'Recording write failed for ' + FActivePartialName + '. ' + SysErrorMessage(GetLastError()));
+
+      Event(relCritical,
+            'Recording write failed for ' + FActivePartialName + '. ' + SysErrorMessage(GetLastError()));
+
       CloseSegment('write failure');
       Exit;
     end;
@@ -812,6 +879,12 @@ begin
   Inc(FBytesWritten,
       Length(RebasedBytes));
   FLastSequence := ASequence;
+  if FSourceInterrupted then
+    begin
+      Event(relRecovery, 'Public stream recording resumed in the same hourly file.');
+      FSourceInterrupted := False;
+    end;
+
 
   Result := True;
 end;
@@ -871,10 +944,13 @@ var
   FragmentName: string;
   FragmentPath: string;
   InitPath: string;
+  PreparedBytes: TBytes;
+  NewInitialization: TBytes;
 
 begin
 
   ReapConversions(False);
+
 
   if not SameText(JsonText(AManifest,
                            'live'),
@@ -886,17 +962,20 @@ begin
   if (SessionId = '') then
     SessionId := 'unknown';
 
-  InitName := ExtractFileName(JsonText(AManifest, 'init'));
+  InitName := ExtractFileName(JsonText(AManifest,
+                                       'init'));
 
   if (InitName = '') then
     InitName := 'init.mp4';
 
-  Prefix := ExtractFileName(JsonText(AManifest, 'prefix'));
+  Prefix := ExtractFileName(JsonText(AManifest,
+                                     'prefix'));
 
   if (Prefix = '') then
     Prefix := 'patched_frag_';
 
-  Extension := ExtractFileName(JsonText(AManifest, 'ext'));
+  Extension := ExtractFileName(JsonText(AManifest,
+                                        'ext'));
 
   if (Extension = '') then
     Extension := '.m4s';
@@ -922,18 +1001,43 @@ begin
   if not SameText(FSessionId, SessionId) then
     begin
       if IsRecording() then
-        CloseSegment('broadcast session changed');
+        begin
+          if SameText(FSettings.SourceMode, 'PublicUrl') then
+            begin
+              if not ReadSourceBytes(InitName, NewInitialization) then Exit;
+              if FxCompatibleFmp4Initialization(FActiveInitialization, NewInitialization) and
+                 FRebaser.BeginContinuityEpoch() then
+                begin
+                  FRebaser.SetInitialization(NewInitialization);
+                  FActiveInitialization := Copy(NewInitialization);
+                  Event(relWarning, 'Broadcast restarted; continuing the same hourly recording. Unavailable intervals are not recovered.');
+                end
+              else CloseSegment('broadcast format or timeline changed');
+            end
+          else CloseSegment('broadcast session changed');
+        end;
 
       FSessionId := SessionId;
-      FNextSequence := FirstSequence;
+      if SameText(FSettings.SourceMode, 'PublicUrl') then
+        begin
+          if not IsRecording() then FNextSequence := LastSequence
+          else if LastSequence < FLastSequence then FNextSequence := FirstSequence
+          else if FNextSequence < FirstSequence then FNextSequence := FirstSequence;
+        end
+      else FNextSequence := FirstSequence;
       FLastSequence := -1;
-      FragmentTargetMs := JsonInteger(AManifest, 'fragmentTargetMs', 4000);
+      FragmentTargetMs := JsonInteger(AManifest,
+                                      'fragmentTargetMs',
+                                      4000);
 
       if (FragmentTargetMs < 250) or (FragmentTargetMs > 60000) then
         FragmentTargetMs := 4000;
 
       FSegmentStartHint := IncMilliSecond(Now,
                                           -((LastSequence - FirstSequence + 1) * FragmentTargetMs));
+      if SameText(FSettings.SourceMode, 'PublicUrl') then
+        FSegmentStartHint := Now;
+      if IsRecording() then FSegmentStartHint := 0;
 
       Event(relInfo,
             'Recording broadcast session: ' + SessionId);
@@ -941,38 +1045,71 @@ begin
 
   if (FNextSequence < FirstSequence) then
     begin
+      if SameText(FSettings.SourceMode, 'PublicUrl') then SourceInterrupted();
       Event(relWarning,
             Format('Recording fragment gap: expected %d, first available is %d.',
                    [FNextSequence, FirstSequence]));
       FNextSequence := FirstSequence;
     end;
 
-  InitPath := TPath.Combine(FSettings.StreamPath,
-                            InitName);
+  if SameText(FSettings.SourceMode, 'PublicUrl') then
+    InitPath := InitName
+  else
+    InitPath := TPath.Combine(FSettings.StreamPath, InitName);
 
   while (FNextSequence <= LastSequence) do
     begin
       if IsRecording() and (Now >= FNextBoundary) then
         CloseSegment('scheduled rotation');
 
-      if not IsRecording() and not StartSegment(InitPath) then
-        Exit;
-
       FragmentName := BuildFragmentName(Prefix,
                                         Extension, Digits,
                                         FNextSequence);
 
-      FragmentPath := TPath.Combine(FSettings.StreamPath,
-                                    FragmentName);
+      if SameText(FSettings.SourceMode, 'PublicUrl') then
+        FragmentPath := FragmentName
+      else
+        FragmentPath := TPath.Combine(FSettings.StreamPath, FragmentName);
+
+      PreparedBytes := nil;
+      // A public 404 must not leave an initialization-only archive file.
+      if Assigned(FOnReadSource) and not ReadSourceBytes(FragmentPath, PreparedBytes) then
+        Exit;
+
+      if not IsRecording() and not StartSegment(InitPath) then
+        Exit;
 
       if not AppendFragment(FragmentPath,
-                            FNextSequence) then
+                            FNextSequence, PreparedBytes) then
         Exit;
 
       Inc(FNextSequence);
     end;
 
   ReportProgress();
+end;
+
+
+function TFxSourceRecorder.DiagnosticText(): string;
+var
+  I: Integer;
+
+begin
+
+  Result := Format('recording=%s bytes=%d lastFragment=%d conversions=%d',
+                   [BoolToStr(IsRecording, True), FBytesWritten, FLastSequence, FConversions.Count]);
+
+  // Bound snapshot size even if conversions unexpectedly accumulate.
+  for I := 0 to FConversions.Count - 1 do
+    begin
+      if (I >= 8) then
+        begin
+          Result := Result + ' [additional conversions omitted]';
+          Break;
+        end;
+
+      Result := Result + ' [' + FConversions[I].DiagnosticText + ']';
+    end;
 end;
 
 

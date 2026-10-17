@@ -82,7 +82,7 @@ const
   // Live MSE/fMP4 public fragment duration setup.
   // Stored in milliseconds so the setup GUI can use a trackbar.
   // Default 2000 ms was proven stable for old Windows 10 servers.
-  RDJ_MSE_PUBLIC_FRAGMENT_TARGET_MIN_MS = 50;
+  RDJ_MSE_PUBLIC_FRAGMENT_TARGET_MIN_MS = 2000;
   RDJ_MSE_PUBLIC_FRAGMENT_TARGET_MAX_MS = 6000;
   RDJ_MSE_PUBLIC_FRAGMENT_TARGET_DEFAULT_MS = 2000;
   AUDIO_BUFFER_MIN_MS = 30;

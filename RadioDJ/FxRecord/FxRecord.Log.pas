@@ -61,40 +61,64 @@ unit FxRecord.Log;
 
 interface
 
-function AppendFxRecordLog(const AConfigFileName, ALevel, AText: string): Boolean;
+function AppendFxRecordLog(const AConfigFileName: string;
+                           const ALevel: string;
+                           const AText: string): Boolean;
 
 implementation
 
 uses
-  Winapi.Windows, System.SysUtils, System.Classes, System.IOUtils;
+
+  {WinApi}
+  WinApi.Windows,
+  {System}
+  System.SysUtils,
+  System.Classes,
+  System.IOUtils;
 
 var
   LogLock: TRTLCriticalSection;
 
-function AppendFxRecordLog(const AConfigFileName, ALevel, AText: string): Boolean;
+function AppendFxRecordLog(const AConfigFileName: string;
+                           const ALevel: string;
+                           const AText: string): Boolean;
 var
-  LogFileName, Line: string;
+  LogFileName: string;
+  Line: string;
+
 begin
+
   Result := False;
-  LogFileName := ChangeFileExt(AConfigFileName, '.log');
-  Line := FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) + ' [' +
-          UpperCase(ALevel) + '] ' + AText + sLineBreak;
+  LogFileName := ChangeFileExt(AConfigFileName,
+                               '.log');
+
+  Line := FormatDateTime('yyyy-mm-dd hh:nn:ss',
+                         Now) + ' [' + UpperCase(ALevel) + '] ' + AText + sLineBreak;
+
   EnterCriticalSection(LogLock);
+
   try
     try
-      TFile.AppendAllText(LogFileName, Line, TEncoding.UTF8);
+      TFile.AppendAllText(LogFileName,
+                          Line,
+                          TEncoding.UTF8);
+
       Result := True;
     except
       on E: Exception do
         OutputDebugString(PChar('FxRecord cannot write ' + LogFileName + ': ' + E.Message));
     end;
+
   finally
     LeaveCriticalSection(LogLock);
   end;
 end;
 
+
 initialization
   InitializeCriticalSection(LogLock);
+
 finalization
   DeleteCriticalSection(LogLock);
+
 end.

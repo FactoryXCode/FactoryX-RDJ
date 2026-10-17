@@ -527,6 +527,7 @@ begin
 
     // MSE MP4
     frm.tbMp4SegmentSize.Position := ASetup.MsePublicSegmentTargetMs;
+    frm.tbMp4SegmentSizeChange(frm.tbMp4SegmentSize);
 
     // Save audiorecordings path
     frm.edAudioRecordingsDirName.Text := ASetup.AudioRecordingsDir;
@@ -869,7 +870,7 @@ begin
 
   FMp4SegmentValueMs := SnapMs(tbMp4SegmentSize.Position,
                                100,   // snap step: 100 ms
-                               50,    // min: 0.05 sec
+                               RDJ_MSE_PUBLIC_FRAGMENT_TARGET_MIN_MS,
                                9000); // max: 9 sec
 
   lblMp4SegmentSize.Caption := FormatFloat('0.00 sec',

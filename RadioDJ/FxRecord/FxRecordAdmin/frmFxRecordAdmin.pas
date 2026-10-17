@@ -116,6 +116,8 @@ type
     lblAacLimits: TLabel;
     Label1: TLabel;
     edStreamPath: TEdit;
+    lblSourceMode: TLabel;
+    cbSourceMode: TComboBox;
     edArchivePath: TEdit;
     cbOutputProfile: TComboBox;
     edFragmentduration: TEdit;
@@ -149,6 +151,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure ConnectionChanged(Sender: TObject);
     procedure SettingsChanged(Sender: TObject);
+    procedure SourceModeChanged(Sender: TObject);
     procedure cbOutputProfileChange(Sender: TObject);
     procedure ConnectClick(Sender: TObject);
     procedure StartClick(Sender: TObject);
@@ -360,13 +363,48 @@ begin
 end;
 
 
+procedure TfrmFxRecordAdmin.SourceModeChanged(Sender: TObject);
+begin
+  if FLoading then Exit;
+  if SameText(FSettings.SourceMode, 'PublicUrl') then FSettings.StreamUrl := Trim(edStreamPath.Text)
+  else FSettings.StreamPath := Trim(edStreamPath.Text);
+  FLoading := True;
+  try
+    if cbSourceMode.ItemIndex = 1 then
+      begin
+        FSettings.SourceMode := 'PublicUrl';
+        lblStreamPath.Caption := 'HLS playlist URL';
+        edStreamPath.Text := FSettings.StreamUrl;
+        if edStreamPath.Text = '' then edStreamPath.Text := 'https://factoryxradio.asuscomm.com/';
+      end
+    else
+      begin
+        FSettings.SourceMode := 'LocalFolder';
+        lblStreamPath.Caption := 'Stream folder';
+        edStreamPath.Text := FSettings.StreamPath;
+      end;
+  finally FLoading := False end;
+  SettingsChanged(Sender);
+end;
+
 procedure TfrmFxRecordAdmin.LoadControls();
 begin
 
   FLoading := True;
 
   try
-    edStreamPath.Text := FSettings.StreamPath;
+    if SameText(FSettings.SourceMode, 'PublicUrl') then
+      begin
+        cbSourceMode.ItemIndex := 1;
+        lblStreamPath.Caption := 'HLS playlist URL';
+        edStreamPath.Text := FSettings.StreamUrl;
+      end
+    else
+      begin
+        cbSourceMode.ItemIndex := 0;
+        lblStreamPath.Caption := 'Stream folder';
+        edStreamPath.Text := FSettings.StreamPath;
+      end;
     edArchivePath.Text := FSettings.ArchivePath;
     cbOutputProfile.ItemIndex := cbOutputProfile.Items.IndexOf(FSettings.OutputProfile);
     edFragmentduration.Text := IntToStr(FSettings.FragmentDuration);
@@ -405,7 +443,16 @@ end;
 procedure TfrmFxRecordAdmin.ReadControls();
 begin
 
-  FSettings.StreamPath := Trim(edStreamPath.Text);
+  if cbSourceMode.ItemIndex = 1 then
+    begin
+      FSettings.SourceMode := 'PublicUrl';
+      FSettings.StreamUrl := NormalizeFxRecordStreamUrl(edStreamPath.Text);
+    end
+  else
+    begin
+      FSettings.SourceMode := 'LocalFolder';
+      FSettings.StreamPath := Trim(edStreamPath.Text);
+    end;
   FSettings.ArchivePath := Trim(edArchivePath.Text);
   FSettings.OutputProfile := cbOutputProfile.Text;
 
@@ -628,9 +675,11 @@ begin
       end
     else
       begin
-        lblOperation.Caption := 'Updated ' + FormatDateTime('hh:nn:ss',
-                                                            Now);
-        if (Item.Action <> aaRefresh) then
+        if Item.State = SERVICE_STOP_PENDING then
+          lblOperation.Caption := 'FxRecord is still stopping and finalizing recordings; status refresh is automatic.'
+        else
+          lblOperation.Caption := 'Updated ' + FormatDateTime('hh:nn:ss', Now);
+        if (Item.Action <> aaRefresh) and (Item.State <> SERVICE_STOP_PENDING) then
           AddLog('Operation completed.');
       end;
 

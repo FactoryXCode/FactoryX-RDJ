@@ -5,6 +5,17 @@ FactoryX FxRecord Windows service over a local Windows network. It uses
 Windows' Service Control Manager and SMB file shares. No additional server
 software, web endpoint, cloud account or public port forwarding is required.
 
+The **Recorder PC** can be the broadcast server or a separate home/office
+recorder. For a service on the same computer as Admin, enter `.` and its local
+INI path; no SMB share is needed. In **Recorder settings**, choose **Local
+folder** or **HTTP/HTTPS stream (HLS)**, then enter the folder or media playlist URL.
+Archive paths always belong to the recorder PC. Public input status is read
+from `FxAlert\status.json` beside that recorder's INI, rather than the broadcast
+server's web root. Admin's service connection is independent of the station URL.
+
+See the [combined setup guide](../Docs/FxServe-and-FxRecord-Setup.md) for the
+complete local-service, remote-service and desktop workflows.
+
 ## Connecting
 
 1. Install the FxRecord Windows service on the broadcast server.
@@ -146,3 +157,24 @@ First release date: 09/07/2023
 Final release date: 10/10/2026
  
 Copyright © FactoryX. All rights reserved.
+
+## Finalization-aware service stopping (12 October 2026)
+
+Stop sends the service stop request and waits for up to two minutes. If SCM
+still reports STOP_PENDING, Admin now treats that as an accepted pending stop,
+shows that recordings are still finalizing, and resumes automatic status and
+log refresh. It does not show a failure popup or log Operation completed while
+stopping. Start, Stop, Restart and save actions stay disabled until the service
+reaches an appropriate state.
+
+Restart and Save & restart wait up to thirty minutes for shutdown, because they
+must not proceed to start/save while the previous recorder is still finalizing.
+Startup retains its two-minute timeout. RPC/network failures remain real errors;
+this UI change does not alter remote Windows service connectivity.
+
+Updated binaries: Win64\StopFinalization\FxRecordAdmin.exe and
+Win32\StopFinalization\FxRecordAdmin.exe. Close Admin and replace its executable
+on the administration PC. Both full builds passed. Checks\AdminChecks.dpr
+passed configuration checks and simulated pending-stop UI/refresh behavior,
+including disabled conflicting commands. No live server service was controlled
+as part of validation.

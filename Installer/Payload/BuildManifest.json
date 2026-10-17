@@ -1,0 +1,135 @@
+[
+  {
+    "File": "RDJ\\MfRdjJ.exe",
+    "Source": "D:\\PROJECTS\\MfPack\\Samples\\MFRDJ Samples\\MfRdjJ\\Win32\\Debug\\MfRdjJ.exe",
+    "Bytes": 7583232,
+    "ModifiedUTC": "2026-08-17T20:03:47.4182634Z",
+    "SHA256": "623FB7991597C41D83A953AFA9032E35C09B1782AC12EE0D7279ABAC5ADF3505"
+  },
+  {
+    "File": "RDJPro\\MfRdjJ.exe",
+    "Source": "D:\\PROJECTS\\MfPack\\Samples\\MFRDJ Samples\\MfRdjPro\\Win32\\Debug\\MfRdjJ.exe",
+    "Bytes": 7872000,
+    "ModifiedUTC": "2026-09-30T19:12:30.5082044Z",
+    "SHA256": "96ED60E2CEFFF47C57007792BDF125EF29C00B2CBB9A761EE699CAA2162AF6CF"
+  },
+  {
+    "File": "FxRecord\\FxRecord.exe",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxRecord\\Win64\\Debug\\FxRecord.exe",
+    "Bytes": 4911104,
+    "ModifiedUTC": "2026-10-10T12:17:02.7855600Z",
+    "SHA256": "6791818039A5D368D2B5AEB3EBC9928F1E97E683617E75B7A9BA39E8ABD835F3"
+  },
+  {
+    "File": "FxRecordAdmin\\FxRecordAdmin.exe",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxRecord\\FxRecordAdmin\\Win64\\Debug\\FxRecordAdmin.exe",
+    "Bytes": 3893248,
+    "ModifiedUTC": "2026-10-09T14:56:09.1501270Z",
+    "SHA256": "E3B75D25233F05E440040DA55F9193E55BD7709B09F3DDBCDE3E76D8F747E3EC"
+  },
+  {
+    "File": "FxServe\\FxServe.exe",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxServe\\Deploy\\Portable\\FxServe.exe",
+    "Bytes": 4087296,
+    "ModifiedUTC": "2026-09-08T19:30:45.6152762Z",
+    "SHA256": "38BDF3F26E82F5DB2B6338E7B2A51326140BF0E967DDBC7B0590C6370590EA40"
+  },
+  {
+    "File": "FxServe\\FxServeAdmin.exe",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxServe\\Deploy\\Portable\\FxServeAdmin.exe",
+    "Bytes": 3769856,
+    "ModifiedUTC": "2026-09-08T20:03:13.4580401Z",
+    "SHA256": "AF8492F4D6D2CCD715EF7305E057ECD9C6EACA608F8E4EA6A588E02229B10583"
+  },
+  {
+    "File": "FxServe\\FxServe.ini",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxServe\\FxServe.ini",
+    "Bytes": 732,
+    "ModifiedUTC": "2026-10-04T20:39:33.1552277Z",
+    "SHA256": "1F287C26DAEFA22B32C21B8906CF3661C5A869DC209EBD2FE2C38559F63317C6"
+  },
+  {
+    "File": "FxRecord\\FxRecord.ini",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxRecord\\FxRecord.ini",
+    "Bytes": 351,
+    "ModifiedUTC": "2026-10-09T08:29:46.6685800Z",
+    "SHA256": "12E54B6F506DF1EE97A9B57C2EAD1E0B47C63E754F738F230D7989DB92CA9BE6"
+  },
+  {
+    "File": "FxRecord\\Install-FxRecord.cmd",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxRecord\\Install-FxRecord.cmd",
+    "Bytes": 581,
+    "ModifiedUTC": "2026-10-09T12:09:21.9388326Z",
+    "SHA256": "0801D78FD2A37F9C34A3297923EFAEFBE3964C918C5FED4EF79D81610C0FA990"
+  },
+  {
+    "File": "FxRecord\\Uninstall-FxRecord.cmd",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxRecord\\Uninstall-FxRecord.cmd",
+    "Bytes": 169,
+    "ModifiedUTC": "2026-10-03T19:10:43.7031158Z",
+    "SHA256": "7D19CC4A8E3638A591CCA8CCF585BD44C813840D77B68D604D836BA29ADB086F"
+  },
+  {
+    "File": "License.txt",
+    "Source": "D:\\GitHub\\FactoryX Radio DJ\\FactoryX Radio DJ\\License.txt",
+    "Bytes": 852,
+    "ModifiedUTC": "2026-08-24T23:19:52.6642640Z",
+    "SHA256": "C1A181D640E4C8869669758CF40B2DE09BE2A4D37DCDB38B6717D669D000AED6"
+  },
+  {
+    "File": "Redist\\icecast_win64_2.5.0.exe",
+    "Source": "D:\\GitHub\\FactoryX Radio DJ\\FactoryX Radio DJ\\RadioDJ\\Redist\\icecast_win64_2.5.0.exe",
+    "Bytes": 5523802,
+    "ModifiedUTC": "2026-04-13T09:57:36.7006761Z",
+    "SHA256": "AD412CBE5D3D3804EA6208DFB4BE8D8A25ECB94D62F46BC5A9AA8FA0F2F647C9"
+  },
+  {
+    "File": "Caddy\\caddy.zip",
+    "Source": "D:\\GitHub\\FactoryX Radio DJ\\FactoryX Radio DJ\\RadioDJ\\Proxy Servers\\Caddy\\caddy.zip",
+    "Bytes": 17798992,
+    "ModifiedUTC": "2026-09-06T18:41:16.5967480Z",
+    "SHA256": "6AB7FECE9911746CFCCF978AF2E5061657933D82889E29DC02C1D1A2DA97B9AA"
+  },
+  {
+    "File": "Caddy\\Caddy_RDJ_Deploy.zip",
+    "Source": "D:\\GitHub\\FactoryX Radio DJ\\FactoryX Radio DJ\\RadioDJ\\Proxy Servers\\Caddy\\Caddy_RDJ_Deploy.zip",
+    "Bytes": 851358,
+    "ModifiedUTC": "2026-09-06T18:40:42.1127954Z",
+    "SHA256": "F9C8D87186D04CBE04D0B1C9825745C1092038374091D60373E9B8A43A0981B7"
+  },
+  {
+    "File": "Caddy\\Caddy_RDJ_PRO_Deploy.zip",
+    "Source": "D:\\GitHub\\FactoryX Radio DJ\\FactoryX Radio DJ\\RadioDJ\\Proxy Servers\\Caddy\\Caddy_RDJ_PRO_Deploy.zip",
+    "Bytes": 1769660,
+    "ModifiedUTC": "2026-09-06T18:40:23.5633351Z",
+    "SHA256": "491D6C8F8627466D2DAFC626F32CECA27ABB3471DEF500FD709D3FD413C16ED0"
+  },
+  {
+    "File": "Docs\\RDJ-User-Manual.md",
+    "Source": "D:\\GitHub\\FactoryX Radio DJ\\FactoryX Radio DJ\\RadioDJ\\MfRdjJ\\Docs\\RDJ-User-Manual.md",
+    "Bytes": 19196,
+    "ModifiedUTC": "2026-09-03T21:21:51.4948478Z",
+    "SHA256": "503CFB2B50BE9ADEC07E5AC61A6457382095EEC7C3C5DC612F1D2DB9439D84B7"
+  },
+  {
+    "File": "Docs\\RDJ-Pro-User-Manual.md",
+    "Source": "D:\\GitHub\\FactoryX Radio DJ\\FactoryX Radio DJ\\RadioDJ\\MfRdjPro\\RDJ-Pro-User-Manual.md",
+    "Bytes": 17268,
+    "ModifiedUTC": "2026-09-08T21:20:50.8554537Z",
+    "SHA256": "2791B106CB5E0D090575FF9C50A25FB71C6C3ECFAA1066AB5181A49AA067A3F5"
+  },
+  {
+    "File": "Docs\\RDJ-Web-Server-Setup.md",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxServe\\RDJ-Web-Server-Setup.md",
+    "Bytes": 3762,
+    "ModifiedUTC": "2026-09-26T18:27:00.0515768Z",
+    "SHA256": "E8B09EC854700327D0DFB389C7D641A1E145AB7EE5E0D3F4771CEC944D5507B9"
+  },
+  {
+    "File": "Docs\\FxRecord-README.md",
+    "Source": "D:\\PROJECTS\\MfPack\\Proxy Servers\\FxRecord\\README.md",
+    "Bytes": 9120,
+    "ModifiedUTC": "2026-10-10T12:18:01.5991448Z",
+    "SHA256": "03D61A8F59D290CA909DC67FAF8F48C4D7AF5A3CF91B918396809E1338AA3B42"
+  }
+]
