@@ -30,13 +30,13 @@ compatibility. The same fields accept FxServe paths. See
 | Notes box | A place for temporary notes. It is not sent to listeners. |
 | Clear Notes | Empties the notes box. |
 | DJ Name | The name shown to listeners. |
-| Showtitle | The current programme or show name. |
+| Showtitle | The current content or show name. |
 | Event | A name for a live event or loopback source. |
 | Title | A description of the current live activity. |
 | Set DJ and Showtitle | Publishes the entered names, event information, and selected logo. |
 | Logo | Shows the current broadcast image. Double-click it to choose another image. |
 
-When a normal audio track is playing, its artist and title are shown to listeners. While any loopback deck is capturing, the operator-entered **Event** and **Title** always take priority. Artist/title metadata from a playlist or channel deck cannot overwrite the loopback programme information; normal track metadata resumes after loopback capture stops.
+When a normal audio track is playing, its artist and title are shown to listeners. While any loopback deck is capturing, the operator-entered **Event** and **Title** always take priority. Artist/title metadata from a playlist or channel deck cannot overwrite the loopback capture content information; normal track metadata resumes after loopback capture stops.
 
 ## Setup
 
@@ -56,10 +56,10 @@ Use the three buttons on the left to switch between **General**, **Broadcast**, 
 | Microphone input | Chooses the microphone or input device. |
 | Audio Recordings | Chooses where audio recordings are saved. |
 | Database | Chooses where the RDJ Pro music database is stored. |
-| Artwork | Shows the compatibility artwork location. Caddy Artwork is the public browser location. |
+| Artwork | Shows the compatibility artwork location. "Artwork" is the public browser location. |
 | Video Recordings | Chooses where video recordings are saved. |
-| `...` buttons | Browse for the folder beside the button. |
-| Override System Sleep | Tries to keep the computer awake while RDJ Pro is running. |
+| `...` (elips)buttons | Browse for the folder beside the button. |
+| Override System Sleep | Keeps the computer awake while RDJ Pro is running, when for example a laptop lid is closed. |
 
 ### Broadcast
 
@@ -73,12 +73,12 @@ Use the three buttons on the left to switch between **General**, **Broadcast**, 
 | Camera | Chooses the camera used for video broadcasting. |
 | Refresh Cameras | Searches again for connected cameras. |
 | Video Path | Chooses where live video files are published. |
-| Content Type URL | Sets the video type sent to the browser. Normally this can stay unchanged. |
-| MP4 Segment size | Changes the length of each small live-video part. Normally this can stay unchanged. |
+| Content Type URL | Sets the video type sent to the browser. This can stay unchanged. |
+| MP4 Segment size | Changes the length of each small live-video part. This can stay unchanged. |
 | Local network list | Shows this computer's available local IPv4 addresses. |
 | Refresh | Searches again for local network addresses. |
-| Use address | Adds the selected local address to the managed Caddy configuration. |
-| Remove LAN | Removes the managed local address from the Caddy configuration. |
+| Use address | Adds the selected local address to the managed FxServe/Caddy configuration. |
+| Remove LAN | Removes the managed local address from the FxServe/Caddy configuration. |
 
 ### Audio Recorder
 
@@ -134,7 +134,7 @@ Each channel deck plays an audio file or playlist.
 | EQ Gain | Raises or lowers the selected tone area. |
 | EQ Frequency | Chooses the centre of the tone area. |
 | EQ Q | Makes the adjusted tone area wider or narrower. |
-| BPM and beat light | Show the detected tempo and beat. |
+| BPM and beat light | Show the detected tempo/beat. |
 | Status, Played, and Duration | Show the loaded item and playback times. |
 
 ## Microphone deck
@@ -340,7 +340,7 @@ Use **3-Band EQ**, **Compressor Limiter**, and **Flanger / Echo** to switch betw
 | Control | What it does |
 |---|---|
 | Filename | Sets the name of the MP4 recording. |
-| Video Only | Records video without the programme audio. |
+| Video Only | Records video without the loopback content audio. |
 | Start | Starts or stops MP4 recording. |
 | REC and recorded time | Show whether recording is active and how long it has run. |
 
