@@ -9,8 +9,8 @@ Version: 4.2.0
 - Requires Windows 10 or later.
 - Minimum supported MfPack version: 4.0.0.
 
-FxRecord is the FactoryX compliance recorder for RDJ Pro broadcasts. It runs
-on the broadcast server beside FxServe or Caddy and monitors the local
+FxRecord is the compliance recorder for RDJ Pro broadcasts. It runs
+on the broadcast server or a local pc beside FxServe or Caddy and monitors the local
 published stream folder. Please check your local laws for public broadcasting.
 
 FxRecord can also run on a separate PC and record the public FxServe stream
