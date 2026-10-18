@@ -97,6 +97,7 @@ type
     procedure Execute(); override;
 
   public
+
     constructor Create(const AInputFileName: string;
                        const APartialFileName: string;
                        const AFinalFileName: string;
@@ -1079,7 +1080,7 @@ begin
   FOutputProfile := AOutputProfile;
   FSampleRate := ASampleRate;
   FBitRateKbps := ABitRateKbps;
-  FStartedTick := FxDiagnosticTick;
+  FStartedTick := GetTickCount64();
   FPhase := 0;
 end;
 
@@ -1109,7 +1110,7 @@ begin
   end;
 
   Result := Format('thread=%d phase=%s ageMs=%d file=%s',
-                   [ThreadID, PhaseName, Int64(FxDiagnosticTick - FStartedTick), FFinalFileName]);
+                   [ThreadID, PhaseName, Int64(GetTickCount64() - FStartedTick), FFinalFileName]);
 end;
 
 

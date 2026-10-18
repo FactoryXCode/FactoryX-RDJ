@@ -764,7 +764,7 @@ begin
 
       Event(relInfo,
             'Conversion completed: elapsedMs=' +
-            IntToStr(Int64(FxDiagnosticTick - Conversion.StartedTick)) +
+            IntToStr(Int64(GetTickCount64() - Conversion.StartedTick)) +
             ' remaining=' + IntToStr(FConversions.Count - 1) + ' ' + Conversion.DiagnosticText);
 
       FConversions.Delete(I);

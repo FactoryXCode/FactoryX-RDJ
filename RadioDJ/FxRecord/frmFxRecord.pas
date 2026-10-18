@@ -176,7 +176,9 @@ uses
 
   {WinApi}
   WinApi.ShellApi,
+  {$WARN UNIT_PLATFORM OFF}
   Vcl.FileCtrl,
+  {$WARN UNIT_PLATFORM ON}
   {Application}
   FxRecord.Log;
 
@@ -190,7 +192,10 @@ begin
 
   Directory := Trim(AEdit.Text);
 
-  if SelectDirectory(ACaption, '', Directory, [sdNewUI, sdNewFolder]) then
+  if SelectDirectory(ACaption,
+                     '',
+                     Directory,
+                     [sdNewUI, sdNewFolder]) then
     AEdit.Text := Directory;
 end;
 
@@ -218,8 +223,10 @@ begin
 
   FMonitor := nil;
   FConfigFileName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + 'FxRecord.ini';
+
   for I := 1 to ParamCount - 1 do
-    if SameText(ParamStr(I), '--config') then
+    if SameText(ParamStr(I),
+                '--config') then
       FConfigFileName := ExpandFileName(ParamStr(I + 1));
 
   LoadFxRecordSettings(FConfigFileName,
@@ -232,14 +239,16 @@ begin
 
   if not AppendFxRecordLog(FConfigFileName, 'INFO', 'Desktop application started.') then
     ShowMessage('Cannot write ' + ChangeFileExt(FConfigFileName, '.log') +
-      '. Grant this Windows account write access to the configuration folder.');
+                '. Grant this Windows account write access to the configuration folder.');
+
   AddLog('FxRecord is ready. Configuration: ' + FConfigFileName);
   AddLog('Recorder settings are ready. Press Start when configuration is complete.');
 
   // Explicit command-line startup is reserved for unattended/service testing.
   //  Normal desktop startup always waits for the administrator.
   if FindCmdLineSwitch('start',
-                       ['-', '/'],
+                       ['-',
+                       '/'],
                        True) then
     StartMonitor();
 end;
@@ -258,7 +267,8 @@ procedure TfrmFxRecord.AddLog(const AText: string);
 begin
 
   AppendFxRecordLog(FConfigFileName, 'INFO', AText);
-  memLog.Lines.Add(FormatDateTime('hh:nn:ss', Now) + '  ' + AText);
+  memLog.Lines.Add(FormatDateTime('hh:nn:ss',
+                                  Now) + '  ' + AText);
 
   while (memLog.Lines.Count > 1000) do
     memLog.Lines.Delete(0);
@@ -284,6 +294,7 @@ begin
       edStreamPath.Text := FSettings.StreamPath;
       btnBrowseStream.Enabled := True;
     end;
+
   edArchivePath.Text := FSettings.ArchivePath;
   cbOutputProfile.ItemIndex := cbOutputProfile.Items.IndexOf(FSettings.OutputProfile);
 
@@ -328,6 +339,7 @@ begin
 
   Result := False;
   AError := '';
+
   if cbSourceMode.ItemIndex = 1 then
     begin
       FSettings.SourceMode := 'PublicUrl';
@@ -338,11 +350,14 @@ begin
       FSettings.SourceMode := 'LocalFolder';
       FSettings.StreamPath := Trim(edStreamPath.Text);
     end;
+
   try
     ValidateFxRecordSource(FSettings);
+
     if SameText(FSettings.SourceMode, 'PublicUrl') then
       FSettings.StreamUrl := NormalizeFxRecordStreamUrl(FSettings.StreamUrl);
   except on E: Exception do begin AError := E.Message; Exit end end;
+
   FSettings.ArchivePath := Trim(edArchivePath.Text);
   FSettings.OutputProfile := cbOutputProfile.Text;
 
@@ -369,17 +384,17 @@ begin
 
   if SameText(FSettings.OutputProfile,
               'AVI-H264-MP3') and ((FSettings.Mp3SampleRate = 0) or (cbMp3BitRate.ItemIndex < 0)) then
-  begin
-    AError := 'Select an MP3 sample rate and bitrate.';
-    Exit;
-  end;
+    begin
+      AError := 'Select an MP3 sample rate and bitrate.';
+      Exit;
+    end;
 
   if SameText(FSettings.OutputProfile,
               'MP4-H264-AAC') and ((FSettings.AacSampleRate = 0) or (cbAacBitRate.ItemIndex < 0)) then
-  begin
-    AError := 'Select an AAC sample rate and bitrate (96-192 kbps).';
-    Exit;
-  end;
+    begin
+      AError := 'Select an AAC sample rate and bitrate (96-192 kbps).';
+      Exit;
+    end;
 
   FSettings.FragmentDuration := StrToIntDef(edFragmentDuration.Text,
                                             0);
@@ -489,8 +504,12 @@ end;
 
 procedure TfrmFxRecord.SourceModeChanged(Sender: TObject);
 begin
-  if SameText(FSettings.SourceMode, 'PublicUrl') then FSettings.StreamUrl := Trim(edStreamPath.Text)
-  else FSettings.StreamPath := Trim(edStreamPath.Text);
+
+  if SameText(FSettings.SourceMode, 'PublicUrl') then
+    FSettings.StreamUrl := Trim(edStreamPath.Text)
+  else
+    FSettings.StreamPath := Trim(edStreamPath.Text);
+
   if cbSourceMode.ItemIndex = 1 then
     begin
       FSettings.SourceMode := 'PublicUrl';
@@ -504,6 +523,7 @@ begin
       lblStreamPath.Caption := 'Stream folder';
       edStreamPath.Text := FSettings.StreamPath;
     end;
+
   btnBrowseStream.Enabled := cbSourceMode.ItemIndex = 0;
 end;
 
