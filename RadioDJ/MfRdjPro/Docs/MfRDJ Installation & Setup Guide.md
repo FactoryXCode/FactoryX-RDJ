@@ -1,7 +1,7 @@
 # MfRDJ Installation & Setup Guide
 
-> **Web-server update:** RDJ Pro can now use FxServe or Caddy. FxServe is the
-> smaller RDJ-focused choice; Caddy remains available for larger or more complex
+> RDJ Pro can use FxServe or Caddy. FxServe is the
+> smaller RDJ choice; Caddy is does larger or more complex
 > web setups. See [RDJ Web Server Setup](../../../FxServe/RDJ-Web-Server-Setup.md)
 > for the current paths and short installation steps. The Caddy examples below
 > remain available for Caddy users.
@@ -17,7 +17,7 @@ MfRDJ supports two setup modes:
 All components run on one machine:
 
 * MfRDJ
-* Caddy
+* FxServe/Caddy
 
 **Use this for:**
 
@@ -29,7 +29,7 @@ All components run on one machine:
 
 ## Server Setup (Network / Internet)
 
-Caddy run on a **server PC**, accessible by:
+FxServe/Caddy runs on a **server PC**, accessible by:
 
 * Local network (LAN)
 * Internet (public users)
@@ -131,7 +131,7 @@ Enable **Port Forwarding**:
 
 # DDNS (Recommended)
 
-Example (ASUS router):
+Example (Router supporting DDNS like some ASUS models):
 
 ```text
 yourradio.asuscomm.com
@@ -150,7 +150,7 @@ Enable:
 
 Runs:
 
-* Caddy
+* FxServe/Caddy
 
 Must have:
 
@@ -164,7 +164,7 @@ Must have:
 
 Only:
 
-* Opens webpage / PWA
+* Opens webpage / PWA (Progressive Web App)
 * Plays stream
 
 Note: No firewall setup needed
@@ -182,7 +182,7 @@ Note: No firewall setup needed
 
 ```text
 ..\MfPack\src
-..\MfPack\Samples\MfRdjPro\Controls
+[MfRdjPro\Controls](https://github.com/FactoryXCode/FactoryX-Radio-DJ/tree/main/RadioDJ/MfRdjPro)
 ..\MfPack\Samples\MfComponents
 ```
 
