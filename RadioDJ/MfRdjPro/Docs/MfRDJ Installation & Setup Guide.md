@@ -134,7 +134,7 @@ Enable **Port Forwarding**:
 Example (Router supporting DDNS like some ASUS models):
 
 ```text
-yourradio.asuscomm.com
+yourradiostationname.asuscomm.com
 ```
 
 Enable:
@@ -233,7 +233,7 @@ database.
 If your Delphi version does not contains FireDac, you need "SQLite3-Delphi-FPC"
 from Github. 
 The shared RDJ redistribution folder contains SQLite 3.53.0 for applications
-that are deliberately configured to load SQLite dynamically:
+that are configured to load SQLite dynamically:
 
 ```text
 ..\Redist\sqlite-dll-win-x86-3530000.zip   Win32
@@ -316,7 +316,7 @@ Host: 192.168.x.x
 ## Internet
 
 ```text
-Host: yourdomain.com
+Host: yourdomainname.com
 ```
 
 ---
@@ -335,6 +335,7 @@ Password: your_password
 # Caddy Setup
 
 ```text
+The path where you installed Caddy, like:
 C:\Caddy
 C:\Caddy\Caddyfile
 C:\Caddy\nowplaying.json
