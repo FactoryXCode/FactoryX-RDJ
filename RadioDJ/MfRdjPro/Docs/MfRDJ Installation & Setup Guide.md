@@ -87,7 +87,7 @@ factoryxradio.asuscomm.com
 ..\MfPack\Samples\MfRdjJ\Binaries\Caddy_PWA.zip
 ```
 
-2. Copy to:
+2. Copy to (for example):
 
 ```text
 C:\Caddy
@@ -241,7 +241,7 @@ that are configured to load SQLite dynamically:
 ```
 
 Extract `sqlite3.dll` from the archive matching the application platform and
-place it beside `MfRdjJ.exe`. The supplied `.def` file is for development and
+place it inside the same folder as `MfRdjJ.exe`. The supplied `.def` file is for development and
 does not need to be distributed. Never put the x64 DLL beside a Win32 build, or
 the x86 DLL beside a Win64 build.
 
