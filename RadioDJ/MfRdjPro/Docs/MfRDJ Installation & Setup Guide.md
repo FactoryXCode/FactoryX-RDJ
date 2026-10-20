@@ -129,7 +129,7 @@ Enable **Port Forwarding**:
 
 ---
 
-# DDNS (Recommended)
+# DDNS (Recommended for testing or non commercial use)
 
 Example (Router supporting DDNS like some ASUS models):
 
