@@ -67,7 +67,8 @@ uses
   {WinApi}
   WinApi.Windows,
   WinApi.WinApiTypes,
-  WinApi.ActiveX,
+  WinApi.ComBaseApi,
+  WinApi.Coml2Api,
   WinApi.Winsock2,
   WinApi.IpTypes,
   WinApi.IpHlpApi,

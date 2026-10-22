@@ -64,6 +64,7 @@ unit RDJ.PlaylistDb;
 interface
 
 uses
+
   {WinApi}
   WinApi.Windows,
   {System}
@@ -106,7 +107,7 @@ type
     FDbFileName: string;
     FConnected: Boolean;
 
-    procedure SetupConnection;
+    procedure SetupConnection();
     procedure ExecSQL(const ASQL: string);
     function QueryInt(const ASQL: string): Integer;
     function ColumnExists(const ATableName: string;
@@ -780,7 +781,7 @@ begin
     // Delphi XE7 FireDAC assigns its SQLite shutdown callback to
     // sqlite3_initialize by mistake, so close the SQLite runtime explicitly.
     sqlite3_shutdown();
-{$IFEND}
+{$ENDIF}
   except
     on E: Exception do
       OutputDebugString(PChar('RDJ playlist FireDAC shutdown failed: ' +

@@ -39,8 +39,6 @@ object frmMediaServer: TfrmMediaServer
     ParentBackground = False
     TabOrder = 0
     OnMouseDown = pnlCaptionMouseDown
-    ExplicitLeft = -1
-    ExplicitTop = -2
     object shpOnAirCap: TShape
       Left = 167
       Top = 5
@@ -276,9 +274,9 @@ object frmMediaServer: TfrmMediaServer
       TabOrder = 0
       object pnlRecorderCtrl: TPanel
         Left = 0
-        Top = 41
+        Top = 47
         Width = 845
-        Height = 122
+        Height = 116
         Align = alClient
         BevelOuter = bvNone
         Caption = 'pnlRecorderCtrl'
@@ -286,6 +284,8 @@ object frmMediaServer: TfrmMediaServer
         ParentBackground = False
         ShowCaption = False
         TabOrder = 2
+        ExplicitTop = 41
+        ExplicitHeight = 122
         object Bevel1: TBevel
           Left = 10
           Top = 14
@@ -337,7 +337,7 @@ object frmMediaServer: TfrmMediaServer
         end
         object lblRecTime: TLabel
           Left = 0
-          Top = 94
+          Top = 88
           Width = 845
           Height = 28
           Align = alBottom
@@ -350,6 +350,7 @@ object frmMediaServer: TfrmMediaServer
           Font.Name = 'Terminal'
           Font.Style = [fsBold]
           ParentFont = False
+          ExplicitTop = 94
           ExplicitWidth = 791
         end
         object edRdjProRecFileName: TEdit
@@ -537,11 +538,12 @@ object frmMediaServer: TfrmMediaServer
         end
       end
       object pnlServerCtrl: TPanel
-        Left = -1
-        Top = 44
+        Left = -2
+        Top = 42
         Width = 845
         Height = 126
-        BevelOuter = bvNone
+        BevelKind = bkSoft
+        BorderStyle = bsSingle
         Caption = 'pnlServerCtrl'
         Color = 5850948
         ParentBackground = False
@@ -916,7 +918,7 @@ object frmMediaServer: TfrmMediaServer
         end
         object memLog: TMemo
           Left = 375
-          Top = 3
+          Top = 1
           Width = 464
           Height = 56
           Color = 9216
@@ -931,9 +933,9 @@ object frmMediaServer: TfrmMediaServer
           OnChange = memLogChange
         end
         object pnlCast: TPanel
-          Left = 0
-          Top = 62
-          Width = 845
+          Left = 1
+          Top = 55
+          Width = 837
           Height = 64
           Align = alBottom
           BevelOuter = bvNone
@@ -941,6 +943,8 @@ object frmMediaServer: TfrmMediaServer
           ParentBackground = False
           ShowCaption = False
           TabOrder = 4
+          ExplicitTop = 59
+          ExplicitWidth = 841
           object Bevel4: TBevel
             Left = 3
             Top = 2
@@ -1291,19 +1295,20 @@ object frmMediaServer: TfrmMediaServer
         Left = 0
         Top = 0
         Width = 845
-        Height = 41
+        Height = 47
         Margins.Left = 0
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
         Align = alTop
+        BevelKind = bkSoft
         BevelOuter = bvSpace
         Color = 9598320
         ParentBackground = False
         ShowCaption = False
         TabOrder = 1
         object chkServerCtrl: TMPxpButton
-          Left = 4
+          Left = 5
           Top = 4
           Width = 107
           Height = 38
@@ -1419,7 +1424,7 @@ object frmMediaServer: TfrmMediaServer
           OnClick = chkServerCtrlClick
         end
         object chkRecorderCtrl: TMPxpButton
-          Left = 112
+          Left = 113
           Top = 4
           Width = 107
           Height = 38

@@ -63,15 +63,19 @@ unit ProcessAudioPickerUtils;
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.TlHelp32,
-  Winapi.ActiveX,
+
+  {WinApi}
+  WinApi.Windows,
+  WinApi.TlHelp32,
+  WinApi.ComBaseApi,
+  {System}
   System.SysUtils,
   System.Classes,
   System.Generics.Collections,
   System.Generics.Defaults,
-  Winapi.CoreAudioApi.MMDeviceApi,
-  Winapi.CoreAudioApi.AudioPolicy;
+  {CoreAudioApi}
+  WinApi.CoreAudioApi.MMDeviceApi,
+  WinApi.CoreAudioApi.AudioPolicy;
 
 type
   TProcessAudioState = (pasUnknown, pasSilent, pasActive);

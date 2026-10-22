@@ -3,11 +3,41 @@
 // Copyright: FactoryX. All rights reserved.
 //
 // Project: Media Foundation - MFPack - Samples
+// Project location: https://sourceforge.net/projects/MFPack
+//                   https://github.com/FactoryXCode/MfPack
 // Module: RDJ.RdjPro.CastFmp4Rebaser.pas
 // Kind: Pascal Unit
+// Release date: 24-01-2026
 // Language: ENU
 //
+// Revision Version: 4.0.0
 // Description: Rebases live fMP4 track decode times for a Cast presentation.
+//
+// Company: FactoryX
+// Intiator(s): Tony (maXcomX), Carmen (carmenh).
+// Contributor(s): Tony Kalf (maXcomX), Carmen (carmenh).
+//
+//------------------------------------------------------------------------------
+// CHANGE LOG
+// Date       Person              Reason
+// ---------- ------------------- ----------------------------------------------
+// 24/08/2026 All                 Moby release  SDK 10.0.28000.2705  (Windows 11)
+//------------------------------------------------------------------------------
+//
+// Remarks: Requires Windows 10 or higher.
+//
+// Related objects: -
+// Related projects: MfPackX400
+// Known Issues: -
+//
+// Compiler version: 23 up to 35
+// SDK version: 10.0.28000.2705
+//
+// Todo: -
+//
+// =============================================================================
+// Source: FactoryX.Code.
+// =============================================================================
 //
 // LICENSE
 //
@@ -16,6 +46,16 @@
 // compliance with the License. You may obtain a copy of the License at
 // https://www.mozilla.org/en-US/MPL/2.0/
 //
+// Software distributed under the License is distributed on an "AS IS"
+// basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+// License for the specific language governing rights and limitations
+// under the License.
+//
+// Non commercial users may distribute this sourcecode provided that this
+// header is included in full at the top of the file.
+// Commercial users are not allowed to distribute this sourcecode as part of
+// their product.
+//
 //==============================================================================
 unit RDJ.RdjPro.CastFmp4Rebaser;
 
@@ -23,6 +63,7 @@ interface
 
 uses
 
+  {System}
   System.SysUtils,
   System.Generics.Collections;
 
@@ -31,9 +72,11 @@ type
   TRdjProCastFmp4Rebaser = class(TObject)
   private
     FTrackOrigins: TDictionary<Cardinal, UInt64>;
+
   public
     constructor Create();
     destructor Destroy(); override;
+
     procedure Reset();
     function Rebase(const AFragment: TBytes;
                     out ARebasedFragment: TBytes): Boolean;
@@ -78,6 +121,7 @@ begin
 
   if (AOffset < 0) or (AOffset + 4 > Length(AData)) then
     Exit;
+
   AData[AOffset] := Byte(AValue shr 24);
   AData[AOffset + 1] := Byte(AValue shr 16);
   AData[AOffset + 2] := Byte(AValue shr 8);
@@ -96,16 +140,16 @@ end;
 
 
 function ValidBox(const AData: TBytes;
-                  const AOffset,
-                        AEnd: Integer;
-                  out ASize,
-                      AType: Cardinal): Boolean;
+                  const AOffset: Integer;
+                  const AEnd: Integer;
+                  out ASize: Cardinal;
+                  out AType: Cardinal): Boolean;
 begin
 
   Result := False;
-  if (AOffset < 0) or (AOffset + 8 > AEnd) or
-     (AEnd > Length(AData)) then
+  if (AOffset < 0) or (AOffset + 8 > AEnd) or (AEnd > Length(AData)) then
     Exit;
+
   ASize := ReadU32(AData, AOffset);
   AType := ReadU32(AData, AOffset + 4);
   Result := (ASize >= 8) and
@@ -158,7 +202,9 @@ var
 
 begin
 
-  ARebasedFragment := Copy(AFragment, 0, Length(AFragment));
+  ARebasedFragment := Copy(AFragment,
+                           0,
+                           Length(AFragment));
   Cursor := 0;
   PatchedCount := 0;
 
@@ -192,39 +238,40 @@ begin
                       if (ChildType = BOX_TFHD) and (ChildSize >= 16) then
                         TrackId := ReadU32(ARebasedFragment,
                                            ChildCursor + 12)
-                      else if (ChildType = BOX_TFDT) and
-                              (TrackId <> 0) and
-                              (ChildSize >= 16) then
-                        begin
-                          Version := ARebasedFragment[ChildCursor + 8];
-                          if Version = 1 then
-                            DecodeTime := ReadU64(ARebasedFragment,
-                                                  ChildCursor + 12)
-                          else
-                            DecodeTime := ReadU32(ARebasedFragment,
-                                                  ChildCursor + 12);
+                      else
+                        if (ChildType = BOX_TFDT) and
+                           (TrackId <> 0) and
+                           (ChildSize >= 16) then
+                          begin
+                            Version := ARebasedFragment[ChildCursor + 8];
+                            if Version = 1 then
+                              DecodeTime := ReadU64(ARebasedFragment,
+                                                    ChildCursor + 12)
+                            else
+                              DecodeTime := ReadU32(ARebasedFragment,
+                                                    ChildCursor + 12);
 
-                          if not FTrackOrigins.TryGetValue(TrackId, Origin) then
-                            begin
-                              Origin := DecodeTime;
-                              FTrackOrigins.Add(TrackId, Origin);
-                            end;
+                            if not FTrackOrigins.TryGetValue(TrackId, Origin) then
+                              begin
+                                Origin := DecodeTime;
+                                FTrackOrigins.Add(TrackId, Origin);
+                              end;
 
-                          if DecodeTime >= Origin then
-                            DecodeTime := DecodeTime - Origin
-                          else
-                            DecodeTime := 0;
+                            if (DecodeTime >= Origin) then
+                              DecodeTime := DecodeTime - Origin
+                            else
+                              DecodeTime := 0;
 
-                          if Version = 1 then
-                            WriteU64(ARebasedFragment,
-                                     ChildCursor + 12,
-                                     DecodeTime)
-                          else
-                            WriteU32(ARebasedFragment,
-                                     ChildCursor + 12,
-                                     Cardinal(DecodeTime));
-                          Inc(PatchedCount);
-                        end;
+                            if (Version = 1) then
+                              WriteU64(ARebasedFragment,
+                                       ChildCursor + 12,
+                                       DecodeTime)
+                            else
+                              WriteU32(ARebasedFragment,
+                                       ChildCursor + 12,
+                                       Cardinal(DecodeTime));
+                            Inc(PatchedCount);
+                          end;
 
                       Inc(ChildCursor,
                           Integer(ChildSize));

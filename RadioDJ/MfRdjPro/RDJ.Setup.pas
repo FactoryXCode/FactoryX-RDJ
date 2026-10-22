@@ -1,6 +1,6 @@
 ﻿// FactoryX
 //
-// Copyright: © FactoryX. All rights reserved.
+// Copyright: (c) FactoryX. All rights reserved.
 //
 // Project: MfPack - CoreAudio - WASAPI
 // Project location: https://sourceforge.net/projects/MFPack
@@ -64,6 +64,7 @@ interface
 
 uses
 
+  {WinApi}
   WinApi.Windows,
   WinApi.WinApiTypes,
   {System}
@@ -281,12 +282,14 @@ begin
 
   Result := AValue;
 
-  if Result < AMin then
+  if (Result < AMin) then
     Result := AMin
   else
-  if Result > AMax then
-    Result := AMax;
+    if (Result > AMax) then
+      Result := AMax;
 end;
+
+
 procedure InitDefaultSetup(var ASetupRec: TRDJSetup);
 var
   i: Integer;

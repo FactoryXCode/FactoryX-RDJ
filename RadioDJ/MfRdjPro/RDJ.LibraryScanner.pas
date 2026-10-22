@@ -142,16 +142,15 @@ var
 begin
   Ext := LowerCase(ExtractFileExt(AFileName));
 
-  Result :=
-    (Ext = '.mp3') or
-    (Ext = '.wav') or
-    (Ext = '.flac') or
-    (Ext = '.m4a') or
-    (Ext = '.aac') or
-    (Ext = '.ogg') or
-    (Ext = '.wma') or
-    (Ext = '.aif') or
-    (Ext = '.aiff');
+  Result := (Ext = '.mp3') or
+            (Ext = '.wav') or
+            (Ext = '.flac') or
+            (Ext = '.m4a') or
+            (Ext = '.aac') or
+            (Ext = '.ogg') or
+            (Ext = '.wma') or
+            (Ext = '.aif') or
+            (Ext = '.aiff');
 end;
 
 
@@ -237,7 +236,7 @@ begin
 
   Cancelled := False;
 
-  Files := TStringList.Create;
+  Files := TStringList.Create();
   try
 
     Files.Sorted := False;

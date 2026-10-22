@@ -1,6 +1,6 @@
 ﻿// FactoryX
 //
-// Copyright: © FactoryX. All rights reserved.
+// Copyright: (c) FactoryX. All rights reserved.
 //
 // Project: MfPack - CoreAudio - WASAPI
 // Project location: https://sourceforge.net/projects/MFPack
@@ -203,17 +203,17 @@ type
                      Period: Integer = 100): HResult;
 
   // Delphi MulDiv replacement for Int64 types.
-  function _MulDiv64(const aNumber,
-                           aNumerator,
-                           aDenominator: Int64): Int64; inline;
+  function _MulDiv64(const aNumber: Int64;
+                     const aNumerator: Int64;
+                     const aDenominator: Int64): Int64; inline;
 
-  function ClampInt(const AValue,
-                  AMin,
-                  AMax: Integer): Integer; inline;
+  function ClampInt(const AValue: Integer;
+                    const AMin: Integer;
+                    const AMax: Integer): Integer; inline;
 
-  function ClampDouble(const AValue,
-                     AMin,
-                     AMax: Double): Double; inline;
+  function ClampDouble(const AValue: Double;
+                       const AMin: Double;
+                       const AMax: Double): Double; inline;
 
   // (DWM) Dark Windows Mode API utils.
   procedure ApplyDarkWindowFrame(const AWnd: HWND);
@@ -362,9 +362,9 @@ begin
 end;
 
 
-function ClampDouble(const AValue,
-                     AMin,
-                     AMax: Double): Double; inline;
+function ClampDouble(const AValue: Double;
+                     const AMin: Double;
+                     const AMax: Double): Double; inline;
 begin
 
   if (AValue < AMin) then
@@ -378,7 +378,7 @@ end;
 
 
 // DWM API
-function IsWindows11OrGreater22000: Boolean;
+function IsWindows11OrGreater22000(): Boolean;
 var
   Info: TOSVersionInfoEx;
 
@@ -642,35 +642,36 @@ var
   pJpg: TJPEGImage;
 
 begin
+
   case pType of
-    itBitmap :
-      begin
-         pBitmap.SaveToFile(pPath);
-      end;
-    itPNG :
-      begin
-         pPng := TPngImage.Create;
-         pPng.Assign(pBitmap);
-         pBitmap.SaveToFile(pPath);
+    itBitmap : begin
+                 pBitmap.SaveToFile(pPath);
+               end;
+      
+    itPNG : begin
+              pPng := TPngImage.Create;
+              pPng.Assign(pBitmap);
+              pBitmap.SaveToFile(pPath);
 
-         if Assigned(pPng) then
-           pPng.Free;
-      end;
-    itJPG :
-      begin
-        pJpg := TJPEGImage.Create;
-        // Adjust performance, compression etc.
-        pJpg.Performance := jpBestQuality;
-        pJpg.ProgressiveEncoding := True;
-        pJpg.ProgressiveDisplay := True;
-        //pJpg.CompressionQuality := 30;
-        pJpg.Compress;
-        pJpg.Assign(pBitmap);
-        pjpg.SaveToFile(pPath);
+              if Assigned(pPng) then
+                pPng.Free;
+            end;
+      
+    itJPG : begin
+              pJpg := TJPEGImage.Create;
+              // Adjust performance, compression etc.
+              pJpg.Performance := jpBestQuality;
+              pJpg.ProgressiveEncoding := True;
+              pJpg.ProgressiveDisplay := True;
+              //pJpg.CompressionQuality := 30;
+              pJpg.Compress;
+              pJpg.Assign(pBitmap);
+              pjpg.SaveToFile(pPath);
 
-        if Assigned(pJpg) then
-          pJpg.Free();
-      end;
+              if Assigned(pJpg) then
+                pJpg.Free();
+            end;
+      
   end;
 end;
 
@@ -686,6 +687,7 @@ var
   millisec: Word;
 
 begin
+
 try
   hours := hns div MFTIME(36000000000);
   hns := hns mod MFTIME(36000000000);
@@ -785,8 +787,11 @@ function CopyAttribute(pSrc: IMFAttributes;
 var
   hr: HResult;
   pVar: PROPVARIANT;
+
 begin
+
   PropVariantInit(pVar);
+
   hr := pSrc.GetItem(key,
                      pVar);
 
@@ -808,6 +813,7 @@ var
   hr: HResult;
 
 begin
+
   hr := MFCreateAttributes(mfAttributes,
                            1);
 

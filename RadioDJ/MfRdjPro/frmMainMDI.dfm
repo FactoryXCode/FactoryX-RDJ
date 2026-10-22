@@ -178,7 +178,6 @@ object MainMDIFrm: TMainMDIFrm
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
       Behavior = bbPushButton
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -232,7 +231,6 @@ object MainMDIFrm: TMainMDIFrm
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
       Behavior = bbPushButton
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -275,7 +273,6 @@ object MainMDIFrm: TMainMDIFrm
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
       Behavior = bbPushButton
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -317,7 +314,6 @@ object MainMDIFrm: TMainMDIFrm
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
       Behavior = bbPushButton
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -370,7 +366,6 @@ object MainMDIFrm: TMainMDIFrm
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
       Behavior = bbPushButton
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -424,7 +419,6 @@ object MainMDIFrm: TMainMDIFrm
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
       Behavior = bbPushButton
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -465,7 +459,6 @@ object MainMDIFrm: TMainMDIFrm
       Color = 5914932
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
-      Down = True
       Behavior = bbCheckBox
       Checked = True
       GlyphUnchecked.Data = {
@@ -601,7 +594,6 @@ object MainMDIFrm: TMainMDIFrm
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000330B0000330B00000001000000010000000000000000
@@ -949,7 +941,6 @@ object MainMDIFrm: TMainMDIFrm
         ColorWhenDown = 11363625
         ColorWhenUp = 5914932
         Behavior = bbPushButton
-        Checked = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -13
@@ -1037,7 +1028,6 @@ object MainMDIFrm: TMainMDIFrm
         ColorWhenDown = 11363625
         ColorWhenUp = 5914932
         Behavior = bbPushButton
-        Checked = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -13

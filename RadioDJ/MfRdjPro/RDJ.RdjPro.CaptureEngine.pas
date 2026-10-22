@@ -69,6 +69,7 @@ unit RDJ.RdjPro.CaptureEngine;
 interface
 
 uses
+
   {WinApi}
   WinApi.Windows,
   WinApi.Messages,

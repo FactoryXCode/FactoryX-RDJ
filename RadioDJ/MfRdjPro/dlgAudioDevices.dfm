@@ -95,7 +95,6 @@ object AudioDevicesDlg: TAudioDevicesDlg
       Color = 5914932
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
-      Checked = False
       ShowFocusRect = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
@@ -135,7 +134,6 @@ object AudioDevicesDlg: TAudioDevicesDlg
       Color = 5914932
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
-      Checked = False
       ShowFocusRect = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
@@ -176,7 +174,6 @@ object AudioDevicesDlg: TAudioDevicesDlg
       Color = 5914932
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
-      Checked = False
       ShowFocusRect = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite

@@ -63,6 +63,8 @@ unit RDJ.PlaylistTypes;
 interface
 
 uses
+
+  {System}
   System.SysUtils,
   System.Classes,
   System.Generics.Collections;
@@ -253,8 +255,8 @@ begin
 
   FItems.Add(AEntry);
   FModified := True;
-end
-;
+end;
+
 
 procedure TRDJPlaylist.Delete(Index: Integer);
 begin

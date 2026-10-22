@@ -761,10 +761,11 @@ var
 begin
 
   Result := 0;
-
-  if Length(ABoxData) < 16 then
-    Exit;
   SampleDuration := 0;
+
+  if (Length(ABoxData) < 16) then
+    Exit;
+
   Flags := RDJReadU32BE(ABoxData,
                         8) and $00FFFFFF;
   SampleCount := RDJReadU32BE(ABoxData,
@@ -849,7 +850,6 @@ var
   TrafDataOffsets: TList<DWORD>;
   TrafTrackIds: TList<DWORD>;
   TrafDurations: TList<UInt64>;
-  TrafCursor: Integer;
   Cursor: Integer;
   BoxSize: DWORD;
   BoxType: DWORD;

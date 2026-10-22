@@ -1,6 +1,6 @@
 // FactoryX
 //
-// Copyright: © FactoryX. All rights reserved.
+// Copyright: (c) FactoryX. All rights reserved.
 //
 // Project: MfPack - CoreAudio - Shared
 // Project location: https://sourceforge.net/projects/MFPack
@@ -217,7 +217,7 @@ type
     pvMixFormat: WAVEFORMATEXTENSIBLE;
 
 
-    pvFrameSize: NativeUint;
+    pvFrameSize: SIZE_T;
     pvBufferSize: UINT32;
 
     pvFileName: TFileName;

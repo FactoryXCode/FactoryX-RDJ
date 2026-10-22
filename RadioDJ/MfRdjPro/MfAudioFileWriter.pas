@@ -1,6 +1,6 @@
 ﻿// FactoryX
 //
-// Copyright: © FactoryX. All rights reserved.
+// Copyright: (c) FactoryX. All rights reserved.
 //
 // Project: MfPack - CoreAudio - Shared
 // Project location: https://sourceforge.net/projects/MFPack
@@ -189,10 +189,6 @@ type
 
 
 implementation
-
-
-uses
-  WinApi.ActiveX; // CoTaskMemFree
 
 
 { TMfAudioFileWriter }

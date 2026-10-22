@@ -80,7 +80,7 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
     end
     object cbxLocations: TComboBox
       Left = 4
-      Top = 28
+      Top = 30
       Width = 266
       Height = 25
       Style = csOwnerDrawFixed
@@ -122,7 +122,6 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
       Color = 6303744
       ColorWhenDown = 11363625
       ColorWhenUp = 6303744
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -228,7 +227,6 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
       Color = 6303744
       ColorWhenDown = 11363625
       ColorWhenUp = 6303744
-      Checked = False
       Enabled = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
@@ -261,7 +259,6 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
       Color = 6303744
       ColorWhenDown = 11363625
       ColorWhenUp = 6303744
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -348,7 +345,7 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
       Left = 0
       Top = 0
       Width = 230
-      Height = 21
+      Height = 17
       Align = alTop
       Alignment = taCenter
       Caption = 'Preview'
@@ -359,18 +356,19 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
       Font.Style = [fsBold]
       ParentFont = False
       Layout = tlCenter
-      ExplicitTop = -4
+      ExplicitWidth = 48
     end
     object imgPreview: TImage
       Left = 0
-      Top = 21
+      Top = 17
       Width = 230
-      Height = 429
+      Height = 433
       Align = alClient
       Center = True
       Proportional = True
       Stretch = True
       ExplicitTop = 23
+      ExplicitHeight = 429
     end
   end
 end

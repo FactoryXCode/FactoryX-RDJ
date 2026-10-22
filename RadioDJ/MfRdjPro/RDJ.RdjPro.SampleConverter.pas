@@ -1,6 +1,6 @@
 // FactoryX
 //
-// Copyright: © FactoryX. All rights reserved.
+// Copyright: (c) FactoryX. All rights reserved.
 //
 // Project: MfPack - MediaFoundation
 // Project location: https://sourceforge.net/projects/MFPack
@@ -12,8 +12,7 @@
 //
 // Revision Version: 4.0.0
 //
-// Description:
-//   This unit returns a IMFSample to BMP and stores the bitmap in to a memory stream.
+// Description: This unit returns a IMFSample to BMP and stores the bitmap in to a memory stream.
 //
 // Organisation: FactoryX
 // Initiator(s): Ciaran
@@ -64,14 +63,14 @@ interface
 
 uses
 
-  {Winapi}
+  {WinApi}
   WinApi.Windows,
   WinApi.WinError,
-  WinAPI.ActiveX,
-  WinApi.MediaFoundationApi.MfApi,
-  WinApi.MediaFoundationApi.WmCodecDsp,
+  WinApi.WinApiTypes,
   WinApi.ComBaseApi,
   {MediaFoundationApi}
+  WinApi.MediaFoundationApi.MfApi,
+  WinApi.MediaFoundationApi.WmCodecDsp,
   WinApi.MediaFoundationApi.MfObjects,
   WinApi.MediaFoundationApi.MfUtils,
   WinApi.MediaFoundationApi.MfTransform,
@@ -148,7 +147,8 @@ end;
 procedure TRdjProSampleConverter.SetSupportedInputs();
 begin
 
-  SetLength(FSupportedInputs, 20);
+  SetLength(FSupportedInputs,
+            20);
   FSupportedInputs[0] := MFVideoFormat_ARGB32;
   FSupportedInputs[1] := MFVideoFormat_RGB24;
   FSupportedInputs[2] := MFVideoFormat_RGB32;
@@ -196,7 +196,7 @@ end;
 
 
 function TRdjProSampleConverter.IndexOf(const AInput: TGUID;
-                                  const AValues: array of TGUID): Integer;
+                                        const AValues: array of TGUID): Integer;
 begin
 
   Result := High(AValues);
@@ -207,8 +207,8 @@ end;
 
 
 function TRdjProSampleConverter.DataFromSample(ASample: IMFSample;
-                                         const AVideoInfo: TVideoFormatInfo;
-                                         out AMemoryStream: TMemoryStream): HResult;
+                                               const AVideoInfo: TVideoFormatInfo;
+                                               out AMemoryStream: TMemoryStream): HResult;
 var
   hr: HResult;
   pBuffer: IMFMediaBuffer;
@@ -323,7 +323,7 @@ end;
 
 
 function TRdjProSampleConverter.UpdateConverter(const AManager: IMFDXGIDeviceManager;
-                                          const AInputType: IMFMediaType): HResult;
+                                                const AInputType: IMFMediaType): HResult;
 begin
 
   Result := CreateTransform(AManager,
@@ -334,7 +334,7 @@ end;
 
 
 function TRdjProSampleConverter.CreateTransform(const AManager: IMFDXGIDeviceManager;
-                                          const AInputType: IMFMediaType): HResult;
+                                                const AInputType: IMFMediaType): HResult;
 var
   hr: HResult;
 
@@ -416,7 +416,7 @@ end;
 
 
 function TRdjProSampleConverter.ConvertSampleToRGB(AInputSample: IMFSample;
-                                             out AConvertedSample: IMFSample): HResult;
+                                                   out AConvertedSample: IMFSample): HResult;
 var
   dwStatus: DWord;
   hr: HResult;

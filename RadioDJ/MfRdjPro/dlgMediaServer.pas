@@ -1,6 +1,6 @@
 // FactoryX
 //
-// Copyright:  FactoryX. All rights reserved.
+// Copyright: (c) FactoryX. All rights reserved.
 //
 // Project: MfPack - CoreAudio - WASAPI
 // Project location: https://sourceforge.net/projects/MFPack
@@ -79,6 +79,8 @@ uses
   System.Math,
   System.Diagnostics,
   System.TimeSpan,
+  RDJ.BroadcastUiTiming,
+  RDJ.BroadcastHeartbeat,
   System.Services.Dbt,
   System.SyncObjs,
   {Vcl}
@@ -462,6 +464,8 @@ type
     FLastBroadcastHealthMessage: string;
     FLastBroadcastHealthLogTick: UInt64;
     FLastFileWriteError: DWORD;
+    FUiTiming: TRdjBroadcastUiTiming;
+    FHeartbeatWorker: TRdjBroadcastHeartbeat;
 
     FLastRdjProAudioWfx: WAVEFORMATEX;
     FLastRdjProAudioWfxValid: Boolean;
@@ -3009,6 +3013,9 @@ var
 
 begin
 
+  tmrTime.Enabled := False;
+  FreeAndNil(FUiTiming);
+
   RDJLog('Shutdown',
          'Media server destruction: begin.');
   FCastClosing := True;
@@ -3399,30 +3406,71 @@ end;
 
 
 procedure TfrmMediaServer.tmrTimeTimer(Sender: TObject);
+var
+  Started: UInt64;
+  WholeTick: UInt64;
+
 begin
 
-  if FTimerRunning then
-    UpdateTimeLabel();
+  if (FUiTiming = nil) then
+    FUiTiming := TRdjBroadcastUiTiming.Create(BroadcastUiTimingFileName());
 
-  if FRdjProBroadcasting and FRdjProBroadcastMp4Recorder.Active then
-    begin
+  FUiTiming.TimerEntered(FRdjProBroadcasting);
+  WholeTick := GetTickCount64();
+
+  try
+    if FTimerRunning then
+      UpdateTimeLabel();
+
+    if FRdjProBroadcasting and FRdjProBroadcastMp4Recorder.Active then
+      begin
+        Started := GetTickCount64();
+        QueueRdjProStaticVideoSample();
+        FUiTiming.Finished('broadcast.queue-video', Started);
+
+        Started := GetTickCount64();
+        DumpBroadcastMseSegments();
+        FUiTiming.Finished('broadcast.publish-fragments', Started);
+
+        Started := GetTickCount64();
+        TryStartPendingCastLive();
+        FUiTiming.Finished('broadcast.start-cast', Started);
+
+        if FBroadcastPublishing then
+          begin
+            Started := GetTickCount64();
+            CheckBroadcastMseVideoSourceFlush();
+            FUiTiming.Finished('broadcast.check-video', Started);
+          end;
+
+        Started := GetTickCount64();
+        LogBroadcastMseMemoryHeartbeat('timer');
+        FUiTiming.Finished('broadcast.memory-heartbeat', Started);
+
+        if FBroadcastPublishing then
+          begin
+            Started := GetTickCount64();
+            UpdateBroadcastHandoverHeartbeat();
+            FUiTiming.Finished('broadcast.server-heartbeat', Started);
+          end;
+      end;
+
+    if not FBroadcastPublishing then
+      begin
+        Started := GetTickCount64();
+        PollBroadcastHandoverStatus();
+        FUiTiming.Finished('broadcast.server-status', Started);
+      end;
+
+    if FRdjProRecording and not FRdjProBroadcasting then
       QueueRdjProStaticVideoSample();
-      DumpBroadcastMseSegments();
-      TryStartPendingCastLive();
-      if FBroadcastPublishing then
-        CheckBroadcastMseVideoSourceFlush();
-      LogBroadcastMseMemoryHeartbeat('timer');
-      if FBroadcastPublishing then
-        UpdateBroadcastHandoverHeartbeat();
-    end;
 
-  if not FBroadcastPublishing then
-    PollBroadcastHandoverStatus();
-
-  if FRdjProRecording and not FRdjProBroadcasting then
-    QueueRdjProStaticVideoSample();
-
-  UpdateBroadcastHealth();
+    Started := GetTickCount64();
+    UpdateBroadcastHealth();
+    FUiTiming.Finished('broadcast.health', Started);
+  finally
+    FUiTiming.Finished('broadcast.timer-total', WholeTick);
+  end;
 end;
 
 // All Icecast end =============================================================
@@ -5661,6 +5709,8 @@ var
 
 begin
 
+  FreeAndNil(FHeartbeatWorker);
+
   if FBroadcastHandoverLockBypassed then
     begin
       // No shared lock or handover status was created for this debug session.
@@ -5785,6 +5835,47 @@ var
 
 begin
 
+  // Poll completed work without waiting or touching the server on the UI thread.
+  if (FHeartbeatWorker <> nil) then
+    begin
+      if AForce then
+        FreeAndNil(FHeartbeatWorker)
+      else
+        begin
+          if not FHeartbeatWorker.Completed then
+            Exit;
+
+          try
+            if SameText(FHeartbeatWorker.OwnerId, FBroadcastHandoverOwnerId) and
+               FBroadcastHandoverLockAcquired then
+              begin
+                if FHeartbeatWorker.Conflict then
+                  DisableBroadcastPublishingAfterLockConflict('Broadcast ownership changed to another RDJ Pro computer.')
+                else if (FHeartbeatWorker.ErrorText <> '') then
+                  SetBroadcastHandoverConnectionLost(FHeartbeatWorker.ErrorText)
+                else
+                  begin
+                    if FBroadcastHandoverConnectionLost then
+                      begin
+                        FBroadcastHandoverConnectionLost := False;
+                        ResetBroadcastMseDebugDump();
+
+                        if FHeartbeatWorker.ReacquiredLock then
+                          memLog.Lines.Append('Broadcast server connection restored and the broadcast lock was reacquired.')
+                        else
+                          memLog.Lines.Append('Broadcast server connection restored; broadcast ownership was verified.');
+                      end;
+
+                    SetBroadcastHandoverLockIndicator(CAP_LOCKED,
+                                                       LOCKED_COLOR);
+                  end;
+              end;
+          finally
+            FreeAndNil(FHeartbeatWorker);
+          end;
+        end;
+    end;
+
   // Preserve the process-lifetime bypass even if the IDE debugger is detached.
   if FBroadcastHandoverLockBypassed then
     Exit;
@@ -5806,6 +5897,22 @@ begin
 
   if (BaseDir = '') or (LockDir = '') then
     Exit;
+
+  // Startup stays synchronous so acquisition is verified before publishing starts.
+  // Recurring heartbeats use immutable inputs and never access this form.
+  if not AForce then
+    begin
+      Json := BuildBroadcastHandoverStatusJson('on_air',
+                                                BroadcastHandoverOwnerDisplay() + ' is on air.');
+      FHeartbeatWorker := TRdjBroadcastHeartbeat.Create(BaseDir,
+                                                         LockDir,
+                                                         BroadcastHandoverStatusFileName(),
+                                                         FBroadcastHandoverOwnerId,
+                                                         Json,
+                                                         FBroadcastHandoverConnectionLost);
+      FHeartbeatWorker.Start();
+      Exit;
+    end;
 
   if not DirectoryExists(BaseDir) then
     begin
@@ -6356,6 +6463,9 @@ var
   PublicPatchedFileName: string;
   I: Integer;
   LastPublishedSeq: Integer;
+  Started: UInt64;
+  HaveInit: Boolean;
+  HaveFragment: Boolean;
 
   function CurrentPublicGroupBytes(): Int64;
   begin
@@ -6482,8 +6592,10 @@ var
     PublicPatchedFileName := DumpDir + Format('patched_frag_%.6d.m4s',
                                               [FBroadcastMsePublicSeq]);
 
+    Started := GetTickCount64();
     WriteBytesToFileAtomic(PublicPatchedFileName,
                            ABytes);
+    FUiTiming.Finished('fragment.local-write', Started);
 
     if (MirrorDir <> '') then
       begin
@@ -6493,8 +6605,10 @@ var
         // mirror thread only needs source and destination filenames. This keeps
         // a slow UNC/Caddy share from turning the job queue into hundreds of MB
         // of retained heap.
+        Started := GetTickCount64();
         MirrorFileToServer(PublicPatchedFileName,
                            MirrorDir + ExtractFileName(PublicPatchedFileName));
+        FUiTiming.Finished('fragment.mirror-enqueue', Started);
       end;
 
     LastPublishedSeq := FBroadcastMsePublicSeq;
@@ -6535,9 +6649,12 @@ begin
   // The recorder first sees only the ftyp box (24 bytes), then later the
   // complete init segment once moov arrives. Do not lock ourselves to the
   // early stub. Rewrite init.mp4 whenever the available init segment grows.
-  if FBroadcastPublishing and
-     FRdjProBroadcastMp4Recorder.GetInitSegment(InitSegment) and
-     (Length(InitSegment) > FBroadcastMseInitSize) then
+  Started := GetTickCount64();
+  HaveInit := FBroadcastPublishing and
+              FRdjProBroadcastMp4Recorder.GetInitSegment(InitSegment);
+  FUiTiming.Finished('encoder.init-snapshot', Started);
+
+  if HaveInit and (Length(InitSegment) > FBroadcastMseInitSize) then
     begin
 
       WriteBytesToFileAtomic(DumpDir + 'init.mp4',
@@ -6569,14 +6686,20 @@ begin
       // source/public drift was useful to trace, but keeping raw+patched
       // fragment pairs doubles memory pressure.  Pop only the patched fragment
       // and count it as one internal source fragment.
-      if not FRdjProBroadcastMp4Recorder.TryPopPatchedFragment(PatchedFragment) then
+      Started := GetTickCount64();
+      HaveFragment := FRdjProBroadcastMp4Recorder.TryPopPatchedFragment(PatchedFragment);
+      FUiTiming.Finished('encoder.fragment-pop', Started);
+
+      if not HaveFragment then
         Break;
 
       Inc(FBroadcastMseFragmentSeq);
 
       // The Chromecast path mirrors MfSimpleCastPlayer: one growing fMP4 HTTP
       // resource. Browser/Caddy publication below remains independent.
+      Started := GetTickCount64();
       ForwardCastLiveFragment(PatchedFragment);
+      FUiTiming.Finished('fragment.cast-forward', Started);
 
       if FBroadcastPublishing then
         AppendToPublicGroup(PatchedFragment);
@@ -6605,7 +6728,11 @@ begin
     PublishPublicFragment(PublicFragment);
 
   if (LastPublishedSeq > 0) then
-    WriteBroadcastMseLiveManifest(LastPublishedSeq);
+    begin
+      Started := GetTickCount64();
+      WriteBroadcastMseLiveManifest(LastPublishedSeq);
+      FUiTiming.Finished('fragment.publish-manifests', Started);
+    end;
 end;
 
 
@@ -7358,6 +7485,17 @@ var
   WasPublishing: Boolean;
 
 begin
+
+  // Save the bounded in-memory trace before teardown can block or fail.
+  if (FUiTiming <> nil) then
+    begin
+      FUiTiming.Flush();
+
+      if (FUiTiming.LastError <> '') then
+        memLog.Lines.Append('Cannot save UI timing trace: ' + FUiTiming.LastError)
+      else
+        memLog.Lines.Append('UI timing trace: ' + FUiTiming.FileName);
+    end;
 
   WasPublishing := FBroadcastPublishing;
   FBroadcastPublishing := False;

@@ -1,6 +1,6 @@
 // FactoryX
 //
-// Copyright: © FactoryX. All rights reserved.
+// Copyright: (c) FactoryX. All rights reserved.
 //
 // Project: MfPack - CoreAudio - WASAPI
 // Project location: https://sourceforge.net/projects/MFPack
@@ -64,18 +64,21 @@ interface
 
 uses
 
-  Winapi.Windows,
+  {WinApi}
+  WinApi.Windows,
   WinApi.WinError,
-  Winapi.ActiveX,
-
+  WinApi.WinApiTypes,
+  WinApi.ComBaseApi,
+  WinApi.ActiveX.ObjBase,
+  {System}
   System.Services.Avrt,
   System.SysUtils,
   System.Classes,
   System.SyncObjs,
   System.Math,
-
-  Winapi.CoreAudioApi.AudioClient,
-  Winapi.CoreAudioApi.MMDeviceApi,
+  {CoreAudioApi}
+  WinApi.CoreAudioApi.AudioClient,
+  WinApi.CoreAudioApi.MMDeviceApi,
   WinApi.CoreAudioApi.AudioSessionTypes,
   WinApi.CoreAudioApi.MMDevApiUtils,
   {WinMM}

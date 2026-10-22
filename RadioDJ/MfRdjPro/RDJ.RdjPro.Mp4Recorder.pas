@@ -1,6 +1,6 @@
 ﻿// FactoryX
 //
-// Copyright: FactoryX. All rights reserved.
+// Copyright: (c) FactoryX. All rights reserved.
 //
 // Project: Media Foundation - MFPack - Samples
 // Project location: https://sourceforge.net/projects/MFPack
@@ -60,25 +60,6 @@
 // header is included in full at the top of the file.
 // Commercial users are not allowed to distribute this sourcecode as part of
 // their product.
-//
-//==============================================================================
-// FactoryX
-//
-// Copyright © FactoryX, Netherlands/Australia
-//
-// Project: RDJ Pro
-// Module: RDJ.RdjPro.Mp4Recorder.pas
-// Kind: Pascal Unit
-// Language: ENU
-//
-// Description:
-//   RDJ Pro MP4 recorder.
-//   IMFSinkWriter based MP4 path.
-//   Camera/video samples come from the async IMFSourceReader callback.
-//   Audio samples come from the RDJ pre-FX Float32 PCM tap.
-//
-// Notes:
-//   This unit deliberately does not use IMFCaptureRecordSink or IMFCaptureEngine.
 //
 //==============================================================================
 unit RDJ.RdjPro.Mp4Recorder;

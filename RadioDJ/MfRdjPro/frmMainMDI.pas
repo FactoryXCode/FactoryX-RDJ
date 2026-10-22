@@ -106,6 +106,7 @@ uses
   MPxpButton,
   RDJ_Common,
   RDJ.Setup,
+  RDJ.ListenerScan,
   RDJ.InternalMixer,
   RDJ.JSon,
   RDJ.RdjPro.AudioQueue,
@@ -281,6 +282,7 @@ type
     FNowPlayingTitle: string;
     FNowPlayingFromChannelDeck: Boolean;
     FCaddyListenerCount: Integer;
+    FListenerScan: TRdjListenerScan;
     FLastCaddyListenerRefreshTick: UInt64;
     FCoverFileName: string;
     FCoverJpg: string;
@@ -307,14 +309,13 @@ type
     procedure LoadBroadcastIdentityFromIni();
     procedure SaveBroadcastIdentityToIni();
     function ResolveCaddyLogFileName(): string;
-    function ReadCaddyActiveListenerCount(): Integer;
     procedure RefreshCaddyListenerCount(const AForceJsonUpdate: Boolean);
 
-    procedure WriteNowPlayingStatus(const ADjName,
-                                    AShowName,
-                                    AArtist,
-                                    ATitle,
-                                    ACoverUrl: string;
+    procedure WriteNowPlayingStatus(const ADjName: string;
+                                    const AShowName: string;
+                                    const AArtist: string;
+                                    const ATitle: string;
+                                    const ACoverUrl: string;
                                     const AListeners: Integer = -1;
                                     const AClearEmptyTrackInfo: Boolean = False);
 
@@ -324,8 +325,12 @@ type
 
     procedure EnsureCueWorkBuf(const AFrames: Integer);
     procedure InitCueQueue(const AFramesCapacity: Integer);
-    procedure PushCueFrames(const Src: PSingle; const Frames: Integer);
-    function PopCueFrames(const Dst: PSingle; const Frames: Integer): Integer;
+
+    procedure PushCueFrames(const Src: PSingle;
+                            const Frames: Integer);
+    function PopCueFrames(const Dst: PSingle;
+                          const Frames: Integer): Integer;
+
     procedure ConfigureOutputEndpoints();
     function BuildRenderWaveFormat(out AWfx: TWAVEFORMATEX): HRESULT;
 
@@ -337,6 +342,7 @@ type
     // Endpoints & deciceloss
     procedure SetupEndpointNotifications();
     procedure TeardownEndpointNotifications();
+
     //procedure QueueEndpointRefresh();
     procedure WMEndpointsChanged(var Msg: TMessage); message WM_RDJ_ENDPOINTS_CHANGED;
     procedure WMPowerBroadcast(var Msg: TMessage); message WM_POWERBROADCAST;
@@ -350,11 +356,14 @@ type
     procedure RestoreLidClosePolicyOverride();
     procedure WarnLidCloseOverrideFailedOnce(const AReason: string);
     procedure AttachAudioOutputHandlers(const AOutput: TMfWasApiRenderOutputEngine);
+
     procedure AudioRenderError(Sender: TObject;
                                const Hr: HRESULT;
                                const Msg: string);
+
     procedure QueueAudioGraphRecovery(const AReason: string;
                                       const ADelayMs: Cardinal = 1500);
+
     procedure ServiceAudioGraphRecovery();
 
     procedure OpenSetupGUI();
@@ -424,7 +433,8 @@ type
     function CanGoOnAir(): Boolean;
     procedure RefreshMainButtonStates();
     procedure SetMediaServerButtonChecked(const AChecked: Boolean);
-        property Caption;
+
+    property Caption;
 
     property Setup: TRDJSetup
       read FSetup;
@@ -466,8 +476,6 @@ const
   BASE_MIN_W = 1920;
   BASE_MIN_H = 1080;
   RDJ_CADDY_LISTENER_REFRESH_MS = 15000;
-  RDJ_CADDY_ACTIVE_LISTENER_SECONDS = 180;
-  RDJ_CADDY_LOG_TAIL_BYTES = 262144;
   RDJ_BROADCAST_IDENTITY_SECTION = 'BroadcastIdentity';
   RDJ_BROADCAST_IDENTITY_DJ_NAME = 'DjName';
   RDJ_BROADCAST_IDENTITY_SHOW_NAME = 'ShowName';
@@ -820,8 +828,7 @@ begin
   Scheme := nil;
   Hr := PowerGetActiveScheme(0,
                              Scheme);
-  if (Hr <> ERROR_SUCCESS) or
-     (Scheme = nil) then
+  if (Hr <> ERROR_SUCCESS) or (Scheme = nil) then
     begin
       OutputDebugString(PChar(Format('RDJ Pro lid close override failed: PowerGetActiveScheme error=%d',
                                      [Hr])));
@@ -835,7 +842,7 @@ begin
                               @GUID_SYSTEM_BUTTON_SUBGROUP,
                               @GUID_LIDCLOSE_ACTION,
                               AcValue);
-  if Hr <> ERROR_SUCCESS then
+  if (Hr <> ERROR_SUCCESS) then
     begin
       LocalFree(HLOCAL(Scheme));
       OutputDebugString(PChar(Format('RDJ Pro lid close override failed: PowerReadACValueIndex error=%d',
@@ -1027,9 +1034,9 @@ begin
                  FAudioGraphRecoveryReason := Reason;
                  FAudioGraphRecoveryDueTick := GetTickCount64() + UInt64(ADelayMs);
                  OutputDebugString(PChar(Format('RDJ Pro audio graph recovery queued: delayMs=%d reason=%s',
-                                                [ADelayMs,
-                                                 Reason])));
+                                                [ADelayMs, Reason])));
                end;
+
   TThread.Queue(nil,
                 QueueProc);
 end;
@@ -1115,6 +1122,10 @@ var
   i: Integer;
 
 begin
+
+  // The worker owns only an immutable path, not this form or its controls.
+  // Cancel any pending synchronous server read before releasing it.
+  FreeAndNil(FListenerScan);
 
   RDJLog('Shutdown',
          'Main form destruction: begin.');
@@ -1723,224 +1734,71 @@ begin
 end;
 
 
-function TMainMDIFrm.ReadCaddyActiveListenerCount(): Integer;
-var
-  LogFileName: string;
-  Stream: TFileStream;
-  Bytes: TBytes;
-  ReadSize: Integer;
-  Text: string;
-  Lines: TStringList;
-  Clients: TStringList;
-  I: Integer;
-  Line: string;
-  JsonValue: TJSONValue;
-  Json: TJSONObject;
-  RequestJson: TJSONObject;
-  Value: TJSONValue;
-  Uri: string;
-  ClientIp: string;
-  TsText: string;
-  LogTs: Double;
-  NowUtc: TDateTime;
-  NowUnix: Double;
-
-  function JsonText(const AJson: TJSONObject;
-                    const AName: string): string;
-  var
-    V: TJSONValue;
-
-  begin
-
-    Result := '';
-    if not Assigned(AJson) then
-      Exit;
-
-    V := AJson.GetValue(AName);
-    if Assigned(V) then
-      Result := V.Value;
-  end;
-
-  function RelevantUri(const AUri: string): Boolean;
-  var
-    S: string;
-
-  begin
-
-    S := LowerCase(Trim(AUri));
-    Result := (Copy(S,
-                    1,
-                    8) = '/stream/') or
-              (Copy(S,
-                    1,
-                    7) = '/video/') or
-              (Copy(S,
-                    1,
-                    5) = '/live') or
-              (Copy(S,
-                    1,
-                    11) = '/video.mjpg');
-  end;
-
-  function CleanClientIp(const AValue: string): string;
-  var
-    P: Integer;
-    S: string;
-
-  begin
-
-    S := Trim(AValue);
-    if (S = '') then
-      Exit('');
-
-    if (Length(S) > 0) and (S[1] = '[') then
-      begin
-        P := Pos(']',
-                 S);
-        if (P > 0) then
-          Exit(Copy(S,
-                    2,
-                    P - 2));
-      end;
-
-    P := Pos(':',
-             S);
-    if (P > 0) then
-      S := Copy(S,
-                1,
-                P - 1);
-
-    Result := S;
-  end;
-
-begin
-
-  Result := -1;
-
-  LogFileName := ResolveCaddyLogFileName();
-  if (LogFileName = '') or not FileExists(LogFileName) then
-    Exit;
-
-  Stream := TFileStream.Create(LogFileName,
-                               fmOpenRead or fmShareDenyNone);
-  try
-    ReadSize := Stream.Size;
-    if (ReadSize > RDJ_CADDY_LOG_TAIL_BYTES) then
-      ReadSize := RDJ_CADDY_LOG_TAIL_BYTES;
-
-    if ReadSize <= 0 then
-      Exit;
-
-    Stream.Position := Stream.Size - ReadSize;
-    SetLength(Bytes,
-              ReadSize);
-    Stream.ReadBuffer(Bytes[0],
-                      ReadSize);
-  finally
-    Stream.Free;
-  end;
-
-  Text := TEncoding.UTF8.GetString(Bytes);
-
-  Lines := TStringList.Create;
-  Clients := TStringList.Create;
-
-  try
-    Lines.Text := Text;
-    Clients.Sorted := True;
-    Clients.Duplicates := dupIgnore;
-
-    NowUtc := TTimeZone.Local.ToUniversalTime(Now);
-    NowUnix := (NowUtc - EncodeDate(1970,
-                                    1,
-                                    1)) * SecsPerDay;
-
-    for I := 0 to Lines.Count - 1 do
-      begin
-        Line := Trim(Lines[I]);
-        if (Line = '') or (Line[1] <> '{') then
-          Continue;
-
-        JsonValue := TJSONObject.ParseJSONValue(Line);
-        try
-          if not (JsonValue is TJSONObject) then
-            Continue;
-
-          Json := TJSONObject(JsonValue);
-          RequestJson := nil;
-
-          Value := Json.GetValue('request');
-          if Value is TJSONObject then
-            RequestJson := TJSONObject(Value);
-
-          Uri := JsonText(RequestJson,
-                          'uri');
-          if Uri = '' then
-            Uri := JsonText(Json,
-                            'uri');
-
-          if not RelevantUri(Uri) then
-            Continue;
-
-          TsText := JsonText(Json,
-                             'ts');
-          LogTs := StrToFloatDef(StringReplace(TsText,
-                                               '.',
-                                               FormatSettings.DecimalSeparator,
-                                               []),
-                                 0);
-
-          if (LogTs > 0) and
-             ((NowUnix - LogTs) > RDJ_CADDY_ACTIVE_LISTENER_SECONDS) then
-            Continue;
-
-          ClientIp := CleanClientIp(JsonText(RequestJson,
-                                            'client_ip'));
-          if ClientIp = '' then
-            ClientIp := CleanClientIp(JsonText(RequestJson,
-                                              'remote_ip'));
-          if ClientIp = '' then
-            ClientIp := CleanClientIp(JsonText(Json,
-                                              'remote_ip'));
-
-          if ClientIp <> '' then
-            Clients.Add(ClientIp);
-        finally
-          JsonValue.Free;
-        end;
-      end;
-
-    Result := Clients.Count;
-  finally
-    Clients.Free;
-    Lines.Free;
-  end;
-end;
-
-
 procedure TMainMDIFrm.RefreshCaddyListenerCount(const AForceJsonUpdate: Boolean);
 var
   NewCount: Integer;
   OldCount: Integer;
+  NowTick: UInt64;
+  LogFileName: string;
 
 begin
 
-  OldCount := FCaddyListenerCount;
-  NewCount := ReadCaddyActiveListenerCount();
-  if (NewCount < 0) then
+  if FAppClosing then
     Exit;
 
-  FCaddyListenerCount := NewCount;
+  LogFileName := ResolveCaddyLogFileName();
 
-  if AForceJsonUpdate and (NewCount <> OldCount) then
-    WriteNowPlayingStatus(FDjName,
-                          FShowName,
-                          FNowPlayingArtist,
-                          FNowPlayingTitle,
-                          BuildCoverJsonUrl(True),
-                          FCaddyListenerCount);
+  if (FListenerScan <> nil) then
+    begin
+      // Poll the worker handle only. Never wait for server I/O on the UI thread.
+      if not FListenerScan.Completed then
+        Exit;
+
+      NewCount := -1;
+
+      if SameText(FListenerScan.FileName, LogFileName) then
+        NewCount := FListenerScan.ListenerCount;
+
+      if (FListenerScan.ElapsedMs >= 100) then
+        RDJLog('UI refresh',
+                 Format('Listener scan took %d ms on its background worker.',
+                          [FListenerScan.ElapsedMs]));
+
+      if (FListenerScan.ErrorText <> '') then
+        RDJLog('Listener scan',
+                 FListenerScan.ErrorText);
+
+      FreeAndNil(FListenerScan);
+
+      if (NewCount >= 0) then
+        begin
+          OldCount := FCaddyListenerCount;
+          FCaddyListenerCount := NewCount;
+
+          if AForceJsonUpdate and (NewCount <> OldCount) then
+            WriteNowPlayingStatus(FDjName,
+                                    FShowName,
+                                    FNowPlayingArtist,
+                                    FNowPlayingTitle,
+                                    BuildCoverJsonUrl(True),
+                                    FCaddyListenerCount);
+        end;
+    end;
+
+  NowTick := GetTickCount64();
+
+  if (FLastCaddyListenerRefreshTick <> 0) and
+     (NowTick - FLastCaddyListenerRefreshTick < RDJ_CADDY_LISTENER_REFRESH_MS) then
+    Exit;
+
+  FLastCaddyListenerRefreshTick := NowTick;
+
+  if (LogFileName = '') then
+    Exit;
+
+  FListenerScan := TRdjListenerScan.Create(LogFileName);
+  FListenerScan.Start();
 end;
-
 
 
 function EncodeBroadcastIdentityText(const AValue: string): string;
@@ -3269,21 +3127,11 @@ end;
 
 
 procedure TMainMDIFrm.tmrClockTimer(Sender: TObject);
-var
-  NowTick: UInt64;
-
 begin
 
   lblLocalTime.Caption := TimeToStr(Time);
   ServiceAudioGraphRecovery();
-
-  NowTick := GetTickCount64();
-  if (FLastCaddyListenerRefreshTick = 0) or
-     (NowTick - FLastCaddyListenerRefreshTick >= RDJ_CADDY_LISTENER_REFRESH_MS) then
-    begin
-      FLastCaddyListenerRefreshTick := NowTick;
-      RefreshCaddyListenerCount(True);
-    end;
+  RefreshCaddyListenerCount(True);
 end;
 
 
