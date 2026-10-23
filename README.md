@@ -19,7 +19,7 @@ The Mixer is fully adjustable for audio endpoint assignments, mixer decks and lo
 **Note:**  
  Before compiling this sample make sure, you have all needed components installed first (see instructions).  
   
-![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Pic/RDJ_Interface_s.png)
+![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJ_Interface_s.png)
   
   
 **MfRDJ Pro Radio Mixer**  
@@ -56,8 +56,46 @@ An FxAlert App running on smartphones or pc's is provided to watch FxRecord and 
 **Note:**  
 Before using this sample make sure, you have all needed components installed (see instructions).  
   
-![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Pic/RDJPro_Interface_s.png)
+![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJPro_Interface_s.png)
   
+
+#Binaries
+  
+# FactoryX DJSuite
+  
+DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
+the optional tools needed to broadcast, serve and record a radio station.
+It can be used on a studio PC, server or another recording PC.
+An installation includes either RDJ or RDJ Pro.
+  
+  
+## What's included
+
+* **RDJ** — audio radio broadcasting application.
+* **RDJ Pro** — audio and video radio broadcasting application.
+* **FxServe** — optional web and broadcast server (recommended for RDJ Pro only).
+* **FxServe Admin** — optional FxServe administration tool (recommended for RDJ Pro only).
+* **FxRecord** — optional broadcast recorder for desktop or Windows service use.
+* **FxRecord Admin** — optional recorder administration tool.
+* **Caddy** — optional web server.
+* **Icecast** — optional streaming server, installed through its own setup wizard.
+* **Web applications and supporting files** — player, FxAlert, website assets,
+SQLite libraries and setup guides.
+  
+  
+The FactoryX applications include **32-bit and 64-bit releases**. Bundled
+Caddy and Icecast packages are 64-bit. Users needing 32-bit versions should
+check the [Caddy](https://caddyserver.com/download) and [Icecast](https://www.icecast.org/download/) sites for compatible downloadsand install them separately.
+  
+  
+Setup lets users choose components, application and data folders, recording
+locations, network access and optional service registration. Existing settings,
+customized website files and recordings are preserved.
+
+See the [user guide](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/USER-GUIDE.md) for installation instructions.
+
+Download the Windows Installer **[here](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.1-Setup.exe)**.
+
 ---
   
 **(c) FactoryX. All rights reserved.**
