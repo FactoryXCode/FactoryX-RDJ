@@ -48,22 +48,21 @@ Before using this sample make sure, you have all needed components installed (se
   
 ![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJPro_Interface_s.png)
 
-  
+ 
 ## Dependencies for Delphi development
-  
 - [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher. 
 - Delphi XE2 (minimum recommended version: Delphi XE7) up to and including Delphi 13.1.  
 - Windows 10 or higher.  
-  
+
 **Important note:**  
 The latest Windows 11 versions do not support Dolby AC-3 and H.265 (hvec) encoders.  
 Those you can buy from Microsoft Store or download elsewhere.  
 
   
 # Binaries
-  
+
 ## DJSuite
-  
+
 DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
 the optional tools needed to broadcast, serve and record a radio station.
 It can be used on a studio PC, server or another recording PC.
