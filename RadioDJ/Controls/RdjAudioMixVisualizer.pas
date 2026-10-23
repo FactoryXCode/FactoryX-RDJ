@@ -748,29 +748,20 @@ var
   bars: TArray<Single>;
 
   fftN, barCount: Integer;
-  i,
-  k,
-  bar: Integer;
-  idxStart,
-  idxEnd: Integer;
-  maxMag,
-  v: Single;
-
+  i: Integer;
   lastDispatchTick: DWORD;
 
   tmpMono: TArray<Single>;
 
   pf: PSingle;
   ps: PSmallInt;
-  a,
+  a: Single;
   b: Single;
-  rmsL,
+  rmsL: Single;
   rmsR: Single;
-  aAtk,
+  aAtk: Single;
   aRel: Single;
 
-  t0,
-  t1: Double;
   acc: Single;
   cnt: Integer;
 

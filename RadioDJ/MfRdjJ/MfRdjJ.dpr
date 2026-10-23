@@ -1,11 +1,8 @@
 program MfRdjJ;
 
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
+{$IFDEF madExcept}
+{$ENDIF}
   Vcl.Forms,
   FireDAC.Comp.Client,
   FireDAC.Phys.SQLiteCli,

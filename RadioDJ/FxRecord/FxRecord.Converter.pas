@@ -122,6 +122,8 @@ uses
   {WinApi}
   WinApi.ComBaseApi,
   WinApi.WinApiTypes,
+  {System}
+  System.SyncObjs,
   {ActiveX}
   WinApi.ActiveX.PropIdl,
   WinApi.ActiveX.ObjBase,
@@ -131,8 +133,7 @@ uses
   WinApi.MediaFoundationApi.MfApi,
   WinApi.MediaFoundationApi.MfIdl,
   WinApi.MediaFoundationApi.MfObjects,
-  WinApi.MediaFoundationApi.MfReadWrite,
-  System.SyncObjs;
+  WinApi.MediaFoundationApi.MfReadWrite;
 
 var
   ConversionLock: TCriticalSection;
@@ -189,11 +190,11 @@ var
   Data: PByte;
   DataLength: DWORD;
   CleanPoint: DWORD;
-  VideoTimestamp,
-  AudioTimestamp,
-  VideoOrigin,
+  VideoTimestamp: Int64;
+  AudioTimestamp: Int64;
+  VideoOrigin: Int64;
   AudioOrigin: Int64;
-  VideoFlags,
+  VideoFlags: DWORD;
   AudioFlags: DWORD;
   Output: TFileStream;
   Index: TMemoryStream;

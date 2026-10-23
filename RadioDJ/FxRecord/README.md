@@ -1,81 +1,105 @@
 # FxRecord
 
-Version: 4.2.0
+Version: **4.2.0** · Documentation updated: **18 October 2026**
 
-**Notes:**
+FxRecord is the FactoryX broadcast archive recorder for Windows. It records
+published audio/video, rotates the archive into clock-aligned files, converts
+audio when requested, and reports recorder health through FxAlert.
 
-- Updated for compiler versions 17 to 35.
-- SDK version: 10.0.28000.2705 (Windows 11).
-- Requires Windows 10 or later.
-- Minimum supported MfPack version: 4.0.0.
+Run it on the broadcast server or on a separate PC at home or in the office.
+Both input modes work in the desktop application and as a Windows service.
+Recording and conversion run on the recorder PC.
 
-FxRecord is the compliance recorder for RDJ Pro broadcasts. It runs
-on the broadcast server or a local pc beside FxServe or Caddy and monitors the local
-published stream folder. Please check your local laws for public broadcasting.
+## Input modes
 
-FxRecord can also run on a separate PC and record the public FxServe stream
-over HTTP/HTTPS. Choose **Local folder** or **HTTP/HTTPS stream (HLS)** in FxRecord
-or FxRecord Admin. Both inputs work in desktop and Windows-service mode.
-HTTP input uses standard HLS master/media playlists and fMP4 segments from any
-HTTP server. It does not read a server-specific JSON API or local stream files.
-Connection failures keep the current hourly recording open; recovered fragments
-are fetched when available, and expired intervals are logged. Choose
-`SourceCopy` to save MP4 without conversion. A public outage is logged rather
-than represented as uninterrupted coverage. Compatible broadcast restarts also
-continue in the same hourly file. A codec, track or timebase incompatibility
-starts a new file to preserve playable output.
+| Mode in the application | INI value | What it reads |
+| --- | --- | --- |
+| HTTP/HTTPS stream (HLS) | `SourceMode=PublicUrl` | A public `.m3u8` playlist and its media over HTTP/HTTPS. |
+| Local folder | `SourceMode=LocalFolder` | The published `live.json`, initialization file and fragments in `StreamPath`. |
 
-See the [server and remote-recorder setup guide](Docs/FxServe-and-FxRecord-Setup.md)
-for FxServe setup, home-PC recording, service installation, Admin targeting,
-configuration examples, interruptions and troubleshooting.
+HTTP recording uses standard HLS and does not require FxServe, Caddy, an RDJ Pro
+recording component, or access to the broadcast server's folders. The station
+still needs an HTTP server to deliver the broadcast. FxRecord downloads the
+media directly; it does not render or record a browser window.
 
-See [HTTP/HLS recording](Docs/HTTP-HLS-Recording.md) for the independent reader,
-port-80 setup, supported formats and reconnect behavior.
+Local-folder recording reads the currently published stream. Neither mode uses
+the removed RDJ recovery units, backup-spool subscriptions or historical
+recording rebuild worker.
 
-## Building from source
+## Requirements
 
-Open `FxRecord.dproj` and build for Win32 or Win64. The project needs its own
-source files and the MfPack core units in `../../src`; it no longer searches
-the RDJ Pro source, Controls or Shared directories. `FxRecord.Fmp4` owns the
-timestamp rebasing used by the archive writer. No RDJ recorder or recovery
-units, subscriptions, spool or historical rebuild worker are included.
-Both LocalFolder and PublicUrl record the available published stream.
+- Windows 10 or later.
+- Windows Media Foundation components for profiles that convert audio.
+- A writable configuration/log directory and sufficient archive disk space.
+- For HTTP input: an accessible, supported HLS playlist.
+- For folder input: read access to the published stream folder.
 
-## Recording and monitoring
+Supported HTTP input is unencrypted HLS with complete fragmented MP4 segments,
+an `EXT-X-MAP` initialization file, and H.264 video/AAC audio together in the
+selected rendition. The reader follows redirects and the first listed variant
+in a master playlist. Relative, absolute and signed media URLs are supported.
+Windows validates HTTPS certificates.
 
-A compliance recorder keeps an archive of broadcasts for a configured
-retention period. FxRecord provides a Windows service for unattended recording
-and a VCL desktop application for local configuration and monitoring.
+Encrypted/DRM streams, MPEG-TS segments, byte-range playlists and assembly of
+separate audio/video renditions are not supported. A normal website HTML page
+is not a playlist URL.
 
-Its features include:
+## Quick start: desktop HTTP recording
 
-- Stream and archive folder configuration.
-- Live manifest and broadcast session monitoring.
-- Disk space warning and critical thresholds.
-- Crash-safe recording to fragmented MP4.
-- Clock-aligned file rotation and configurable retention.
-- Recording progress and active filenames in the log.
-- An `FxAlert/status.json` status feed and warnings for phones, tablets and PCs.
+1. Place `FxRecord.exe` and your `FxRecord.ini` in a writable local directory.
+   The supplied [FxRecord.PublicUrl.ini](FxRecord.PublicUrl.ini) is an HTTP-input
+   example; copy it as `FxRecord.ini` before editing.
+2. Start `FxRecord.exe`. Desktop startup waits for **Start**; it does not begin
+   recording automatically.
+3. Choose **HTTP/HTTPS stream (HLS)** and enter the playlist URL. For example:
 
-Normal desktop startup waits for the administrator to press **Start**.
-The Windows service starts recording without a signed-in user and enables
-recording regardless of the INI's desktop `Enabled` value.
+   ```text
+   http://factoryxradio.asuscomm.com/stream/live.m3u8
+   ```
 
-## Output profiles and audio settings
+4. Choose an archive directory on the recorder PC. A local disk is useful when
+   testing network reliability because archive writes then avoid the network.
+5. Select the output profile, rotation interval and retention period. Choose
+   **Save**, then **Start**.
+6. Check the active filename and sequence progress in the log. Press **Stop**
+   and allow finalization/conversion to finish before updating the executable.
 
-- `SourceCopy` preserves RDJ Pro's H.264 video and AAC audio without re-encoding.
-- `MP4-H264-AAC` preserves the H.264 video and encodes stereo AAC at the selected
-  sample rate (44.1 or 48 kHz) and bitrate (96, 128, 160 or 192 kbps).
-- `AVI-H264-MP3` creates an AVI file with H.264 video at 25 fps and stereo MP3
-  at the selected sample rate (44.1, 48 or 32 kHz) and bitrate
-  (128, 160 or 192 kbps).
+Keep the desktop application open while recording. For unattended recording
+without a signed-in user, use the Windows service instead.
 
-The MP3 and AAC controls are enabled for their matching output profiles.
-Each codec retains its own settings. **Save** writes them to the INI, which
-is also used by the Windows service. Defaults are MP3 at 44.1 kHz/192 kbps
-and AAC at 44.1 kHz/160 kbps. `SourceCopy` preserves the source audio settings.
+An `http://` URL starts on port 80 unless a port is specified. If the host
+redirects to HTTPS, recording continues over HTTPS; selecting HTTP does not
+force the server to deliver media on port 80.
+
+## Configuration
+
+The default configuration is `FxRecord.ini` beside the executable, regardless
+of the executable's filename. Select another INI explicitly with:
+
+```bat
+FxRecord.exe --config "C:\FxRecord\Station.ini"
+```
+
+Paths are interpreted on the recorder PC. Relative paths resolve beside the
+selected INI. The following example records HTTP input to a local archive:
 
 ```ini
+[Recorder]
+Enabled=False
+SourceMode=PublicUrl
+StreamUrl=http://factoryxradio.asuscomm.com/stream/live.m3u8
+ArchivePath=C:\ComplianceRecordings
+PollIntervalMs=1000
+RequireLiveStream=True
+LiveStaleSeconds=15
+WarningFreeGB=20
+CriticalFreeGB=5
+
+[Archive]
+FragmentDuration=60
+RetentionDays=14
+OutputProfile=SourceCopy
+
 [Audio]
 Mp3SampleRate=44100
 Mp3BitRateKbps=192
@@ -83,221 +107,247 @@ AacSampleRate=44100
 AacBitRateKbps=160
 ```
 
-The supported stereo AAC-LC settings range from 96 to 192 kbps in the steps
-listed above, at 44.1 or 48 kHz. The 32 kHz option is available for MP3.
-See Microsoft's [AAC encoder documentation](https://learn.microsoft.com/en-us/windows/win32/medfound/aac-encoder)
-and [MP3 encoder documentation](https://learn.microsoft.com/en-us/windows/win32/medfound/mp3-audio-encoder).
+`FragmentDuration` is the archive rotation interval **in minutes**. It is
+separate from the broadcast's HLS fragment duration, which is measured in
+seconds. `RetentionDays` controls archive cleanup.
 
-`SourceCopy` recordings use the `.mp4.partial` suffix. Profiles that encode
-audio first record to `.avi.source.mp4.partial` or `.mp4.source.mp4.partial`.
-When a source segment closes, FxRecord converts it in the background and
-publishes the result as `.avi` or `.mp4`. If conversion fails, the source MP4
-is preserved and an FxAlert warning is published. Unfinished files found
-after a crash are preserved and reported.
+For local-folder input, replace the source settings with:
 
-FxRecord rebases video and audio decode timelines separately at the start
-of each archive file. Completed MP4 files start at time zero, keeping elapsed
-time and seeking correct even after a long broadcast session.
+```ini
+[Recorder]
+SourceMode=LocalFolder
+StreamPath=C:\FxServe\www\Stream
+ArchivePath=F:\ComplianceRecordings
+```
 
-`AVI-H264-MP3` uses the Windows Media Foundation H.264 and MP3 encoders through
-MfPack, with an AVI container writer built into FxRecord. No third-party
-converter is required. The server needs the Windows Media Foundation
-media components.
+In HTTP mode, `StreamPath` is ignored. Older `/stream/live.json` URL settings
+are normalized to the sibling `live.m3u8`. A station-root URL is a convenience
+for the FactoryX `/stream/live.m3u8` layout; use an explicit playlist URL for
+other layouts.
 
-Conversion uses an intermediate `.avi.partial.encoded.mp4` file, removed
-on success and preserved on failure. The AVI writer supports segments below
-2 GiB. Use shorter rotation intervals for larger recordings; exceeding the
-limit produces an FxAlert warning and preserves the source.
+## Output profiles
 
-## Windows service installation
+| Profile | Completed file | Processing |
+| --- | --- | --- |
+| `SourceCopy` | MP4 | Preserves the received H.264/AAC media without re-encoding. |
+| `MP4-H264-AAC` | MP4 | Copies H.264 video and encodes stereo AAC audio. |
+| `AVI-H264-MP3` | AVI | Copies H.264 video and encodes stereo MP3 audio. |
 
-Copy `FxRecord.exe`, `FxRecord.ini`, `Install-FxRecord.cmd` and
-`Uninstall-FxRecord.cmd` to a local folder on the broadcast server, such as
-`C:\FxRecord`. Use local drive paths for the executable, INI, stream and
-archive folders. The default LocalSystem account should not rely on a network
-share pointing back to the same server.
+Source video dimensions, frame rate and quality are preserved. AVI output no
+longer forces video to 25 fps or re-encodes it at a fixed video bitrate.
+Conversion uses Windows Media Foundation/MfPack and FxRecord's own AVI writer;
+FFmpeg is not a runtime dependency.
 
-On the broadcast server, open Command Prompt as administrator and run:
+Supported audio settings:
+
+| Audio | Sample rates | Bitrates | Default |
+| --- | --- | --- | --- |
+| MP3 | 32, 44.1 or 48 kHz | 128, 160 or 192 kbps | 44.1 kHz / 192 kbps |
+| AAC-LC | 44.1 or 48 kHz | 96, 128, 160 or 192 kbps | 44.1 kHz / 160 kbps |
+
+MP3/AAC controls apply to their matching profiles and retain separate settings.
+`SourceCopy` preserves the source audio settings.
+
+While recording, the filename ends in `.mp4.partial` for `SourceCopy`, or
+`.mp4.source.mp4.partial` / `.avi.source.mp4.partial` for conversion profiles.
+At rotation or Stop, conversion runs in the background and publishes the final
+`.mp4` or `.avi`. New recording can continue while conversion finishes.
+
+Allow enough disk space for active media, conversion work files and completed
+archives. Conversion failures preserve the source/work files and are logged.
+Unfinished recordings are recovered where possible at startup; inspect warnings
+rather than assuming every interrupted file is complete. An existing encoded
+work file can block a retry to avoid overwriting recoverable data.
+
+The built-in AVI writer supports files below 2 GiB. Reduce the rotation interval
+if your media would exceed that limit. A failure preserves the source recording.
+
+## Interruptions, restarts and coverage
+
+- HTTP connection failures keep the current interval file open. FxRecord retries
+  and retrieves missed fragments if they remain in the server's HLS window.
+- Expired fragments cannot be recovered from that window. Skipped sequences and
+  interruptions are logged; missing broadcast content is not reconstructed.
+- A compatible broadcast restart can continue in the same file with rebased
+  decode timestamps. An incompatible codec, track layout or timebase requires
+  a new file and is logged.
+- Scheduled rotation still takes place during an outage. Recording resumes in
+  the current interval when media returns. An interval with no received media
+  does not produce a fake empty recording.
+- The first file usually covers only the remainder of its clock interval. For
+  example, starting at 12:39 produces an approximately 21-minute first file.
+- Rotation uses the recorder's clock. Delayed fragments can fall into the next
+  interval, so adjacent files can differ from exactly 60 minutes.
+
+A near-hour file duration does **not** prove uninterrupted coverage. MP4 can
+preserve timing gaps, while AVI duration reflects its stored frames differently.
+Use the recorder log, sequence progress and playback checks together.
+
+## Windows service
+
+The service can run on the broadcast server or any separate recorder PC. Install
+locally on that PC from an elevated Command Prompt:
 
 ```bat
 C:\FxRecord\Install-FxRecord.cmd
 ```
 
-The installer registers the service as `FxRecord`, enables delayed automatic
-startup and configures three restart attempts with a 60-second delay. If
-Windows rejects delayed startup, installation continues with ordinary
-automatic startup and records a warning in the log.
+The script expects `FxRecord.exe` and `FxRecord.ini` beside it, registers the
+service as **FxRecord**, and starts it. Installation configures delayed automatic
+startup where supported and failure-recovery restart attempts. Reinstalling can
+repair an existing stopped registration while retaining its service account.
 
-Running the installer again repairs an existing stopped service registration
-and preserves its service account. Stop a running service before repairing
-its registration. Uninstalling first is unnecessary.
+For a custom configuration, register it explicitly, then start the service:
 
-For the PCHP001 installation, the local folders are `C:\FxRecord` and
-`F:\ComplianceRecordings`. Its recorder settings include:
+```bat
+"C:\FxRecord\FxRecord.exe" --install --config "C:\FxRecord\Station.ini"
+sc.exe start FxRecord
+```
+
+The service enables recording regardless of the desktop INI's `Enabled` value.
+Closing a desktop window does not stop an independently running service. Check
+which instances are active before conducting a local-only or server-only test.
+Do not point simultaneous desktop/service instances at the same archive/INI.
+
+Use local drive paths for archives on the service PC. For a remote archive,
+configure a service account with the required share and filesystem permissions;
+mapped drive letters from an interactive login are not service drive mappings.
+
+Useful commands:
+
+```bat
+sc.exe query FxRecord
+sc.exe qc FxRecord
+sc.exe stop FxRecord
+sc.exe start FxRecord
+```
+
+`--service` is used by Windows' Service Control Manager, not as a desktop start
+command. To remove the registration while retaining files, run
+`Uninstall-FxRecord.cmd` as administrator.
+
+Before replacing an executable, stop its desktop/service instance and allow
+recording closure and pending conversions to finish. Back up the existing EXE
+and INI, replace the EXE, then start with the same configuration. A service
+uninstall/reinstall is unnecessary when its registered path is unchanged.
+
+## FxRecord Admin
+
+[FxRecord Admin](FxRecordAdmin/README.md) manages the recorder PC's Windows
+service, settings, status and logs. Its target is the **recorder PC**, which can
+be different from the broadcast server. For a service on the same PC, use `.`
+and a local INI path. Remote administration uses Windows authentication, service
+control and an SMB share for the recorder's configuration/log directory.
+
+Archive paths belong to that recorder PC. For example, on PCHP001 use
+`F:\ComplianceRecordings` inside its recorder configuration. On another PC,
+`\\PCHP001\ComplianceRecordings` is usable only if that share exists and the
+recording account has access. A share's existence is not implied by a local
+folder with the same name.
+
+## FxAlert and heartbeat location
+
+FxRecord publishes health independently from whether listeners can play the
+broadcast. A live stream does not prove that a recorder is running.
+
+- **HTTP input:** `FxAlert\status.json` is beside the selected recorder INI/log.
+- **Local-folder input:** status remains in the FxAlert directory beside the
+  published Stream directory, normally the website's FxAlert folder.
+
+For a standalone recorder on the same server as FxServe, configure the FxServe
+instance hosting the public FxAlert page to read the current recorder file:
 
 ```ini
-[Recorder]
-StreamPath=C:\FxServe\www\Stream
-ArchivePath=F:\ComplianceRecordings
+[FxAlert]
+StatusFile=C:\FxRecord\FxAlert\status.json
 ```
 
-Remote administration uses server `PCHP001` and the shared INI
-`\\PCHP001\FxRecord\FxRecord.ini`. The archive share is
-`\\PCHP001\ComplianceRecordings`; the recorder itself uses the local path.
+This setting belongs in **FxServe.ini**, not FxRecord.ini. The FxServe service
+account must be able to read the file. Relative paths resolve beside FxServe.ini.
+The `/FxAlert/status.json` endpoint disables caching and returns 404 if the
+configured file is missing, without falling back to an obsolete web-root copy.
 
-To remove the service registration while retaining its files:
+If recording moves to a home/local PC, the public FxAlert page does not
+automatically switch to that recorder. The hosting server must have an explicitly
+configured, accessible heartbeat source; FxRecord does not automatically upload
+its local status file. FxRecord Admin can read the selected recorder's status
+directly over the LAN.
 
-```bat
-C:\FxRecord\Uninstall-FxRecord.cmd
-```
+Open the hosted FxAlert application over HTTPS, for example
+`https://factoryxradio.asuscomm.com/FxAlert/`. Enable alerts and allow browser
+notifications. The current application polls every five seconds and distinguishes
+a stale recorder heartbeat from repeated failures to retrieve the status feed.
+Its current stale-heartbeat threshold is 45 seconds; repeated fetch failures
+use a 60-second connection-loss threshold with a startup/wake grace period.
 
-## Logging and troubleshooting
+Recovered conditions leave the active alarm automatically. A historical last
+warning can remain visible; pending Windows updates can keep the current state
+at warning even when recording is healthy. Browser/background push behavior
+depends on the installed FxServe/FxAlert build, notification permissions and
+platform support.
 
-### CPU and memory diagnostics
+## Logs and troubleshooting
 
-Desktop recording and Windows service recording automatically start an independent
-resource sampler. It writes `FxRecord.diagnostics.log` beside the selected INI,
-with PID, executable path/build timestamp, machine-normalized process CPU,
-system CPU, private memory, working set/peak, thread/handle counts, monitor
-operation and heartbeat age, and conversion count/phase/age/file snapshots.
-The sampler does not enumerate the archive or modify recording settings.
+The selected INI determines the regular log path: `C:\FxRecord\Station.ini`
+writes `C:\FxRecord\Station.log`. Resource diagnostics are written beside it
+with the `.diagnostics.log` suffix.
 
-Resources are sampled every five seconds. Baselines are logged every minute;
-CPU at or above 70% of total machine capacity, monitor heartbeat delays of at
-least five seconds, and private-memory increases of 64 MiB trigger additional
-entries. Sustained CPU/stall entries are limited to once every 15 seconds.
-The heartbeat age measures time since the monitor's last activity snapshot,
-not the age of `live.json`. Conversion phases distinguish H.264/MP3 encoding,
-AVI muxing, AAC encoding, finalization and Media Foundation shutdown. The
-regular log also includes conversion elapsed time and remaining conversions.
+| Message or symptom | Meaning / action |
+| --- | --- |
+| Windows error `12002` | An HTTP operation timed out. FxRecord retries; check network/server availability and subsequent recovery. The code alone does not identify the cause. |
+| HTTP `502` | The HTTP host/proxy returned an error. Compare its logs with recorder timestamps. |
+| Recording fragment gap | Expected segments expired or became unavailable; inspect coverage around that interval. |
+| Heartbeat dated days ago | Verify which recorder/file FxAlert is reading and whether that recorder is still running. |
+| Windows updates waiting | The recorder PC has updates available; plan maintenance separately from recording. |
+| Windows restart pending | An installed update requires a restart. |
+| Small first hourly file | May be the expected remainder of the current clock interval; check start/rotation times. |
+| Completed AVI/MP4 not visible yet | Check the active source file and pending conversion; final output appears after closure/conversion. |
+| Shared server path unavailable | RDJ Pro may be unable to publish fresh media even while FxRecord itself remains running. |
 
-The diagnostic file rotates at 10 MiB, retaining one `.previous` file. After a
-spike, collect both diagnostic files and the regular recorder log; PID and build
-timestamp identify restarts/builds. This instrumentation gathers evidence and
-does not throttle encoders or change conversion concurrency.
+Resource diagnostics include process/system CPU, private/working-set/peak memory,
+threads, handles, monitor activity and converter state. Sampling occurs every
+five seconds, with normal baselines about once a minute and extra entries for
+spikes or stalls. The monitor activity age is not the age of the stream playlist.
+Peak working set is a historical maximum, not current memory consumption.
 
-Deploy an updated binary during a planned interruption: stop the service and
-allow it to finish closing/converting its current recording, replace only
-`FxRecord.exe`, then start the service with its existing INI. No service
-uninstall/reinstall is needed for replacing the executable at the same path.
-The build in `Win64\Diagnostics\FxRecord.exe` includes this instrumentation.
-`Tests\DiagnosticsSmoke.dpr` verifies sampling, memory growth, heartbeat
-snapshots and clean sampler shutdown without running a recorder service.
+The diagnostics log rotates at 10 MiB and keeps one `.previous` file. Collect
+both files together with the regular recorder log when investigating an issue.
+Do not assume the regular recorder log has the same size limit.
 
-Desktop mode, service mode and installation diagnostics write to the log
-beside the selected INI. `C:\FxRecord\FxRecord.ini` produces
-`C:\FxRecord\FxRecord.log`. The desktop user and service account need write
-access to that folder; remote administrators need read access to the log.
-A custom INI can be selected with `--config "C:\Path\Recorder.ini"`.
+Windows update checks report restart requirements and available updates; they
+do not install updates or restart the PC. The available-update scan runs in a
+separate helper process.
 
-Installation errors identify the failing Windows operation and error number.
-If installation or startup fails, read the log and inspect the registration
-and current state:
+## Building and source layout
 
-```bat
-sc.exe qc FxRecord
-sc.exe query FxRecord
-```
+Open `FxRecord.dproj` in Delphi and build Win32 or Win64. Clean builds have been
+verified with Delphi XE7 (compiler 28.0). The project uses its own units and the
+MfPack core units in `../../src`; no RDJ Pro source search paths or old recovery
+DCUs are needed. Normal outputs are `Win32\Release` / `Win64\Release` (or the
+selected Debug directories). FxRecord Admin has its own project under
+`FxRecordAdmin`.
 
-The registered command has this form:
+| Unit | Responsibility |
+| --- | --- |
+| `FxRecord.Http` | Native Windows HTTP/HTTPS requests and URL resolution. |
+| `FxRecord.Hls` | HLS playlist parsing and supported-format validation. |
+| `FxRecord.PublicSource` | Playlist/media fetching, source identity and media validation. |
+| `FxRecord.Fmp4` | Fragment validation and timestamp rebasing. |
+| `FxRecord.Recorder` | Archive writing, interval rotation and conversion scheduling. |
+| `FxRecord.Converter` | Audio encoding and completed MP4/AVI output. |
+| `FxRecord.Monitor` | Recording supervision, health checks and FxAlert status. |
+| `FxRecord.Diagnostics` | Process/resource sampling. |
+| `FxRecord.Service` | Windows service installation and operation. |
 
-```text
-"C:\FxRecord\FxRecord.exe" --service --config "C:\FxRecord\FxRecord.ini"
-```
+FFmpeg used by test fixtures/output checks is not required by deployed FxRecord.
 
-Windows' service manager uses `--service`. Start the installed service through
-Services, FxRecord Admin or `sc.exe start FxRecord`.
+## Further documentation
 
-The installer passes the Windows Boolean value `1` for delayed startup and
-failure recovery. Older builds passed Delphi's `LongBool` value `-1`, which
-caused Windows error 87 when configuring delayed automatic startup. Replace
-an affected executable with the corrected build and rerun the installer.
+- [FxServe and FxRecord setup guide](Docs/FxServe-and-FxRecord-Setup.md)
+- [HTTP/HLS recording details](Docs/HTTP-HLS-Recording.md)
+- [FxRecord Admin](FxRecordAdmin/README.md)
+- [MfPack on GitHub](https://github.com/FactoryXCode/MfPack)
+- [FactoryX Radio DJ](https://github.com/FactoryXCode/FactoryX-Radio-DJ)
+- [MfPack on SourceForge](https://sourceforge.net/projects/MFPack)
 
-## Windows update monitoring
-
-FxRecord checks every five minutes for an installed Windows update requiring
-a restart. Every six hours, it asks Windows Update Agent whether updates are
-waiting for installation. Both conditions are published through FxAlert so
-the administrator can choose a maintenance window. The update scan runs in
-a separate helper process and does not pause recording.
-
-## FxAlert phone and desktop application
-
-FxRecord writes `FxAlert\status.json` below the web root containing the configured
-`Stream` folder. FxServe or Caddy can serve it without another TCP port or
-server process.
-
-Open the application through HTTPS, for example:
-
-```text
-https://yourbroadcaststation.yourdomain.com/FxAlert/
-```
-
-Choose **Enable alerts**, allow notifications and install the application when
-the browser offers that option. It checks FxRecord every five seconds, sounds
-an alarm, shows a notification while active and warns when the heartbeat is
-more than 20 seconds old. **Acknowledge** silences the current warning on that
-device; a new warning sounds again.
-
-Recovered conditions are removed from the active alarm automatically. The last
-warning remains visible as history. If another condition is still active, such
-as Windows updates waiting, its own warning is displayed instead.
-
-The application shell is cached, but `status.json` must remain uncached.
-Add `/fxalert/status.json` to FxServe's `NoStoreRoutes` setting. Caddy should
-send `Cache-Control: no-store` for this file.
-
-With FxServe's `[Push] Enabled=True`, **Enable alerts** also creates a secure
-Web Push subscription. Android and Windows devices can receive warnings
-while FxAlert is closed. On iPhone and iPad, add FxAlert to the Home Screen,
-open the installed application and enable alerts there. FxServe sends an
-authenticated wake-up; the service worker retrieves warning details directly
-from `status.json` over HTTPS.
-
-## LAN desktop administration
-
-[FxRecord Admin](FxRecordAdmin/README.md) is a separate Windows desktop
-application for service control, recorder settings, logs and status over
-the LAN. It uses Windows authentication, native service control and an SMB
-configuration share. Its README describes access rights, firewall rules,
-background refresh, saving and closing.
-
-Project: Media Foundation - MFPack - Samples
- 
-Project location:  
-https://github.com/FactoryXCode/MfPack  
-https://github.com/FactoryXCode/FactoryX-Radio-DJ
-https://sourceforge.net/projects/MFPack  
- 
-First release date: 09/07/2023  
-Final release date: 10/10/2026
- 
 Copyright © FactoryX. All rights reserved.
-
-### Conversion load reduction (11 October 2026)
-
-The AVI-H264-MP3 converter now copies original H.264 packets directly into AVI and encodes
-only the audio. Source video dimensions, frame rate and quality are preserved;
-the previous fixed 25 fps / 1.2 Mbps video re-encode is removed. Windows sink
-writer throttling remains enabled, and the sample loop calls Sleep(1) after
-every four decoded audio samples. The actual pause depends on Windows timer resolution;
-this is cooperative pacing, not a guaranteed CPU percentage limit. The AAC
-profile retains its existing conversion path.
-
-New binaries are in Win64\ConversionLoad and Win32\ConversionLoad. The
-diagnostic phase for AVI preparation is now MP3-encode; AVI-mux then copies the original video and encoded audio. The diagnostic
-heartbeat age is clamped to zero when an activity update is newer than the
-resource sample timestamp, preventing spurious negative ages.
-
-Tests\ConversionLoadSmoke.dpr runs the converter on a disposable source copy
-(the production converter removes that copy after success). Local validation
-covered all nine MP3 settings, audio-first input, 29.97 fps AVI headers, full
-audio/video decode and decoded video frame hashes. No FFmpeg dependency is
-added to FxRecord: the bundled FFmpeg was used only for test fixtures and
-independent output verification. Confirm CPU usage with the next full-hour
-conversion on the server after deploying the new binary.
-
-The work MP4 contains MP3 audio only. Video bypasses the MP4 writer so reordered
-H.264 frames are preserved. AVI muxing merges the two packet streams with a
-bounded one-packet lookahead per stream. Tests include H.264 B frames and a
-source with a nonzero start timestamp; all 150 decoded frames matched.

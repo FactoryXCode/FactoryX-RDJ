@@ -218,7 +218,7 @@ type
     pvMixFormat: WAVEFORMATEXTENSIBLE;
 
 
-    pvFrameSize: NativeUint;
+    pvFrameSize: SIZE_T;
     pvBufferSize: UINT32;
 
     pvFileName: TFileName;

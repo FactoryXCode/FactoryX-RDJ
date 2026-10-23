@@ -24,18 +24,13 @@ object frmFxRecord: TfrmFxRecord
     ActivePage = tabStatus
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 394
     object tabStatus: TTabSheet
       Caption = 'Status'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 362
       object memLog: TMemo
         Left = 0
         Top = 0
         Width = 718
-        Height = 307
+        Height = 347
         Align = alClient
         Color = 9216
         Font.Charset = DEFAULT_CHARSET
@@ -47,11 +42,10 @@ object frmFxRecord: TfrmFxRecord
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 0
-        ExplicitHeight = 289
       end
       object pnlStatusTop: TPanel
         Left = 0
-        Top = 307
+        Top = 347
         Width = 718
         Height = 54
         Align = alBottom
@@ -59,7 +53,6 @@ object frmFxRecord: TfrmFxRecord
         Color = 5850948
         ParentBackground = False
         TabOrder = 1
-        ExplicitTop = 295
         object lblState: TLabel
           Left = 14
           Top = 18
@@ -123,10 +116,6 @@ object frmFxRecord: TfrmFxRecord
     object tabRecorder: TTabSheet
       Caption = 'Recorder'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 362
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -136,7 +125,6 @@ object frmFxRecord: TfrmFxRecord
         Color = 5850948
         ParentBackground = False
         TabOrder = 0
-        ExplicitHeight = 362
         object lblSourceMode: TLabel
           Left = 6
           Top = 20
@@ -676,7 +664,6 @@ object frmFxRecord: TfrmFxRecord
     Color = 5850948
     ParentBackground = False
     TabOrder = 1
-    ExplicitTop = 394
     object btnSave: TButton
       Left = 521
       Top = 8
