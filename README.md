@@ -1,17 +1,6 @@
 ﻿# FactoryX Radio DJ
   
   
-# <u>Dependencies for Delphi development</u> 
-  
-- [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher. 
-- Delphi XE2 (minimum recommended version: Delphi XE7) up to and including Delphi 13.1.  
-- Windows 10 or higher.  
-  
-**Important note:**  
-The latest Windows 11 versions do not support Dolby AC-3 and H.265 (hvec) encoders.  
-Those you can buy from Microsoft Store or download elsewhere.  
-  
-  
 **MfRDJ**  
 This application is a multi-channel audio mixer with effects able to use IceCast/Caddy for internet broadcasting.  
 The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
@@ -58,11 +47,22 @@ An FxAlert App running on smartphones or pc's is provided to watch FxRecord and 
 Before using this sample make sure, you have all needed components installed (see instructions).  
   
 ![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJPro_Interface_s.png)
-  
 
-#Binaries
   
-# FactoryX DJSuite
+# <u>Dependencies for Delphi development</u> 
+  
+- [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher. 
+- Delphi XE2 (minimum recommended version: Delphi XE7) up to and including Delphi 13.1.  
+- Windows 10 or higher.  
+  
+**Important note:**  
+The latest Windows 11 versions do not support Dolby AC-3 and H.265 (hvec) encoders.  
+Those you can buy from Microsoft Store or download elsewhere.  
+
+  
+# Binaries
+  
+## FactoryX DJSuite
   
 DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
 the optional tools needed to broadcast, serve and record a radio station.
