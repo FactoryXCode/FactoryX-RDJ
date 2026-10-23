@@ -49,7 +49,7 @@ Before using this sample make sure, you have all needed components installed (se
 ![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJPro_Interface_s.png)
 
   
-# <u>Dependencies for Delphi development</u> 
+## Dependencies for Delphi development
   
 - [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher. 
 - Delphi XE2 (minimum recommended version: Delphi XE7) up to and including Delphi 13.1.  
