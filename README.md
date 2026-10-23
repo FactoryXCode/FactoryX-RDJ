@@ -1,20 +1,21 @@
 ﻿# FactoryX Radio DJ
   
   
-# <u>Dependencies</u> 
+# <u>Dependencies for Delphi development</u> 
   
-- MfPack Version 4.0.0 or higher 
-- Delphi XE2 (minimum recommended version: Delphi XE7) up to and including Delphi 13.1  
-  
+- [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher. 
+- Delphi XE2 (minimum recommended version: Delphi XE7) up to and including Delphi 13.1.  
+- Windows 10 or higher.  
   
 **Important note:**  
 The latest Windows 11 versions do not support Dolby AC-3 and H.265 (hvec) encoders.  
 Those you can buy from Microsoft Store or download elsewhere.  
   
   
-**MfRDJ Radio Mixer**  
+**MfRDJ**  
 This application is a multi-channel audio mixer with effects able to use IceCast/Caddy for internet broadcasting.  
-The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.  
+The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
+This mixer is primarily intended for live music, but it's capable to broadcast with Caddy/IceCast.
   
 **Note:**  
  Before compiling this sample make sure, you have all needed components installed first (see instructions).  
@@ -22,7 +23,7 @@ The Mixer is fully adjustable for audio endpoint assignments, mixer decks and lo
 ![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJ_Interface_s.png)
   
   
-**MfRDJ Pro Radio Mixer**  
+**MfRDJ Pro**  
 MfRDJPro is the extended version of MfRDJ.
   
 Where MfRDJ mainly demonstrates DJ-style audio playback and mixing with MfPack,  
@@ -48,8 +49,8 @@ fragment cleanup, FxServe mirroring, sleep prevention options, and clean shutdow
 MfRDJ Pro supports casting to Cromecast devices on your local network using the  
 MfPack Cast V2 protocols. 
 
-An extra tool FxRecord is provided for broadcast stations that needs to record their broadcasts by law.
-FxRecord is intended to run on a local server as a Windows service.
+An extra tool FxRecord is provided for broadcast stations that needs to record their broadcasts for a period by law.
+FxRecord is designed to run on a local pc or server as a Windows service.
 FxRecordAdmin is a tool that is able to control FxRecord within the local network.
 An FxAlert App running on smartphones or pc's is provided to watch FxRecord and alert admins of the recording/server status.
   
@@ -67,7 +68,7 @@ DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
 the optional tools needed to broadcast, serve and record a radio station.
 It can be used on a studio PC, server or another recording PC.
 An installation includes either RDJ or RDJ Pro.
-  
+DJSuite applications run on Windows 10 22H2 and above.  
   
 ## What's included
 
@@ -83,7 +84,7 @@ An installation includes either RDJ or RDJ Pro.
 SQLite libraries and setup guides.
   
   
-The FactoryX applications include **32-bit and 64-bit releases**. Bundled
+The applications include **32-bit and 64-bit releases**. Bundled
 Caddy and Icecast packages are 64-bit. Users needing 32-bit versions should
 check the [Caddy](https://caddyserver.com/download) and [Icecast](https://www.icecast.org/download/) sites for compatible downloadsand install them separately.
   
@@ -94,7 +95,7 @@ customized website files and recordings are preserved.
 
 See the [user guide](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/USER-GUIDE.md) for installation instructions.
 
-Download the Windows Installer **[here](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.1-Setup.exe)**.
+# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.1-Setup.exe)
 
 ---
   
