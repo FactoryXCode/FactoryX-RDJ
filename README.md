@@ -1,6 +1,5 @@
 ﻿# Radio DJ & DJSuite
   
-  
 **MfRDJ**  
 This application is a multi-channel audio mixer with effects.  
 The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
