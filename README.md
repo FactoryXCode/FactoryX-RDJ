@@ -1,10 +1,10 @@
-﻿# FactoryX Radio DJ
+﻿# Radio DJ & DJSuite
   
   
 **MfRDJ**  
-This application is a multi-channel audio mixer with effects able to use IceCast/Caddy for internet broadcasting.  
+This application is a multi-channel audio mixer with effects.  
 The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
-This mixer is primarily intended for live music, but it's capable to broadcast with Caddy/IceCast.
+This mixer is primarily intended for live music, but it's capable of internet broadcasting with Caddy/IceCast.
   
 **Note:**  
  Before compiling this sample make sure, you have all needed components installed first (see instructions).  
@@ -62,7 +62,7 @@ Those you can buy from Microsoft Store or download elsewhere.
   
 # Binaries
   
-## FactoryX DJSuite
+## DJSuite
   
 DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
 the optional tools needed to broadcast, serve and record a radio station.
