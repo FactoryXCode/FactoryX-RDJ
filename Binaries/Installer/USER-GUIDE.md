@@ -4,8 +4,7 @@ This Windows installer contains RDJ and RDJ Pro plus optional broadcast,
 recording and administration tools. Delphi is not needed on the destination PC.
 Every installation includes **one mixer: RDJ or RDJ Pro**.
   
-Use Windows 10 or later with Windows Media Foundation available. Windows N
-editions and Windows Server may need the corresponding media features enabled.
+Use Windows 10 22H2 or later. Windows N editions and Windows Server may need the corresponding media features enabled.
 After installing, choose the actual audio devices and broadcast settings in the
 mixer's setup; personal device assignments are not bundled.
   
@@ -14,23 +13,24 @@ mixer's setup; personal device assignments are not bundled.
 1. Run `FactoryX-DJSuite-x.x.x-Setup.exe` on the PC being installed.
 2. Choose the application folder, for example `D:\Radio\Applications`.
 3. Choose **RDJ Pro** (audio/video) or **RDJ** (audio).
-4. Choose **64-bit** or **32-bit** FactoryX applications. A 32-bit Windows PC
-   uses 32-bit applications. A 64-bit Windows PC can use either release.
-5. Select the optional components. The two administrator tools are independent:
+4. Choose 64-bit or 32-bit FactoryX applications.
+   A PC running 32-bit Windows requires the 32-bit release.A PC running 64-bit Windows can run either release.
+   The 64-bit release can address more memory, which may benefit demanding workloads, but it does not automatically improve playback quality or performance.
+6. Select the optional components. The two administrator tools are independent:
    installing an administrator does not require installing its server locally.
-6. Choose the data folder and compliance recording folder. The website is
+7. Choose the data folder and compliance recording folder. The website is
    created below the data folder as `Web`. Recordings and data are kept
    separately from program files and are retained when uninstalling. New
    FxServe/FxRecord INIs and logs live below this writable data folder; shortcuts
    and service registrations pass their actual INI paths explicitly.
-7. For a web server, select local-only, private LAN or public HTTPS access.
+8. For a web server, select local-only, private LAN or public HTTPS access.
    Public HTTPS needs a real hostname, DNS pointing to the server and router
    forwarding. Setup does not change your router or DNS.
-8. For FxRecord, select HTTP/HTTPS HLS or a published Stream folder, then enter
+9. For FxRecord, select HTTP/HTTPS HLS or a published Stream folder, then enter
    the actual source. Use the station's `.m3u8` URL for a remote/home recorder.
    FxRecord currently needs the supported fMP4 HLS format; an Icecast MP3 mount
    alone is not that format.
-9. Choose optional service registration and firewall rules only when wanted.
+10. Choose optional service registration and firewall rules only when wanted.
    They are off by default. Review the summary, then install.
   
 The **Studio PC** preset installs the mixer and guides. **Studio PC with FxServe
@@ -41,7 +41,7 @@ individual choices while keeping the mixer required.
   
 | Component | Installation behavior |
 | --- | --- |
-| RDJ / RDJ Pro | The selected edition and architecture, including its SQLite DLL. |
+| RDJ / RDJ Pro | The selected edition and architecture, including its SQLite DLL, needed for Delphi versions that does not have FireDac. |
 | FxServe | Native HTTP/HTTPS server, optional Windows service. |
 | FxServe Admin | Independent local/LAN administration tool. |
 | FxRecord | Desktop recorder, optionally registered as a Windows service. |
