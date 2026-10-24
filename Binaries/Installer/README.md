@@ -30,7 +30,7 @@ SQLite libraries and setup guides.
 
 The FactoryX applications include **32-bit and 64-bit releases**. Bundled
 Caddy and Icecast packages are 64-bit. Users needing 32-bit versions should
-check the [Caddy](https://caddyserver.com/download) and [Icecast](https://www.icecast.org/download/) sites for compatible downloadsand install them separately.
+check the [Caddy](https://caddyserver.com/download) and [Icecast](https://www.icecast.org/download/) sites for compatible downloads and install them separately.
 
 &#x20;
 

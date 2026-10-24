@@ -1,4 +1,4 @@
-MfPack X 4.0.0
+RDJ
 LICENSE
 
  The contents of this file are subject to the Mozilla Public License

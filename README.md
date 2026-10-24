@@ -12,9 +12,9 @@ This mixer is primarily intended for live music, but it's capable of WAN/LAN bro
   
   
 **RDJ Pro**  
-RDJPro is the extended version of MfRDJ.
+RDJ Pro is the extended version of RDJ.
   
-Where MfRDJ mainly demonstrates DJ-style audio playback and mixing with MfPack,  
+Where RDJ mainly demonstrates DJ-style audio playback and mixing with MfPack,  
 RDJ Pro adds a complete live broadcast layer around the mixer.  
 RDJ Pro still provides the familiar RDJ functions: channel decks,  
 loopback decks, microphone input, effects, PFL/cue monitoring, playlist editing,  
@@ -25,17 +25,16 @@ It can combine the live program audio with camera video or a static video source
 encode the result with Microsoft Media Foundation, and publish it as a browser-playable stream.  
 
 The main technical difference is the broadcast pipeline.  
-MfRDJ Pro uses Media Foundation Sink Writer and the MPEG-4 media sink to create fragmented MP4 chunks.
-MfRDJ Pro observes the generated MP4 byte stream, extracts and patches fMP4 fragments,
+RDJ Pro uses Media Foundation Sink Writer and the MPEG-4 media sink to create fragmented MP4 chunks.
+RDJ Pro observes the generated MP4 byte stream, extracts and patches fMP4 fragments,
 writes a rolling live.json manifest and serves the result through FxServe or an alternative proxy server like Caddy.
 Modern browsers can then play the stream using Media Source Extensions.
-MfRDJ Pro also writes now-playing metadata, artwork links, on-air state, and 
+RDJ Pro also writes now-playing metadata, artwork links, on-air state, and 
 listener counts to JSON files for the web interface.
 
 It includes safeguards for long-running broadcasts, such as bounded queues,  
 fragment cleanup, FxServe mirroring, sleep prevention options, and clean shutdown handling.  
-MfRDJ Pro supports casting to Cromecast devices on your local network using the  
-MfPack Cast V2 protocols. 
+RDJ Pro supports casting to Cromecast devices on your local network using the MfPack Cast V2 protocols. 
 
 An extra tool, FxRecord, is provided for broadcast stations that needs to record their broadcasts for a period by law.
 FxRecord is designed to run on a local pc or server as a Windows service.
@@ -91,9 +90,9 @@ Setup lets users choose components, application and data folders, recording
 locations, network access and optional service registration. Existing settings,
 customized website files and recordings are preserved.
 
-See the [user guide](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/USER-GUIDE.md) for installation instructions.
+See the [user guide](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/Binaries/Installer/USER-GUIDE.md) for installation instructions.
 
-# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.1-Setup.exe)
+# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.2-Setup.exe)
 
 ---
   
