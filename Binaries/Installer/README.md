@@ -13,14 +13,14 @@ installation includes either RDJ or RDJ Pro.
 
 ## What's included
 
-* **RDJ** — audio radio broadcasting application.
-* **RDJ Pro** — audio and video radio broadcasting application.
-* **FxServe** — optional web and broadcast server.
-* **FxServe Admin** — optional FxServe administration tool.
-* **FxRecord** — optional broadcast recorder for desktop or Windows service use.
-* **FxRecord Admin** — optional recorder administration tool.
-* **Caddy** — optional web server.
-* **Icecast** — optional streaming server, installed through its own setup wizard.
+* **RDJ** — audio mixer application that supports Caddy/IceCast if needed.
+* **RDJ Pro** — audio and video broadcasting application.
+* **FxServe** — optional web and broadcast server (preferred for RDJ Pro).
+* **FxServe Admin** — optional FxServe administration tool (preferred for RDJ Pro).
+* **FxRecord** — optional broadcast recorder for desktop or Windows service use (preferred for RDJ Pro).
+* **FxRecord Admin** — optional recorder administration tool (preferred for RDJ Pro).
+* **Caddy** — optional web server (preferred for RDJ).
+* **Icecast** — optional streaming server, installed through its own setup wizard (preferred for RDJ).
 * **Web applications and supporting files** — player, FxAlert, website assets,
 SQLite libraries and setup guides.
 
