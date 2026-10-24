@@ -284,8 +284,6 @@ object frmMediaServer: TfrmMediaServer
         ParentBackground = False
         ShowCaption = False
         TabOrder = 2
-        ExplicitTop = 41
-        ExplicitHeight = 122
         object Bevel1: TBevel
           Left = 10
           Top = 14
@@ -943,8 +941,6 @@ object frmMediaServer: TfrmMediaServer
           ParentBackground = False
           ShowCaption = False
           TabOrder = 4
-          ExplicitTop = 59
-          ExplicitWidth = 841
           object Bevel4: TBevel
             Left = 3
             Top = 2

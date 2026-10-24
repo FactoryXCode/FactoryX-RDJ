@@ -46,6 +46,7 @@ object frmChannelDeck: TfrmChannelDeck
     ParentBackground = False
     ParentDoubleBuffered = False
     TabOrder = 0
+    ExplicitLeft = 1
     object Bevel4: TBevel
       Left = 0
       Top = 513
@@ -257,7 +258,7 @@ object frmChannelDeck: TfrmChannelDeck
       Layout = tlCenter
     end
     object lblBarPositionTime: TLabel
-      Left = 235
+      Left = 237
       Top = 12
       Width = 60
       Height = 15
@@ -365,7 +366,7 @@ object frmChannelDeck: TfrmChannelDeck
       ExplicitWidth = 287
     end
     object lblGain: TLabel
-      Left = 20
+      Left = 18
       Top = 484
       Width = 26
       Height = 14
@@ -409,10 +410,10 @@ object frmChannelDeck: TfrmChannelDeck
       Layout = tlCenter
     end
     object lblInputGainValue: TLabel
-      Left = 15
-      Top = 324
-      Width = 18
-      Height = 30
+      Left = 5
+      Top = 331
+      Width = 52
+      Height = 19
       Alignment = taCenter
       Caption = '0.0 dB'
       Font.Charset = DEFAULT_CHARSET
@@ -440,6 +441,45 @@ object frmChannelDeck: TfrmChannelDeck
       Font.Style = [fsBold]
       ParentFont = False
       Transparent = True
+    end
+    object tbInputGain: TMfTrackBar
+      Left = 9
+      Top = 346
+      Width = 45
+      Height = 136
+      Margins.Left = 0
+      Margins.Top = 0
+      Margins.Right = 0
+      Margins.Bottom = 0
+      TabOrder = 6
+      Color = 5850948
+      ParentColor = False
+      Minimum = -120
+      Maximum = 60
+      Orientation = soVertical
+      IncreaseToward = itUp
+      ThumbWidth = 60
+      ThumbHeight = 50
+      TransparentColor = clBlack
+      ThumbPictureVert.Data = {
+        07544269746D61700E010000424D0E0100000000000076000000280000000D00
+        000013000000010004000000000098000000330B0000330B0000100000001000
+        000000000000959595009B9B9B00A2A2A200B9B9B900BFBFBF00C4C4C400C9C9
+        C900CECECE00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00044444444444000048888888888840004777777777774000455555555555
+        4000477777777777400045555555555540004777777777774000455555555555
+        4000477777777777500050000000000050005444444444445000555555555555
+        5000544444444444500055555555555550005222222222225000544444444444
+        5000511111111111500053333333333350000555555555550000}
+      ShowTicks = True
+      DbFloor = -50.000000000000000000
+      DbCeil = 6.000000000000000000
+      TickColor = clAqua
+      TickLabelsVisible = False
+      TickPlacementH = tphBoth
+      TickPlacementV = tpvBoth
+      OnChange = tbInputGainChange
+      OnDblClick = tbInputGainDblClick
     end
     object tbVolume: TMfTrackBar
       Left = 69
@@ -668,47 +708,8 @@ object frmChannelDeck: TfrmChannelDeck
       OnChange = tbEqGainDbChange
       OnDblClick = tbEqGainDbDblClick
     end
-    object tbInputGain: TMfTrackBar
-      Left = 11
-      Top = 343
-      Width = 45
-      Height = 136
-      Margins.Left = 0
-      Margins.Top = 0
-      Margins.Right = 0
-      Margins.Bottom = 0
-      TabOrder = 6
-      Color = 5850948
-      ParentColor = False
-      Minimum = -120
-      Maximum = 60
-      Orientation = soVertical
-      IncreaseToward = itUp
-      ThumbWidth = 60
-      ThumbHeight = 50
-      TransparentColor = clBlack
-      ThumbPictureVert.Data = {
-        07544269746D61700E010000424D0E0100000000000076000000280000000D00
-        000013000000010004000000000098000000330B0000330B0000100000001000
-        000000000000959595009B9B9B00A2A2A200B9B9B900BFBFBF00C4C4C400C9C9
-        C900CECECE00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00044444444444000048888888888840004777777777774000455555555555
-        4000477777777777400045555555555540004777777777774000455555555555
-        4000477777777777500050000000000050005444444444445000555555555555
-        5000544444444444500055555555555550005222222222225000544444444444
-        5000511111111111500053333333333350000555555555550000}
-      ShowTicks = True
-      DbFloor = -50.000000000000000000
-      DbCeil = 6.000000000000000000
-      TickColor = clAqua
-      TickLabelsVisible = False
-      TickPlacementH = tphBoth
-      TickPlacementV = tpvBoth
-      OnChange = tbInputGainChange
-      OnDblClick = tbInputGainDblClick
-    end
     object pbProgress: TMfLevelProgressBar
-      Left = 242
+      Left = 246
       Top = 33
       Width = 39
       Height = 473
@@ -871,7 +872,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -986,7 +986,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1101,7 +1100,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1215,7 +1213,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1331,7 +1328,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1449,7 +1445,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 8931846
       ColorWhenUp = 15368203
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 0
       ImageIndexChecked = 0
       ShowFocusRect = False
@@ -1484,7 +1479,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 20480
       ColorWhenUp = clGreen
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 0
       ImageIndexChecked = 0
       ShowFocusRect = False
@@ -1518,7 +1512,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = clMaroon
       ColorWhenUp = clRed
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 0
       ImageIndexChecked = 0
       ShowFocusRect = False
@@ -1552,7 +1545,6 @@ object frmChannelDeck: TfrmChannelDeck
       Color = 6899524
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
-      Down = True
       Behavior = bbCheckBox
       Checked = True
       GlyphUnchecked.Data = {
@@ -1669,7 +1661,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1784,7 +1775,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1899,7 +1889,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 0
       ImageIndexChecked = 0
       ShowFocusRect = False
@@ -1947,7 +1936,6 @@ object frmChannelDeck: TfrmChannelDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 0
       ImageIndexChecked = 0
       ShowFocusRect = False

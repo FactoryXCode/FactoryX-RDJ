@@ -341,8 +341,7 @@ const
   RDJ_FMP4_ASSUMED_AUDIO_STREAM_INDEX = 1;
   RDJ_FMP4_CAPTURE_LOG_STEP_BYTES = 16 * 1024 * 1024;
   RDJ_FMP4_SINK_FRAGMENT_DURATION_MS = 1000;
-  RDJ_FMP4_SINK_MIN_FRAGMENT_DURATION_100NS =
-    RDJ_FMP4_SINK_FRAGMENT_DURATION_MS * 10000;
+  RDJ_FMP4_SINK_MIN_FRAGMENT_DURATION_100NS = RDJ_FMP4_SINK_FRAGMENT_DURATION_MS * 10000;
 
   // Milestone 24 memory guard:
   // The browser only consumes patched MSE fragments. Keeping a second raw
@@ -446,6 +445,7 @@ begin
 
   SetLength(Result,
             4);
+
   Result[1] := Char((AType shr 24) and $FF);
   Result[2] := Char((AType shr 16) and $FF);
   Result[3] := Char((AType shr 8) and $FF);
@@ -505,7 +505,7 @@ begin
 
   if Assigned(FFragmentQueue) then
     begin
-      while FFragmentQueue.Count > 0 do
+      while (FFragmentQueue.Count > 0) do
         begin
           Fragment := FFragmentQueue.Dequeue();
           Fragment := nil;
@@ -514,7 +514,7 @@ begin
 
   if Assigned(FPatchedFragmentQueue) then
     begin
-      while FPatchedFragmentQueue.Count > 0 do
+      while (FPatchedFragmentQueue.Count > 0) do
         begin
           Fragment := FPatchedFragmentQueue.Dequeue();
           Fragment := nil;
@@ -535,7 +535,8 @@ var
 begin
 
   AddLen := Length(ASource);
-  if AddLen <= 0 then
+
+  if (AddLen <= 0) then
     Exit;
 
   OldLen := Length(ADest);
@@ -624,6 +625,7 @@ procedure RDJAppendRaw(var ADest: TBytes;
                        const ACount: Integer);
 var
   OldLen: Integer;
+
 begin
 
   if ACount <= 0 then
@@ -643,6 +645,7 @@ procedure RDJAppendU32BE(var ADest: TBytes;
                          const AValue: DWORD);
 var
   OldLen: Integer;
+
 begin
 
   OldLen := Length(ADest);
@@ -658,11 +661,13 @@ procedure RDJAppendU64BE(var ADest: TBytes;
                          const AValue: UInt64);
 var
   OldLen: Integer;
+
 begin
 
   OldLen := Length(ADest);
   System.SetLength(ADest,
                    OldLen + 8);
+
   RDJWriteU64BE(ADest,
                 OldLen,
                 AValue);
@@ -677,12 +682,15 @@ begin
   RDJWriteU32BE(Result,
                 0,
                 20);
+
   RDJWriteU32BE(Result,
                 4,
                 $74666474); // tfdt
+
   RDJWriteU32BE(Result,
                 8,
                 $01000000); // version 1, flags 0
+
   RDJWriteU64BE(Result,
                 12,
                 ABaseDecodeTime);
@@ -704,11 +712,12 @@ begin
   ATrackId := 0;
   ABaseDataOffset := 0;
 
-  if Length(ABoxData) < 16 then
+  if (Length(ABoxData) < 16) then
     Exit;
 
   Flags := RDJReadU32BE(ABoxData,
                         8) and $00FFFFFF;
+
   ATrackId := RDJReadU32BE(ABoxData,
                            12);
 
@@ -727,9 +736,10 @@ begin
                 ATrackId);
 
   Cursor := 16;
-  if (Flags and $000001) <> 0 then
+
+  if ((Flags and $000001) <> 0) then
     begin
-      if Length(ABoxData) >= Cursor + 8 then
+      if (Length(ABoxData) >= Cursor + 8) then
         ABaseDataOffset := RDJReadU64BE(ABoxData,
                                         Cursor);
       Inc(Cursor,
@@ -737,7 +747,8 @@ begin
     end;
 
   Remaining := Length(ABoxData) - Cursor;
-  if Remaining > 0 then
+
+  if (Remaining > 0) then
     RDJAppendRaw(Result,
                  ABoxData,
                  Cursor,
@@ -768,24 +779,26 @@ begin
 
   Flags := RDJReadU32BE(ABoxData,
                         8) and $00FFFFFF;
+
   SampleCount := RDJReadU32BE(ABoxData,
                               12);
   Cursor := 16;
 
-  if (Flags and $000001) <> 0 then
+  if ((Flags and $000001) <> 0) then
     Inc(Cursor,
         4);
 
-  if (Flags and $000004) <> 0 then
+  if ((Flags and $000004) <> 0) then
     Inc(Cursor,
         4);
 
   for I := 0 to SampleCount - 1 do
     begin
-      if (Flags and $000100) <> 0 then
+      if ((Flags and $000100) <> 0) then
         begin
-          if Cursor + 4 > Length(ABoxData) then
+          if (Cursor + 4 > Length(ABoxData)) then
             Break;
+
           SampleDuration := RDJReadU32BE(ABoxData,
                                           Cursor);
           Inc(Cursor,
@@ -797,15 +810,15 @@ begin
       Inc(Result,
           SampleDuration);
 
-      if (Flags and $000200) <> 0 then
+      if ((Flags and $000200) <> 0) then
         Inc(Cursor,
             4);
 
-      if (Flags and $000400) <> 0 then
+      if ((Flags and $000400) <> 0) then
         Inc(Cursor,
             4);
 
-      if (Flags and $000800) <> 0 then
+      if ((Flags and $000800) <> 0) then
         Inc(Cursor,
             4);
     end;

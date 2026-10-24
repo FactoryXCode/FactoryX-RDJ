@@ -138,28 +138,28 @@ type
     shi1_remark: PWideChar;
   end;
 
-function NetServerEnum(servername: PWideChar;
-                       level: DWORD;
-                       var bufptr: Pointer;
-                       prefmaxlen: DWORD;
-                       var entriesread: DWORD;
-                       var totalentries: DWORD;
-                       servertype: DWORD;
-                       domain: PWideChar;
-                       var resume_handle: DWORD): DWORD; stdcall;
-                       external 'Netapi32.dll' name 'NetServerEnum';
+  function NetServerEnum(servername: PWideChar;
+                         level: DWORD;
+                         var bufptr: Pointer;
+                         prefmaxlen: DWORD;
+                         var entriesread: DWORD;
+                         var totalentries: DWORD;
+                         servertype: DWORD;
+                         domain: PWideChar;
+                         var resume_handle: DWORD): DWORD; stdcall;
+                         external 'Netapi32.dll' name 'NetServerEnum';
 
-function NetShareEnum(servername: PWideChar;
-                      level: DWORD;
-                      var bufptr: Pointer;
-                      prefmaxlen: DWORD;
-                      var entriesread: DWORD;
-                      var totalentries: DWORD;
-                      var resume_handle: DWORD): DWORD; stdcall;
-                      external 'Netapi32.dll' name 'NetShareEnum';
+  function NetShareEnum(servername: PWideChar;
+                        level: DWORD;
+                        var bufptr: Pointer;
+                        prefmaxlen: DWORD;
+                        var entriesread: DWORD;
+                        var totalentries: DWORD;
+                        var resume_handle: DWORD): DWORD; stdcall;
+                        external 'Netapi32.dll' name 'NetShareEnum';
 
-function NetApiBufferFree(Buffer: Pointer): DWORD; stdcall;
-                      external 'Netapi32.dll' name 'NetApiBufferFree';
+  function NetApiBufferFree(Buffer: Pointer): DWORD; stdcall;
+                            external 'Netapi32.dll' name 'NetApiBufferFree';
 
 type
 

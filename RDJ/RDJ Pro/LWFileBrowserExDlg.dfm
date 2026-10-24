@@ -344,7 +344,7 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
     object lblPreview: TLabel
       Left = 0
       Top = 0
-      Width = 230
+      Width = 48
       Height = 17
       Align = alTop
       Alignment = taCenter
@@ -356,7 +356,6 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
       Font.Style = [fsBold]
       ParentFont = False
       Layout = tlCenter
-      ExplicitWidth = 48
     end
     object imgPreview: TImage
       Left = 0

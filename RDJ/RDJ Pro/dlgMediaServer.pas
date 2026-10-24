@@ -2230,7 +2230,7 @@ begin
     end;
 
   StaticImageFileName := PickRdjProStaticImageFileName();
-  if StaticImageFileName = '' then
+  if (StaticImageFileName = '') then
     begin
       SetRdjProVideoSourceButtons(FRdjProStaticImage,
                                   not FRdjProStaticImage);

@@ -1538,6 +1538,7 @@ begin
 
   StopPlaylistMode();
 
+  DlgLWFileBrowserEx.FileFilter := fbxAudio;
   DlgLWFileBrowserEx.ShowModal;
 
   if (DlgLWFileBrowserEx.ModalResult = mrOk) then
