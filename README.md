@@ -1,6 +1,6 @@
-﻿# Radio DJ & DJSuite
+﻿# RDJ & DJSuite
   
-**MfRDJ**  
+**RDJ**  
 This application is a multi-channel audio mixer with effects.  
 The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
 This mixer is primarily intended for live music, but it's capable of WAN/LAN broadcasting with Caddy/IceCast.
@@ -11,12 +11,12 @@ This mixer is primarily intended for live music, but it's capable of WAN/LAN bro
 ![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJ_Interface_s.png)
   
   
-**MfRDJ Pro**  
-MfRDJPro is the extended version of MfRDJ.
+**RDJ Pro**  
+RDJPro is the extended version of MfRDJ.
   
 Where MfRDJ mainly demonstrates DJ-style audio playback and mixing with MfPack,  
-MfRDJ Pro adds a complete live broadcast layer around the mixer.  
-MfRDJ Pro still provides the familiar RDJ functions: channel decks,  
+RDJ Pro adds a complete live broadcast layer around the mixer.  
+RDJ Pro still provides the familiar RDJ functions: channel decks,  
 loopback decks, microphone input, effects, PFL/cue monitoring, playlist editing,  
 tag editing, and local recording.  
   
