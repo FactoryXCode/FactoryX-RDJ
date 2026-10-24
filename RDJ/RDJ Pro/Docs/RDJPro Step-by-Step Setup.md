@@ -1,12 +1,12 @@
-# RDJPro Step-by-Step Setup
+# RDJ Pro Step-by-Step Setup
 
-This guide explains how to set up the RDJPro example from a clean Delphi environment.
+This guide explains how to set up the RDJ Pro example from a clean Delphi environment.
 
 Important: install the required Delphi components before opening the RDJPro project in Delphi. If you open the project first, the IDE may report missing controls/forms.
 
 ## 1. Requirements
 
-- Windows 10 or later.
+- Windows 10 22H2 or later.
 - Delphi XE7 or later.
 - MfPack source tree available locally.
 - Media Foundation available on the system.
@@ -30,7 +30,7 @@ MfPack\Samples\MfComponents\MfComponents.dpk
 3. Open and build/install:
 
 ```text
-MfPack\Samples\MfRdjPro\Controls\RDJControls.dpk
+RDJ\RDJ Pro\Controls\RDJControls.dpk
 ```
 
 4. Close Delphi after installing the packages.
@@ -87,12 +87,12 @@ RDJ Pro uses SQLite WAL mode. Files named `RDJLibrary.db-wal` and
 before copying or restoring the database, back up the complete `Data` folder,
 and do not allow two application instances to write to the same database.
 
-## 4. Open The RDJPro Project
+## 4. Open The RDJ Pro Project
 
 Open:
 
 ```text
-MfPack\Samples\MfRdjPro\MfRdjJ.dproj
+RDJ\RDJ Pro\MfRdjJ.dproj
 ```
 
 ## 5. Set The Delphi Search Paths
@@ -110,12 +110,12 @@ If your folder layout is different, use the equivalent absolute paths, for examp
 ```text
 D:\PROJECTS\MfPack\src
 D:\PROJECTS\MfPack\Samples\MfComponents
-D:\PROJECTS\MfPack\Samples\MfRdjPro\Controls
+D:\PROJECTS\RDJ\RDJ Pro\Controls
 ```
 
 ## 6. Check The Recommended Project Settings
 
-Before building, check the RDJPro project options and make sure they follow the recommended settings from `readme.txt`.
+Before building, check the RDJ Pro project options and make sure they follow the recommended settings from `readme.txt`.
 
 In Project Options, set:
 
@@ -143,7 +143,7 @@ The project should build without errors. Fix missing package/search-path issues 
 
 Run RDJPro.
 
-On first start, RDJPro creates its setup `.ini` file and opens the setup dialog.
+On first start, RDJ Pro creates its setup `.ini` file and opens the setup dialog.
 
 ## 9. Configure General Audio
 
@@ -208,9 +208,9 @@ artwork\
 stream\
 ```
 
-## 12. Configure Caddy In RDJPro
+## 12. Configure Caddy in RDJ Pro
 
-Open the RDJPro setup dialog and configure the Caddy paths.
+Open the RDJ Pro setup dialog and configure the Caddy paths.
 
 For a local Caddy setup:
 
@@ -269,7 +269,7 @@ For local testing, this step is not required.
 
 ## 16. Start Broadcasting
 
-In RDJPro:
+In RDJ Pro:
 
 1. Load or start your decks.
 2. Open the media/broadcast server dialog.
@@ -299,8 +299,8 @@ nowplaying.json
 
 For long broadcasts:
 
-1. Disable Windows sleep or enable the RDJPro sleep override option.
-2. Do not close the laptop lid when RDJpro is running on a laptop, unless the lid action is configured correctly.
+1. Disable Windows sleep or enable the RDJ Pro sleep override option.
+2. Do not close the laptop lid when RDJ pro is running on a laptop, unless the lid action is configured correctly.
 3. Keep FxServe or Caddy running.
 4. Make sure the selected stream folder is writable.
 5. Watch RDJPro debug/memory heartbeat messages during testing.
@@ -346,4 +346,4 @@ Check that Caddy JSON access logging is enabled and that RDJPro points to the co
 
 Broadcast stops after sleep:
 
-Check Windows power settings and the RDJPro sleep override setting.
+Check Windows power settings and the RDJ Pro sleep override setting.

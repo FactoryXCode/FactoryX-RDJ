@@ -1,4 +1,4 @@
-## **MfRdj Install/Setup instructions**
+## **RDJ Install/Setup instructions**
 
 
 ## Web server: FxServe or Caddy
@@ -41,11 +41,11 @@ HTTPS/SSL Certificate: Free Certificate from Let's Encrypt (enable)
 Now register and Apply to your router settings.
 
 
-## MfRdj Project setup
+## RDJ Project setup
 Before opening the project, first install the MfPack components (MfPack\Samples\Components) and the RDJ components (MfPack\Samples\MfRdjJ\Controls).
 After installing the components, open the  project and add the following Search Paths: 
   ..\MfPack\src
-  ..\MfPack\Samples\MfRdjJ\Controls
+  ..\RDJ\Controls
   ..\MfPack\Samples\MfComponents
 
 Set 
@@ -56,10 +56,10 @@ Set
 Build the RDJ project.
 No hints, Warnings or error should occure.
 
-## MfRDJ Applicationsetup
+## RDJ Applicationsetup
 
-**Run MfRDJ**
-At first time MfRDJ will create the setup ini file and opens the Setup dialog.
+**Run RDJ**
+At first time RDJ will create the setup ini file and opens the Setup dialog.
 
 **Start with tab "General"**
 Select Main output (Master) This endpoint should be wired with your PA speakers.
@@ -75,7 +75,7 @@ set capture buffersize (default is 60 ms)
 Set Latency (Default is 100 ms)
 
 Enable "Don't overwrite files to active"
-Enable Sstreamswitch detection".
+Enable streamswitch detection".
 
 **Open tab "Broadcast"**
 If you don't want to use IceCast streaming, you can skip this (close the setup dialog) 

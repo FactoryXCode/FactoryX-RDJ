@@ -1,4 +1,4 @@
-MfRdjJ
+RDJ
   
 Version: 4.0.0
   
@@ -39,16 +39,17 @@ We tested it, and it works without issues on Delphi XE7 up to 12.2.
   
 NOTES:  
 - The code is not suitable for starters and knowledge of audio manipulation/ algo's is also required.
-- Before opening the project, install the MfRdjJ controls (MfPack\\Samples\\MfRdjJ\\Controls\\RDJControls.dpk)
+- Before opening the project, install the RDJ controls (..\RDJ\Controls\RDJControls.dpk)
 and MfPack MfComponents (MfPack\\Samples\\MfComponents\\MfComponents.dpk)
   
-Project: MFPack - Samples - MfRdjJ  
+Project: MFPack - Samples - RDJ  
 
-Project location: https://github.com/FactoryXCode/MfPack  
+Project location: https://github.com/FactoryXCode/MfPack
+https://github.com/FactoryXCode/FactoryX-Radio-DJ  
 https://sourceforge.net/projects/MFPack  
   
 First release date: 05-02-2026  
 Final release date: 22/06/2026  
   
-Copyright  FactoryX. All rights reserved.
+Copyright (c) FactoryX. All rights reserved.
 

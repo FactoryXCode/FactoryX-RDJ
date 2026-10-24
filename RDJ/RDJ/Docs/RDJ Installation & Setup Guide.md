@@ -1,4 +1,4 @@
-# MfRDJ Installation & Setup Guide
+# RDJ Installation & Setup Guide
 
 > RDJ Pro can use FxServe or Caddy. FxServe is the
 > smaller RDJ choice; Caddy is does larger or more complex
@@ -10,13 +10,13 @@
 
 # Overview
 
-MfRDJ supports two setup modes:
+RDJ supports two setup modes:
 
 ## Local Setup (Single PC)
 
 All components run on one machine:
 
-* MfRDJ
+* RDJ
 * FxServe/Caddy
 
 **Use this for:**
@@ -171,7 +171,7 @@ Note: No firewall setup needed
 
 ---
 
-# MfRDJ Project Setup
+# RDJ Project Setup
 
 ## Install Components
 
@@ -182,7 +182,7 @@ Note: No firewall setup needed
 
 ```text
 ..\MfPack\src
-[MfRdjPro\Controls](https://github.com/FactoryXCode/FactoryX-Radio-DJ/tree/main/RadioDJ/MfRdjPro)
+[RdjPro\Controls](https://github.com/FactoryXCode/FactoryX-Radio-DJ/tree/main/RDJ/RDJ Pro)
 ..\MfPack\Samples\MfComponents
 ```
 
@@ -264,7 +264,7 @@ appear while it is running. This is normal.
 
 ---
 
-#  Running MfRdjPro
+#  Running RdjPro
 
 First run:
 

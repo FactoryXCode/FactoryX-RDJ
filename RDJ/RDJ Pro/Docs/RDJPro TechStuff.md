@@ -2,21 +2,21 @@
 
 Version: 4.0.0
 
-RDJPro is the extended MfRdj sample application. It combines MfPack, Microsoft Media Foundation, Core Audio, WASAPI, VCL, FxServe or Caddy, and browser Media Source Extensions into one live audio/video DJ and broadcast application.
+RDJ Pro is the extended RDJ sample application. It combines MfPack, Microsoft Media Foundation, Core Audio, WASAPI, VCL, FxServe or Caddy, and browser Media Source Extensions into one live audio/video DJ and broadcast application.
 
 The project is larger than a small sample because it shows how several real-time Windows media technologies can work together in one application: local DJ playback, microphone and loopback capture, audio processing, recording, playlist editing, and browser-based broadcasting.
 
-## What RDJPro Does
+## What RDJ Pro Does
 
-RDJPro is an MDI DJ mixer application with channel decks, loopback decks, a microphone deck, an effects deck, an end deck, playlist editing, tag editing, local recording, and browser broadcast support.
+RDJ Pro is an MDI DJ mixer application with channel decks, loopback decks, a microphone deck, an effects deck, an end deck, playlist editing, tag editing, local recording, and browser broadcast support.
 
-The normal audio path is built around Windows audio devices and MfPack helpers. Deck audio is mixed inside RDJPro and sent to the selected master output. A separate PFL/cue/headphone output can be enabled for monitoring.
+The normal audio path is built around Windows audio devices and MfPack helpers. Deck audio is mixed inside RDJ Pro and sent to the selected master output. A separate PFL/cue/headphone output can be enabled for monitoring.
 
-The broadcast path publishes the live program to a browser. The browser does not need Icecast for the RDJPro video path. FxServe or Caddy serves the web page, JSON metadata, artwork, and fragmented MP4 media files.
+The broadcast path publishes the live program to a browser. The browser does not need Icecast for the RDJ Pro video path. FxServe or Caddy serves the web page, JSON metadata, artwork, and fragmented MP4 media files.
 
 ## Main Technologies
 
-RDJPro uses these main Windows and web technologies:
+RDJ Pro uses these main Windows and web technologies:
 
 - Delphi VCL for the desktop GUI.
 - MfPack for Media Foundation and WASAPI access.
@@ -30,19 +30,19 @@ RDJPro uses these main Windows and web technologies:
 
 ## Local Audio And Video Flow
 
-The local RDJPro application keeps the desktop side and browser side separate.
+The local RDJ Pro application keeps the desktop side and browser side separate.
 
 On the desktop side:
 
 1. Decks, loopback inputs, and microphone input produce audio.
-2. RDJPro mixes and processes the audio.
+2. RDJ Pro mixes and processes the audio.
 3. The result is sent to the selected master output.
 4. Optional monitoring goes to the headphone/PFL output.
 5. Optional local recording can save WAV, FLAC, or MP4 depending on the recorder path.
 
 On the video side:
 
-1. RDJPro can use a camera source or a static image source.
+1. RDJ Pro can use a camera source or a static image source.
 2. Video samples are normalized into a Media Foundation video stream.
 3. Audio samples from the RDJ program output are batched and timestamped.
 4. Audio and video are passed to the broadcast fMP4 recorder.
@@ -53,12 +53,12 @@ The browser broadcast path is designed as a rolling live fMP4 stream.
 
 The high-level flow is:
 
-1. RDJPro receives live video samples and live program audio samples.
-2. RDJPro feeds those samples to a Media Foundation Sink Writer.
+1. RDJ Pro receives live video samples and live program audio samples.
+2. RDJ Pro feeds those samples to a Media Foundation Sink Writer.
 3. Media Foundation encodes H.264 video and AAC audio into fragmented MP4.
 4. A custom byte-stream wrapper observes the MP4 boxes as Media Foundation writes them.
-5. RDJPro extracts init data and moof+mdat fragments.
-6. RDJPro patches fragment sequence and decode-time metadata for browser MSE playback.
+5. RDJ Pro extracts init data and moof+mdat fragments.
+6. RDJ Pro patches fragment sequence and decode-time metadata for browser MSE playback.
 7. Several small internal Media Foundation fragments are grouped into larger public fragments.
 8. RDJPro writes `init.mp4`, `patched_frag_XXXXXX.m4s`, and `live.json`.
 9. A mirror thread copies those files to the Caddy server folder.
@@ -80,7 +80,7 @@ A normal MP4 file is not ideal for live browser playback because important metad
 
 Fragmented MP4 solves this by splitting media into independent fragments. Each fragment contains timing and sample information that the browser can append while the stream is still being produced.
 
-RDJPro uses the typical fMP4/MSE pattern:
+RDJ Pro uses the typical fMP4/MSE pattern:
 
 - The init segment contains codec and track setup information.
 - Each media fragment contains one or more `moof` and `mdat` box pairs.
@@ -98,14 +98,14 @@ The broadcast implementation lives mainly in:
 
 The recorder uses cautious Media Foundation settings:
 
-1. RDJPro creates target media types for H.264 video and AAC audio.
-2. RDJPro creates a byte stream for Media Foundation output.
-3. RDJPro creates an MPEG-4 media sink with `MFCreateFMPEG4MediaSink`.
-4. RDJPro creates a Sink Writer from that media sink.
-5. RDJPro writes video samples and audio samples to the Sink Writer.
+1. RDJ Pro creates target media types for H.264 video and AAC audio.
+2. RDJ Pro creates a byte stream for Media Foundation output.
+3. RDJ Pro creates an MPEG-4 media sink with `MFCreateFMPEG4MediaSink`.
+4. RDJ Pro creates a Sink Writer from that media sink.
+5. RDJ Pro writes video samples and audio samples to the Sink Writer.
 6. Media Foundation writes fragmented MP4 bytes to the byte stream.
 
-The important RDJPro trick is that the byte stream is not only a file stream. RDJPro wraps it in `TRdjProFmp4CaptureByteStream`, which implements `IMFByteStream`.
+The important RDJ Pro trick is that the byte stream is not only a file stream. RDJ Pro wraps it in `TRdjProFmp4CaptureByteStream`, which implements `IMFByteStream`.
 
 That wrapper forwards writes to the real Media Foundation file stream, but it also observes the bytes. This lets RDJPro parse top-level MP4 boxes while Media Foundation is writing.
 
@@ -126,13 +126,13 @@ RDJPro therefore patches selected fragment metadata before publishing the fragme
 
 This patching is done inside `TRdjProFmp4CaptureByteStream.PatchFragmentForMse`.
 
-The original Media Foundation bytes are treated as the source. RDJPro produces a patched public fragment for MSE. This keeps the Media Foundation encoder path simple, while allowing the browser stream to stay live and appendable.
+The original Media Foundation bytes are treated as the source. RDJ Pro produces a patched public fragment for MSE. This keeps the Media Foundation encoder path simple, while allowing the browser stream to stay live and appendable.
 
 ## Public Fragment Grouping
 
 Media Foundation can emit small internal fragments. Very small public fragments are expensive for a browser and for a file-server mirror, because they create many file writes, many web requests, and many MSE append operations.
 
-RDJPro groups several internal source fragments into one public `.m4s` file.
+RDJ Pro groups several internal source fragments into one public `.m4s` file.
 
 The default grouping is approximately four source fragments per public fragment. The exact public fragment duration is controlled by the broadcast setup values and the constants in `dlgMediaServer.pas`.
 
@@ -258,14 +258,14 @@ High-frequency logs are therefore throttled. Important state changes, errors, an
 For a stable RDJPro browser broadcast:
 
 1. Use Windows 10 or later.
-2. Configure the RDJPro web-server paths correctly.
-3. Make sure FxServe or Caddy serves the RDJPro web folder.
+2. Configure the RDJ Pro web-server paths correctly.
+3. Make sure FxServe or Caddy serves the RDJ Pro web folder.
 4. Enable Caddy JSON access logging if its listener count is needed.
-5. Make sure the selected stream folder is writable by RDJPro.
+5. Make sure the selected stream folder is writable by RDJ Pro.
 6. Keep the machine awake while broadcasting.
 7. Use HTTPS if browsers require secure media or PWA behavior.
 8. Watch `live.json` and `nowplaying.json` when diagnosing browser issues.
-9. Watch RDJPro MSE memory heartbeat lines for queue growth or mirror stalls.
+9. Watch RDJ Pro MSE memory heartbeat lines for queue growth or mirror stalls.
 
 ## Important Files
 
@@ -324,6 +324,7 @@ The needed hardware as the best configuration is:
   
 ## Summary
   
-RDJPro uses Media Foundation for the hard media work: capture, encode, mux, and write fragmented MP4. RDJPro adds the live-broadcast layer around it: observing the fMP4 byte stream, extracting and patching fragments, grouping fragments for practical browser delivery, publishing a rolling manifest, mirroring to the web server, and feeding a browser MSE player.
+RDJ Pro uses Media Foundation for the hard media work: capture, encode, mux, and write fragmented MP4.
+RDJ Pro adds the live-broadcast layer around it: observing the fMP4 byte stream, extracting and patching fragments, grouping fragments for practical browser delivery, publishing a rolling manifest, mirroring to the web server, and feeding a browser MSE player.
 
 The result is a Windows desktop DJ application that can broadcast synchronized audio/video to modern browsers using standard web playback technology and FxServe or Caddy.
