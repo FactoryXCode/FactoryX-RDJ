@@ -13,8 +13,8 @@ mixer's setup; personal device assignments are not bundled.
 1. Run `FactoryX-DJSuite-x.x.x-Setup.exe` on the PC being installed.
 2. Choose the application folder, for example `D:\Radio\Applications`.
 3. Choose **RDJ Pro** (audio/video) or **RDJ** (audio).
-4. Choose 64-bit or 32-bit FactoryX applications.
-   A PC running 32-bit Windows requires the 32-bit release.A PC running 64-bit Windows can run either release.
+4. Choose a 64-bit or 32-bit application.
+   A PC running 32-bit Windows requires the 32-bit release. A PC running 64-bit Windows can run both releases.
    The 64-bit release can address more memory, which may benefit demanding workloads, but it does not automatically improve playback quality or performance.
 6. Select the optional components. The two administrator tools are independent:
    installing an administrator does not require installing its server locally.
