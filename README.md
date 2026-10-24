@@ -3,7 +3,7 @@
 **MfRDJ**  
 This application is a multi-channel audio mixer with effects.  
 The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
-This mixer is primarily intended for live music, but it's capable of internet broadcasting with Caddy/IceCast.
+This mixer is primarily intended for live music, but it's capable of WAN/LAN broadcasting with Caddy/IceCast.
   
 **Note:**  
  Before compiling this sample make sure, you have all needed components installed first (see instructions).  
@@ -25,9 +25,9 @@ It can combine the live program audio with camera video or a static video source
 encode the result with Microsoft Media Foundation, and publish it as a browser-playable stream.  
 
 The main technical difference is the broadcast pipeline.  
-MfRDJ Pro uses Media Foundation Sink Writer and the MPEG-4 media sink to create fragmented MP4.
+MfRDJ Pro uses Media Foundation Sink Writer and the MPEG-4 media sink to create fragmented MP4 chunks.
 MfRDJ Pro observes the generated MP4 byte stream, extracts and patches fMP4 fragments,
-writes a rolling live.json manifest, and serves the result through FxServe or an alternative proxy server like Caddy.
+writes a rolling live.json manifest and serves the result through FxServe or an alternative proxy server like Caddy.
 Modern browsers can then play the stream using Media Source Extensions.
 MfRDJ Pro also writes now-playing metadata, artwork links, on-air state, and 
 listener counts to JSON files for the web interface.
@@ -37,7 +37,7 @@ fragment cleanup, FxServe mirroring, sleep prevention options, and clean shutdow
 MfRDJ Pro supports casting to Cromecast devices on your local network using the  
 MfPack Cast V2 protocols. 
 
-An extra tool FxRecord is provided for broadcast stations that needs to record their broadcasts for a period by law.
+An extra tool, FxRecord, is provided for broadcast stations that needs to record their broadcasts for a period by law.
 FxRecord is designed to run on a local pc or server as a Windows service.
 FxRecordAdmin is a tool that is able to control FxRecord within the local network.
 An FxAlert App running on smartphones or pc's is provided to watch FxRecord and alert admins of the recording/server status.
@@ -50,8 +50,8 @@ Before using this sample make sure, you have all needed components installed (se
  
 ## Dependencies for Delphi development
 - [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher. 
-- Delphi XE2 (minimum recommended version: Delphi XE7) up to and including Delphi 13.1.  
-- Windows 10 or higher.  
+- Delphi XE7 up to and including Delphi 13.1.  
+- Windows 10 22H2 or higher.  
 
 **Important note:**  
 The latest Windows 11 versions do not support Dolby AC-3 and H.265 (hvec) encoders.  
