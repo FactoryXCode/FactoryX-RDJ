@@ -1,11 +1,11 @@
 # FactoryX DJSuite
 
-
+&#x20;
 
 DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
 the optional tools needed to broadcast, serve and record a radio station.
-It can be used on a studio PC, server or another recording PC. Every
-installation includes either RDJ or RDJ Pro.
+It can be used on a studio PC, server or another recording PC.
+Every installation includes either RDJ or RDJ Pro.
 
 &#x20;
 
@@ -37,13 +37,8 @@ check the [Caddy](https://caddyserver.com/download) and [Icecast](https://www.ic
 Setup lets users choose components, application and data folders, recording
 locations, network access and optional service registration. Existing settings,
 customized website files and recordings are preserved.
-
-See the [user guide](USER-GUIDE.md) for installation instructions and
-[maintenance guide](MAINTAINING.md) for building and updating Setup.
-
-
-
-
-
+&#x20;
+See the [user guide](Setup.md) for installation instructions.
+&#x20;
 Copyright © FactoryX. All rights reserved.
 
