@@ -15,8 +15,8 @@ installation includes either RDJ or RDJ Pro.
 
 * **RDJ** — audio mixer application that supports Caddy/IceCast if needed.
 * **RDJ Pro** — audio and video broadcasting application.
-* **FxServe** — optional web and broadcast server (preferred for RDJ Pro).
-* **FxServe Admin** — optional FxServe administration tool (preferred for RDJ Pro).
+* **FxServe** — optional web and broadcast server (preferred for RDJ Pro only).
+* **FxServe Admin** — optional FxServe administration tool (preferred for RDJ Pro only).
 * **FxRecord** — optional broadcast recorder for desktop or Windows service use (preferred for RDJ Pro).
 * **FxRecord Admin** — optional recorder administration tool (preferred for RDJ Pro).
 * **Caddy** — optional web server (preferred for RDJ).
@@ -38,8 +38,7 @@ Setup lets users choose components, application and data folders, recording
 locations, network access and optional service registration. Existing settings,
 customized website files and recordings are preserved.
 
-See the [user guide](USER-GUIDE.md) for installation instructions and
-[maintenance guide](MAINTAINING.md) for building and updating Setup.
+See the [user guide](USER-GUIDE.md) for installation instructions.
 
 
 
