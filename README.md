@@ -9,7 +9,7 @@ This mixer is primarily intended for live music, but it's capable of WAN/LAN bro
 **Note:**  
  Before compiling this sample make sure, you have all needed components installed first (see instructions).  
   
-![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJ_Interface_s.png)
+![](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RDJ/Pic/RDJ_Interface_s.png)
   
   
 **RDJ Pro**  
@@ -46,7 +46,7 @@ An FxAlert App running on smartphones or pc's is provided to watch FxRecord and 
 **Note:**  
 Before using this sample make sure, you have all needed components installed (see instructions).  
   
-![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJPro_Interface_s.png)
+![](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RDJ/Pic/RDJPro_Interface_s.png)
 
  
 ## Dependencies for Delphi development
