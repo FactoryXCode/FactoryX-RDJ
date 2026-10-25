@@ -131,9 +131,5 @@ does not establish that the monitored recorder is alive.
   are removed; generated INIs, data, recordings and customized website content
   remain. Optional firewall rules are retained for administrator review.
   
-Read `Setup-configuration.log`, `Setup-plan.json` and the application logs if
-configuration or startup needs attention. The package's `BuildManifest.json`
-records bundled files, architectures, sources and SHA256 hashes.
-    
 Copyright © FactoryX. All rights reserved.
   
