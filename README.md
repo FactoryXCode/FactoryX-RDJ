@@ -1,6 +1,7 @@
-﻿# RDJ & DJSuite
+﻿# RDJ & DJSuite  
   
 **RDJ**  
+  
 This application is a multi-channel audio mixer with effects.  
 The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
 This mixer is primarily intended for live music, but it's capable of WAN/LAN broadcasting with Caddy/IceCast.
@@ -12,6 +13,7 @@ This mixer is primarily intended for live music, but it's capable of WAN/LAN bro
   
   
 **RDJ Pro**  
+  
 RDJ Pro is the extended version of RDJ.
   
 Where RDJ mainly demonstrates DJ-style audio playback and mixing,  
