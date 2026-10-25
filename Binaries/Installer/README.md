@@ -40,7 +40,7 @@ customized website files and recordings are preserved.
 
 &#x20;
 
-See the [user guide](Setup.md) for installation instructions.
+See the [Setup guide](Setup.md) for installation instructions.
 
 &#x20;
 
