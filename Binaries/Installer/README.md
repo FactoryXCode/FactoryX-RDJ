@@ -37,8 +37,12 @@ check the [Caddy](https://caddyserver.com/download) and [Icecast](https://www.ic
 Setup lets users choose components, application and data folders, recording
 locations, network access and optional service registration. Existing settings,
 customized website files and recordings are preserved.
+
 &#x20;
+
 See the [user guide](Setup.md) for installation instructions.
+
 &#x20;
+
 Copyright © FactoryX. All rights reserved.
 
