@@ -1,6 +1,7 @@
-﻿# RDJ & DJSuite
+﻿# RDJ & DJSuite  
   
 **RDJ**  
+  
 This application is a multi-channel audio mixer with effects.  
 The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
 This mixer is primarily intended for live music, but it's capable of WAN/LAN broadcasting with Caddy/IceCast.
@@ -8,13 +9,14 @@ This mixer is primarily intended for live music, but it's capable of WAN/LAN bro
 **Note:**  
  Before compiling this sample make sure, you have all needed components installed first (see instructions).  
   
-![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJ_Interface_s.png)
+![](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RDJ/Pic/RDJ_Interface_s.png)
   
   
 **RDJ Pro**  
+  
 RDJ Pro is the extended version of RDJ.
   
-Where RDJ mainly demonstrates DJ-style audio playback and mixing with MfPack,  
+Where RDJ mainly demonstrates DJ-style audio playback and mixing,  
 RDJ Pro adds a complete live broadcast layer around the mixer.  
 RDJ Pro still provides the familiar RDJ functions: channel decks,  
 loopback decks, microphone input, effects, PFL/cue monitoring, playlist editing,  
@@ -44,7 +46,7 @@ An FxAlert App running on smartphones or pc's is provided to watch FxRecord and 
 **Note:**  
 Before using this sample make sure, you have all needed components installed (see instructions).  
   
-![](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/RadioDJ/Pic/RDJPro_Interface_s.png)
+![](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RDJ/Pic/RDJPro_Interface_s.png)
 
  
 ## Dependencies for Delphi development

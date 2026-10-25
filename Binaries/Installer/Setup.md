@@ -1,7 +1,7 @@
 # FactoryX DJSuite Setup
   
 This Windows installer contains RDJ and RDJ Pro plus optional broadcast,
-recording and administration tools. Delphi is not needed on the destination PC.
+recording and administration tools.
 Every installation includes **one mixer: RDJ or RDJ Pro**.
   
 Use Windows 10 22H2 or later. Windows N editions and Windows Server may need the corresponding media features enabled.
@@ -76,9 +76,8 @@ includes a selected RDJ/RDJ Pro edition; you can leave that mixer closed.
 For a split studio/server arrangement:
 
 - On the studio PC, install your mixer and any administrator tools you need.
-- On the Windows server, install a mixer edition plus FxServe or Caddy and,
-  optionally, FxRecord. Leave the server's mixer closed if broadcasting from
-  the studio PC.
+- On the Windows server or your studio PC, install FxServe or Caddy and,
+  optionally, FxRecord.
 - Configure RDJ Pro's publication paths to the server's writable website/share.
   Setup creates local paths, not SMB shares or network credentials. Choose
   audio devices and station settings in RDJ/RDJ Pro after installation.
@@ -135,12 +134,6 @@ does not establish that the monitored recorder is alive.
 Read `Setup-configuration.log`, `Setup-plan.json` and the application logs if
 configuration or startup needs attention. The package's `BuildManifest.json`
 records bundled files, architectures, sources and SHA256 hashes.
-  
-Test installation, sound/video devices, service operation and uninstall on
-a spare PC or VM before distributing it as a signed production installer.
-The build machine's active broadcast, recorders and Windows services are
-not used as installation test targets.
-  
-  
+    
 Copyright © FactoryX. All rights reserved.
   
