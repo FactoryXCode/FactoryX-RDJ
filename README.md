@@ -94,7 +94,7 @@ customized website files and recordings are preserved.
 
 See the [Setup guide](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/Binaries/Installer/Setup.md) for installation instructions.
 
-# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.2-Setup.exe)
+# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.3-Setup.exe)
 
 ---
   
