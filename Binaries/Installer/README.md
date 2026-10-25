@@ -22,7 +22,7 @@ Every installation includes either RDJ or RDJ Pro.
 * **Caddy** — optional web server (preferred for RDJ).
 * **Icecast** — optional streaming server, installed through its own setup wizard (preferred for RDJ).
 * **Web applications and supporting files** — player, FxAlert, website assets,
-SQLite libraries and setup guides.
+SQLite libraries, setup, user and technical guides.
 
 &#x20;
 
