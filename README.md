@@ -14,7 +14,7 @@ This mixer is primarily intended for live music, but it's capable of WAN/LAN bro
 **RDJ Pro**  
 RDJ Pro is the extended version of RDJ.
   
-Where RDJ mainly demonstrates DJ-style audio playback and mixing with MfPack,  
+Where RDJ mainly demonstrates DJ-style audio playback and mixing,  
 RDJ Pro adds a complete live broadcast layer around the mixer.  
 RDJ Pro still provides the familiar RDJ functions: channel decks,  
 loopback decks, microphone input, effects, PFL/cue monitoring, playlist editing,  
