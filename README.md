@@ -92,7 +92,7 @@ Setup lets users choose components, application and data folders, recording
 locations, network access and optional service registration. Existing settings,
 customized website files and recordings are preserved.
 
-See the [user guide](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/Binaries/Installer/USER-GUIDE.md) for installation instructions.
+See the [Setup guide](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/Binaries/Installer/Setup.md) for installation instructions.
 
 # Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.2-Setup.exe)
 
