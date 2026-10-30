@@ -1,4 +1,4 @@
-﻿# RDJ & DJSuite  
+# RDJ & DJSuite  
   
 **RDJ**  
   
@@ -38,6 +38,11 @@ It includes safeguards for long-running broadcasts, such as bounded queues,
 fragment cleanup, FxServe mirroring, sleep prevention options, and clean shutdown handling.  
 RDJ Pro supports casting to Cromecast devices on your local network using the MfPack Cast V2 protocols. 
 
+RDJ Pro also streams the live Masterdeck mix to Denon/Marantz HEOS receivers.
+Open **HEOS** and toggle **Stream RDJ** to start or stop. RDJ Master Volume and
+balance affect the outgoing audio; HEOS Remote volume independently sets the
+receiver's listening level. See the [HEOS integration notes](<RDJ/RDJ Pro/HEOS-INTEGRATION.md>).
+
 An extra tool, FxRecord, is provided for broadcast stations that needs to record their broadcasts for a period by law.
 FxRecord is designed to run on a local pc or server as a Windows service.
 FxRecordAdmin is a tool that is able to control FxRecord within the local network.
@@ -51,6 +56,7 @@ Before using this sample make sure, you have all needed components installed (se
  
 ## Dependencies for Delphi development
 - [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher. 
+- [FactoryX HEOS CLI for Delphi](https://github.com/FactoryXCode/FactoryX-HEOS-CLI), for RDJ Pro HEOS streaming.
 - Delphi XE7 up to and including Delphi 13.1.  
 - Windows 10 22H2 or higher.  
 
@@ -62,6 +68,8 @@ Those you can buy from Microsoft Store or download elsewhere.
 # Binaries
 
 ## DJSuite
+
+Current installer: [FactoryX-DJSuite-4.0.0.4-Setup.exe](Binaries/Installer/FactoryX-DJSuite-4.0.0.4-Setup.exe), including the updated RDJ Pro HEOS integration and guides.
 
 DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
 the optional tools needed to broadcast, serve and record a radio station.

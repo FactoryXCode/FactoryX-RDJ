@@ -12,7 +12,7 @@ is useful when the server also hosts other websites or needs more proxy options.
 
 The setup page keeps the existing **Caddy / json settings** name for
 compatibility. The same fields accept FxServe paths. See
-[RDJ Web Server Setup](../../../FxServe/RDJ-Web-Server-Setup.md) for the values.
+[RDJ Web Server Setup](https://github.com/FactoryXCode/MfPack/blob/main/Proxy%20Servers/FxServe/RDJ-Web-Server-Setup.md) for the values.
 
 ## Main window
 
@@ -23,6 +23,7 @@ compatibility. The same fields accept FxServe paths. See
 | Playlist | Opens the Playlist Editor. |
 | Effects | Shows or hides the master effects window. |
 | Broadcast | Opens or closes Media Server Control. |
+| HEOS | Shows or hides HEOS Remote for Masterdeck streaming and receiver controls. |
 | Notes | Shows or hides the notes area. |
 | Minimize | Sends RDJ Pro to the taskbar. |
 | Maximize/Restore | Switches between a full-size and normal window. |
@@ -96,7 +97,7 @@ Use the three buttons on the left to switch between **General**, **Broadcast**, 
 
 | Control | What it does |
 |---|---|
-| Left and Right faders | Set the main output volume for each side. |
+| Left and Right faders | Set the main output volume for each side and the level sent to HEOS. |
 | Lock | Moves the left and right faders together. |
 | Balance | Moves the sound towards the left or right speaker. Double-click to return to the centre. |
 | PFL volume | Sets the headphone preview volume. |
@@ -107,6 +108,33 @@ Use the three buttons on the left to switch between **General**, **Broadcast**, 
 | Post-FX | Records the mix after master effects. |
 | Start | Starts or stops the audio recording. |
 | Recording and time indicators | Show whether recording is active and how long it has run. |
+
+## HEOS Remote
+
+The main **HEOS** button opens or hides the separate receiver window. Select a
+receiver in **Settings**, using **Find HEOS Device** if necessary, then return to
+**Console** and click **Stream RDJ**. The checked button requests streaming;
+the status and log show connection progress. Click it again to stop streaming.
+Closing this window hides it while streaming continues. Exiting RDJ stops the
+sender; stopping HEOS streaming leaves RDJ's local playback running.
+
+The receiver hears the Masterdeck mix after Master FX, including RDJ Master
+Left/Right volume and balance. PFL/cue is excluded. Select files and playlists
+in RDJ's decks and Playlist Editor; the HEOS window has no separate file player,
+playlist, seek or loop controls.
+
+**RDJ Master Volume sets the level sent to HEOS; HEOS Remote volume sets the
+receiver's listening level.** These sliders do not follow each other. With
+centred balance, reducing both RDJ Master faders from 100 to 50 halves the
+stream's audio amplitude. At zero the receiver receives silence, regardless of
+its volume setting. The receiver's displayed `%` scale is not a linear audio
+gain and should not be multiplied by RDJ's percentage. RDJ balance and receiver
+balance also act in sequence. HEOS buffering delays audible RDJ fader changes.
+
+The remote also provides zone power, mute, input, balance and bass/treble controls
+where supported by the receiver. The elapsed label shows streaming time. HEOS
+playback is delayed relative to local playback, so use the local PFL output for
+cueing. See the [HEOS integration notes](../HEOS-INTEGRATION.md) for connection troubleshooting.
 
 ## Channel deck
 

@@ -93,6 +93,7 @@ type
 
   TJogChangeEvent = procedure(Sender: TObject;
                               const NewPosition: Integer) of object;
+
   TJogDeltaEvent  = procedure(Sender: TObject;
                               const Delta: Integer) of object;
 
@@ -140,8 +141,8 @@ type
     procedure SetPicture(const Value: TPicture);
     procedure SetTransparent(const Value: Boolean);
 
-    procedure EnsureBitmaps;
-    procedure LoadOriginalFromPicture;
+    procedure EnsureBitmaps();
+    procedure LoadOriginalFromPicture();
 
     procedure SetMin(const Value: Integer);
     procedure SetMax(const Value: Integer);
@@ -155,23 +156,24 @@ type
                               AMax,
                               AValue: Integer): Integer; inline;
 
-    function CenterPt: TPoint;
-    function AngleFromPoint(const X,
-                                  Y: Integer): Double; // radians, -pi..+pi
+    function CenterPt(): TPoint;
+    function AngleFromPoint(const X: Integer;
+                            const Y: Integer): Double; // radians, -pi..+pi
+
     function AngleToDegreesCW(const Theta: Double): Double; // 0..360 (clockwise)
 
-    function PositionToAngleDeg: Double;
+    function PositionToAngleDeg(): Double;
     function AngleDegToPosition(const Deg: Double): Integer;
 
     procedure RotateToAngle(const DegCW: Double);
 
-    procedure SyncProgressBar;
-    procedure DoChange;
+    procedure SyncProgressBar();
+    procedure DoChange();
     procedure DoJogDelta(const Delta: Integer);
 
   protected
-    procedure Paint; override;
-    procedure Resize; override;
+    procedure Paint(); override;
+    procedure Resize(); override;
 
     procedure MouseDown(Button: TMouseButton;
                         Shift: TShiftState;
@@ -606,7 +608,7 @@ var
   sinT,
   cosT: Double;
   theta: Double;
-  scanBytes: Integer;
+  scanBytes: NativeInt;
   pOrigStart: Pointer;
   pOrig: Pointer;
   iRot,
@@ -644,7 +646,7 @@ begin
   if (FBitmapOriginal.Height < 2) then
     Exit;
 
-  scanBytes := Integer(FBitmapOriginal.ScanLine[1]) - Integer(FBitmapOriginal.ScanLine[0]);
+  scanBytes := NativeInt(FBitmapOriginal.ScanLine[1]) - NativeInt(FBitmapOriginal.ScanLine[0]);
 
   BW := FBitmapOriginal.Width - 1;
   BH := FBitmapOriginal.Height - 1;
@@ -678,7 +680,7 @@ begin
               if (jOriginal >= 0) and (jOriginal <= BH) then
                 begin
 
-                  RowOriginal := Pointer(Integer(pOrig) + (jOriginal * scanBytes));
+                  RowOriginal := pRGBArray(NativeInt(pOrig) + (jOriginal * scanBytes));
                   RowRotated[i] := RowOriginal[iOriginal];
                 end
               else
@@ -688,13 +690,12 @@ begin
             RowRotated[i] := Black;
         end;
 
-      Dec(Integer(RowRotated),
-          scanBytes);
+      RowRotated := pRGBArray(NativeInt(RowRotated) - scanBytes);
     end;
 end;
 
 
-procedure TJogShuttleProgress.Paint;
+procedure TJogShuttleProgress.Paint();
 var
   r: TRect;
   deg: Double;

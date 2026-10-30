@@ -46,7 +46,6 @@ object frmChannelDeck: TfrmChannelDeck
     ParentBackground = False
     ParentDoubleBuffered = False
     TabOrder = 0
-    ExplicitLeft = 1
     object Bevel4: TBevel
       Left = 0
       Top = 513
@@ -149,7 +148,7 @@ object frmChannelDeck: TfrmChannelDeck
     end
     object lblVolumePerc: TLabel
       Left = 65
-      Top = 17
+      Top = 18
       Width = 50
       Height = 15
       Alignment = taCenter
@@ -412,8 +411,8 @@ object frmChannelDeck: TfrmChannelDeck
     object lblInputGainValue: TLabel
       Left = 5
       Top = 331
-      Width = 52
-      Height = 19
+      Width = 32
+      Height = 15
       Alignment = taCenter
       Caption = '0.0 dB'
       Font.Charset = DEFAULT_CHARSET

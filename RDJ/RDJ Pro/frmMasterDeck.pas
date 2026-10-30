@@ -410,6 +410,9 @@ begin
     if (bal > 0) then
       gainL := 1.0 - (bal * 0.01);
 
+  if Assigned(MainMDIFrm) then
+    MainMDIFrm.SetHeosMasterGains(baseL * gainL, baseR * gainR);
+
   epMaster.SetChannelScalarVolume(0,
                                   baseL * gainL);
   epMaster.SetChannelScalarVolume(1,

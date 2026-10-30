@@ -66,6 +66,51 @@ Icecast installation. Silent suite installation does not run that second wizard.
 Caddy is launched through **Caddy console**; this package does not pretend that
 `caddy.exe` is a native Windows service or install an unlisted service wrapper.
   
+## RDJ Pro HEOS receiver output
+
+Version **4.0.0.4** includes RDJ Pro's integrated HEOS Remote for Denon/Marantz
+HEOS devices in both 32-bit and 64-bit releases. It is part of RDJ Pro; there
+is no separate installer component or Delphi package to install on the target PC.
+
+1. Configure RDJ Pro's actual audio devices and start playback through its decks.
+2. Open **HEOS** in the main window. In **Settings**, click **Find HEOS Device**
+   and select the receiver, or enter its IPv4 address.
+3. Leave **PC IP** blank for automatic routing, or enter the studio PC's reachable
+   LAN address. The audio HTTP port defaults to **8890**.
+4. Turn on the receiver's main zone and return to **Console**. Click **Stream RDJ**
+   to start streaming the Masterdeck mix after Master FX. Check the status/log and
+   HTTP request count, and allow time for receiver buffering.
+5. Click **Stream RDJ** again to stop. Closing the HEOS window hides it while
+   streaming continues. Exiting RDJ Pro stops the sender. Local RDJ playback
+   continues when HEOS streaming is stopped.
+
+Files and playlists are managed by RDJ Pro. The HEOS window contains receiver
+controls and the live stream toggle, without a separate file/playlist player.
+
+**Volume controls act in sequence.** RDJ Master Left/Right volume and balance
+affect the PCM audio before AAC encoding. HEOS Remote volume independently sets
+the receiver's main-zone listening level. The sliders do not follow each other.
+At centred balance, lowering both RDJ Master faders from 100 to 50 halves the
+stream's audio amplitude; at zero the receiver gets silence regardless of its
+volume. The receiver's displayed `%` scale is not a linear audio gain and cannot
+be multiplied by RDJ's percentage. Receiver balance/tone apply additional
+processing where supported. PFL/cue is excluded from the stream.
+
+The PC and receiver must be mutually reachable on the LAN. Receiver control uses
+TCP **1255** (HEOS) and **23** (AVR); the receiver fetches AAC audio from the PC's
+configured HTTP port. Allow the RDJ Pro executable/port through the Windows
+private-network firewall if needed. The installer's optional web-server firewall
+task covers web servers only; it does not add a HEOS streaming rule. No router
+forwarding, FxServe, Caddy or Icecast is required for this local receiver path.
+Remote standby power needs receiver network control to stay reachable; mains-off
+devices cannot be controlled through the network.
+
+The installed `Docs\RDJPro` folder contains `HEOS-INTEGRATION.md`,
+`RDJPro TechStuff.md`, the GUI guide and setup guide. The GUI and HEOS notes cover
+operation; the source setup guide's Delphi package instructions apply only when
+building from source. End users need Windows Media Foundation with AAC encoding
+available, and no Delphi runtime packages or standalone HEOS executable.
+
 ## Local PC, server and split installations
 
 Setup installs on the PC where it is running. Copy the same setup EXE to another

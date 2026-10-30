@@ -11,6 +11,20 @@ Every installation includes either RDJ or RDJ Pro.
 
 &#x20;
 
+## RDJ Pro HEOS
+
+The **4.0.0.4** installer includes 32-bit and 64-bit RDJ Pro releases with
+the integrated HEOS Remote, plus updated user and technical guides. Toggle
+**Stream RDJ** to send the live Masterdeck mix to a HEOS receiver. RDJ Master
+Volume affects the stream; HEOS Remote volume independently sets the receiver's
+listening level. HEOS streaming does not require a web-server component.
+
+Installer: [FactoryX-DJSuite-4.0.0.4-Setup.exe](FactoryX-DJSuite-4.0.0.4-Setup.exe).
+
+&#x20; 
+
+&#x20; 
+
 ## What's included
 
 * **RDJ** — audio mixer application that supports Caddy/IceCast if needed.

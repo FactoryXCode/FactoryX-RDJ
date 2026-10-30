@@ -13,7 +13,7 @@ Important: install the required Delphi components before opening the RDJPro proj
 - FxServe or Caddy, if you want to use the browser broadcast page.
 
 FxServe is the normal choice for a small RDJ Pro server. Caddy is also supported.
-See [RDJ Web Server Setup](../../../FxServe/RDJ-Web-Server-Setup.md) for a short
+See [RDJ Web Server Setup](https://github.com/FactoryXCode/MfPack/blob/main/Proxy%20Servers/FxServe/RDJ-Web-Server-Setup.md) for a short
 comparison and the current server paths.
 
 ## 2. Install Required Delphi Packages First
@@ -24,7 +24,7 @@ Before opening `MfRdjJ.dproj`, install these packages in Delphi:
 2. Open and build/install:
 
 ```text
-MfPack\Samples\MfComponents\MfComponents.dpk
+<MfPackRoot>\Samples\MfComponents\MfComponents.dpk
 ```
 
 3. Open and build/install:
@@ -33,8 +33,18 @@ MfPack\Samples\MfComponents\MfComponents.dpk
 RDJ\RDJ Pro\Controls\RDJControls.dpk
 ```
 
-4. Close Delphi after installing the packages.
-5. Start Delphi again so the installed controls are loaded cleanly.
+4. Build/install the TDn controls used by the HEOS Remote window:
+
+```text
+RDJ\RDJ Pro\HEOSRemote\Controls\HEOSControls.dpk
+```
+
+If these TDn controls are already installed from the standalone HEOS Remote,
+keep one compatible installed package; avoid registering duplicate control
+classes from two packages.
+
+5. Close Delphi after installing the packages.
+6. Start Delphi again so the installed controls are loaded cleanly.
 
 ## 3. Install FireDAC and Understand SQLite
 
@@ -97,25 +107,36 @@ RDJ\RDJ Pro\MfRdjJ.dproj
 
 ## 5. Set The Delphi Search Paths
 
-In the RDJPro project options, add these paths to the Delphi search path:
+Open the supplied `MfRdjJ.dproj`. It includes the embedded HEOS/control
+directories and `..\Controls`, plus these external source paths:
 
 ```text
-..\..\src
-..\MfComponents
-.\Controls
+$(MfPackRoot)\src
+$(MfPackRoot)\Cast
+$(MfPackRoot)\Cast\Media
+$(MfPackRoot)\Samples\MfComponents
+$(HeosCliRoot)\Source
 ```
 
-If your folder layout is different, use the equivalent absolute paths, for example:
+`MfPackRoot` defaults to `..\..\..\..\MfPack`, relative to `RDJ\RDJ Pro`.
+`HeosCliRoot` is configured as `D:\GitHub\FactoryX-HEOS-CLI`.
+For this checkout at `D:\GitHub\FactoryX-RDJ\FactoryX-RDJ`, the MfPack default
+resolves to `D:\GitHub\MfPack`. Override `MfPackRoot` if your MfPack source is
+elsewhere. Change `HeosCliRoot` only if you move the HEOS API repository.
 
-```text
-D:\PROJECTS\MfPack\src
-D:\PROJECTS\MfPack\Samples\MfComponents
-D:\PROJECTS\RDJ\RDJ Pro\Controls
+For example, build with the current dependencies on this machine:
+
+```powershell
+msbuild MfRdjJ.dproj /t:Build /p:Config=Release /p:Platform=Win32 /p:MfPackRoot=D:\PROJECTS\MfPack /p:HeosCliRoot=D:\GitHub\FactoryX-HEOS-CLI
 ```
+
+Use `Platform=Win64` for the 64-bit build. Set the same properties through your
+Delphi/MSBuild configuration when building in the IDE. Do not copy DCUs between
+Delphi versions or architectures.
 
 ## 6. Check The Recommended Project Settings
 
-Before building, check the RDJ Pro project options and make sure they follow the recommended settings from `readme.txt`.
+Before building, check the RDJ Pro project options and make sure they follow the recommended settings from `readme.md`.
 
 In Project Options, set:
 
@@ -156,6 +177,30 @@ In the General setup page:
 5. Choose the number of loopback decks.
 6. Set the capture buffer size.
 7. Enable and select the microphone input if needed.
+
+### Optional: Stream the Masterdeck to HEOS
+
+1. Put the PC and HEOS receiver on a network where they can reach each other.
+2. Open **HEOS** from RDJ's main window. In **Settings**, use **Find HEOS Device**
+   and select the receiver, or enter its IPv4 address.
+3. Leave **PC IP** blank for automatic routing, or enter the PC's reachable LAN
+   address. The default HTTP port is 8890; allow RDJ through the private-network
+   firewall so the receiver can fetch the audio.
+4. Ensure the receiver's main zone is on. Start audio through RDJ's decks and
+   set RDJ Master Left/Right volume above zero.
+5. Return to **Console** and click **Stream RDJ**. Check the status/log and HTTP
+   request count, and allow time for the receiver to buffer the stream.
+6. Adjust the HEOS Remote volume for listening level. RDJ Master Volume and
+   balance already affect the encoded stream; receiver volume and balance act
+   afterwards. The two volume sliders are independent. RDJ Master at zero sends
+   silence even with receiver volume raised.
+7. Click **Stream RDJ** again to stop streaming. Closing the window keeps it
+   running; exiting RDJ stops the sender.
+
+This is direct audio streaming from the Masterdeck. FxServe, Caddy and the browser
+broadcast setup below are not required. Receiver commands use TCP ports 1255
+(HEOS) and 23 (AVR); the receiver must remain network-accessible for those
+controls to work. See [HEOS integration notes](../HEOS-INTEGRATION.md).
 
 ## 10. Configure Recording
 

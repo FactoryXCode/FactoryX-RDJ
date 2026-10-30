@@ -1,4 +1,4 @@
-// FactoryX
+﻿// FactoryX
 //
 // Copyright: FactoryX. All rights reserved.
 //
@@ -125,7 +125,9 @@ uses
   MfWasApiEffectsRack,
   MfWasApiRenderOutputEngine,
   MfAudioRecorder,
-  dlgMediaServer;
+  dlgMediaServer,
+  dlgHeosRemote,
+  RDJ.HeosOutput;
 
 const
 
@@ -192,6 +194,7 @@ type
     btnSetDjNameAndShowTitle: TMPxpButton;
     imgDjShowLogo: TImage;
     chkMediaServer: TMPxpButton;
+    chkHeosRemote: TMPxpButton;
     Label1: TLabel;
     Label2: TLabel;
     mmoEventTitle: TMemo;
@@ -218,10 +221,17 @@ type
     procedure btnSetDjNameAndShowTitleClick(Sender: TObject);
     procedure imgDjShowLogoDblClick(Sender: TObject);
     procedure chkMediaServerClick(Sender: TObject);
+    procedure chkHeosRemoteClick(Sender: TObject);
 
   private
 
     FAppClosing: Boolean;
+    FHeosOutput: TRdjHeosOutput;
+    FHeosForm: TRdjHeosRemoteForm;
+
+    procedure HeosVisibilityChanged(Sender: TObject);
+
+  private
     FSetupApplied: Boolean;
     FSetupFileName: string;
     FMasterDeck: TMasterDeckFrm;
@@ -433,6 +443,7 @@ type
     function CanGoOnAir(): Boolean;
     procedure RefreshMainButtonStates();
     procedure SetMediaServerButtonChecked(const AChecked: Boolean);
+    procedure SetHeosMasterGains(ALeft: Single; ARight: Single);
 
     property Caption;
 
@@ -1095,6 +1106,7 @@ begin
 
   RDJLog('Lifecycle',
          'Main form created.');
+  FHeosOutput := TRdjHeosOutput.Create();
   FAudioGraphRecoveryQueued := 0;
   FAudioGraphRecoveryDueTick := 0;
   FAudioGraphRecoveryReason := '';
@@ -1173,6 +1185,9 @@ begin
   FreeAndNil(FCueOut);
   FreeAndNil(FMasterOut);
   FreeAndNil(FInternalMixer);
+  // Audio callbacks have stopped before releasing their HEOS output target.
+  FreeAndNil(FHeosForm);
+  FreeAndNil(FHeosOutput);
   RDJLog('Shutdown',
          'Audio outputs and mixer destruction: complete.');
 
@@ -1533,6 +1548,7 @@ begin
                       FMediaServer.Visible and
                       (FMediaServer.WindowState <> wsMinimized);
   SetMediaServerButtonChecked(MediaServerShown);
+  chkHeosRemote.Checked := Assigned(FHeosForm) and FHeosForm.Visible;
 end;
 
 
@@ -2371,6 +2387,42 @@ begin
   end;
 end;
 // Json end ====================================================================
+
+
+procedure TMainMDIFrm.chkHeosRemoteClick(Sender: TObject);
+begin
+
+  if chkHeosRemote.Checked then
+    begin
+      if not Assigned(FHeosForm) then
+        begin
+          FHeosForm := TRdjHeosRemoteForm.Create(Self);
+          FHeosForm.BindOutput(FHeosOutput);
+          FHeosForm.OnVisibilityChanged := HeosVisibilityChanged;
+        end;
+      FHeosForm.Show;
+      FHeosForm.WindowState := wsNormal;
+      FHeosForm.BringToFront;
+    end
+  else
+    if Assigned(FHeosForm) then
+      FHeosForm.Hide;
+end;
+
+
+procedure TMainMDIFrm.HeosVisibilityChanged(Sender: TObject);
+begin
+
+  chkHeosRemote.Checked := Assigned(FHeosForm) and FHeosForm.Visible;
+end;
+
+
+procedure TMainMDIFrm.SetHeosMasterGains(ALeft: Single; ARight: Single);
+begin
+
+  if Assigned(FHeosOutput) then
+    FHeosOutput.SetMasterGains(ALeft, ARight);
+end;
 
 
 procedure TMainMDIFrm.chkMediaServerClick(Sender: TObject);
@@ -3356,6 +3408,10 @@ begin
   ProcessMasterFx(OutBuffer,
                   Frames,
                   pwfx.nSamplesPerSec);
+
+  // Copy the Masterdeck mix to the bounded HEOS queue; encoding is off-thread.
+  if Assigned(FHeosOutput) then
+    FHeosOutput.PushFloat32(OutBuffer, Frames, pwfx.nSamplesPerSec);
 
   // POST-FX tap for recorder.
   if IsRecordingPostFx() then

@@ -2933,6 +2933,7 @@ begin
   FBroadcastMseSessionStartedUtc := TTimeZone.Local.ToUniversalTime(Now);
   FBroadcastMseMemLastLogTick := 0;
   FBroadcastHandoverLockAcquired := False;
+
   // Capture debugger state for the entire form lifetime. This remains true
   // even if the debugger is detached before broadcasting starts.
   FBroadcastHandoverLockBypassed := RDJIsRunningUnderDebugger();

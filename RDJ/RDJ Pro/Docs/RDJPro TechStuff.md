@@ -27,6 +27,7 @@ RDJ Pro uses these main Windows and web technologies:
 - FxServe as the small RDJ-focused web server, or Caddy as a general web server and reverse proxy.
 - Browser Media Source Extensions, usually called MSE, for live fMP4 playback in the browser.
 - JSON files for now-playing metadata and the live stream manifest.
+- HEOS CLI and AVR network control, with direct HTTP AAC streaming from the RDJ Pro Masterdeck.
 
 ## Local Audio And Video Flow
 
@@ -46,6 +47,100 @@ On the video side:
 2. Video samples are normalized into a Media Foundation video stream.
 3. Audio samples from the RDJ program output are batched and timestamped.
 4. Audio and video are passed to the broadcast fMP4 recorder.
+
+## HEOS Masterdeck Output
+
+RDJ Pro can send its live stereo Masterdeck mix to a Denon or Marantz HEOS
+device. The separate **HEOS Remote** window opens from the main **HEOS** button.
+**Stream RDJ** is an on/off toggle: checked requests streaming, and clicking it
+again stops the local sender and queues a HEOS stop command. A checked button is
+not proof that the receiver is already audible; check the status/log and HTTP
+request count while the receiver connects.
+
+RDJ's channel decks and playlist editor manage playback. The embedded HEOS window
+has no separate file player, playlist editor, transport buttons, seek bar or loop
+mode. It retains discovery, connection settings, elapsed streaming time, receiver
+volume, balance, zone power, input, mute and bass/treble controls where supported
+by the receiver. Closing the window hides it and keeps streaming active; exiting
+RDJ stops the sender.
+
+### Audio Path And Volume Relationship
+
+```text
+RDJ decks / microphone / loopback inputs
+  -> RDJ stereo mix -> Master FX
+  -> network copy with RDJ Master L/R volume and balance
+  -> Media Foundation AAC encoder -> HTTP AAC/ADTS stream
+  -> HEOS receiver -> receiver volume / balance / sound settings -> speakers
+```
+
+The HEOS source is tapped after `ProcessMasterFx` in `frmMainMDI.pas`.
+`TMasterDeckFrm.SetVolumeChannels` forwards the Masterdeck's left/right faders and
+balance to `TMainMDIFrm.SetHeosMasterGains`. `TRdjHeosOutput.PushFloat32` applies
+those gains to its own PCM copy before encoding. It does not modify the original
+mix buffer. PFL/cue and unrelated Windows sounds are excluded; a loopback deck
+deliberately routed into the Masterdeck is included.
+
+| Control | Where it acts | Effect on HEOS playback |
+|---|---|---|
+| RDJ Master Left/Right volume | PCM copy before AAC encoding; also controls the local master endpoint channels | Changes the level sent to the receiver. |
+| RDJ Master balance | Left/right gains before AAC encoding | Changes the stereo balance already present in the stream. |
+| HEOS Remote volume | Receiver main-zone volume through AVR commands | Changes receiver listening level without changing RDJ faders or encoded audio. |
+| HEOS Remote balance and tone | Receiver processing, where available | Further adjusts the received sound without changing RDJ's mix. |
+| RDJ PFL volume | Headphone/cue output | Does not change the HEOS stream. |
+
+For centred RDJ balance, the network-copy gains are the absolute Master fader
+positions divided by 100, clamped to 0..1. Moving balance left attenuates the
+right channel; moving it right attenuates the left channel. Thus reducing both
+Master faders from 100 to 50 halves each channel's PCM amplitude (about -6 dB),
+while the receiver's volume setting stays unchanged. Setting both Master faders
+to zero sends silence; raising receiver volume cannot restore that signal.
+
+The receiver control currently displays its own volume scale with a `%` suffix.
+That scale is not a linear PCM amplitude percentage. Do not multiply the two
+displayed percentages or expect matching slider positions to mean equal gain.
+RDJ Master and receiver volume are independent controls in sequence: RDJ sets
+the outgoing program level, and the receiver sets listening level. Their balance
+settings also act in sequence. Stream buffering delays audible RDJ fader changes
+relative to local playback.
+
+### Encoder, Network And Lifecycle
+
+`RDJ.HeosOutput` uses a bounded, preallocated PCM queue. The audio callback does
+not encode, access VCL controls or perform network I/O; if the queue is full or
+its lock is unavailable, it drops the network-copy block without waiting. A
+worker owns COM/Media Foundation and encodes stereo AAC at 192 kbit/s, served as
+a continuous AAC/ADTS stream by `RDJ.HeosAudioServer`.
+
+The current Masterdeck uses 44100 Hz float PCM; the sender also accepts 48000 Hz.
+A sample-rate change during streaming is reported and requires a stream restart.
+The compressed queue is bounded too, so a disconnected receiver cannot cause
+unlimited buffering. Expected HTTP disconnects allow a new request to reconnect.
+
+HEOS commands use receiver TCP port 1255. AVR settings use TCP port 23. The
+receiver fetches the audio from the PC's configured HTTP port (default 8890).
+Leave **PC IP** blank to select the interface routed to the receiver, or specify
+the PC's reachable LAN IPv4 address. The PC and receiver must be able to reach
+each other; allow RDJ through the private-network firewall for this HTTP stream.
+This direct audio path does not require FxServe, Caddy or browser broadcasting.
+
+Startup checks receiver availability before reading AVR settings and can search
+for HEOS devices when the saved address is unavailable. Use **Find HEOS Device**
+to select a receiver after an address change. Receiver network control must
+remain reachable in standby for remote power commands to work. Removing mains
+power prevents network control.
+
+Streaming requests are serialized so a stop/restart can be queued while a HEOS
+request is pending. During shutdown, RDJ stops its audio output threads before
+freeing the HEOS window and sender. The window uses VCL DFM resources and TDn
+controls from `HEOSRemote\Controls`; the separate FactoryX-HEOS-CLI repository
+supplies `Heos.Sockets` through the `HeosCliRoot` project property.
+
+The integration has been built and tested with Delphi XE7 for Win32 and Win64. Local mock
+receiver checks cover the trimmed DFM, AAC delivery, elapsed display, queued
+restart, close-to-hide and shutdown. Actual receiver buffering and listening
+level depend on the device and network. See [HEOS integration notes](../HEOS-INTEGRATION.md)
+for operation and troubleshooting.
 
 ## Browser Broadcast Flow
 
@@ -147,7 +242,7 @@ This grouping reduces:
 ## The Web Server Mirror
 
 RDJPro can publish directly to a local web root or mirror files to a web root on
-another machine. The normal FxServe path is:
+another machine. The normal FxServe path is for example:
 
 ```text
 \\PCHP001\FxServe\www\Stream
@@ -257,7 +352,7 @@ High-frequency logs are therefore throttled. Important state changes, errors, an
 
 For a stable RDJPro browser broadcast:
 
-1. Use Windows 10 or later.
+1. Use Windows 10 22H2 or later.
 2. Configure the RDJ Pro web-server paths correctly.
 3. Make sure FxServe or Caddy serves the RDJ Pro web folder.
 4. Enable Caddy JSON access logging if its listener count is needed.
@@ -275,6 +370,11 @@ Main RDJPro files:
 - `dlgMediaServer.pas` handles broadcast controls, web file publishing, live MSE manifest generation, and the mirror thread.
 - `RDJ.RdjPro.BroadcastFmp4Recorder.pas` handles Media Foundation fMP4 recording, byte-stream observation, fragment extraction, and fragment patching.
 - `RDJ.JSon.pas` writes and reads browser JSON state.
+- `dlgHeosRemote.pas/.dfm` implements the separate HEOS Remote window and receiver controls.
+- `RDJ.HeosOutput.pas` queues the Masterdeck PCM copy and manages the AAC worker.
+- `RDJ.HeosAacEncoder.pas` encodes PCM to AAC/ADTS with Media Foundation.
+- `RDJ.HeosAudioServer.pas` serves the live AAC stream directly to the receiver.
+- `HEOSRemote` contains the embedded HEOS/AVR command, socket and discovery units and TDn controls.
 
 Browser and web-server files:
 
@@ -308,9 +408,9 @@ The needed hardware as the best configuration is:
 - Studio microphone 
 - Studio camera
 - Internet connection
-- Remote server that has as minimum Windows 10 running on it, running FxServe or Caddy.
+- Remote server that has as minimum Windows 10 22H2 running on it, running FxServe or Caddy.
 - Router that supports DDNS or your own registered domain.
-- An amplifier + speakers for master sound
+- An amplifier + speakers for master sound. If your amplifier supports HEOS, you do not need hardware connection and you are able to use the RDJ Pro build inn HEOS Remote from the masterdeck.
 
 ## Test conditions
   

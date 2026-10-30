@@ -10,7 +10,7 @@ object frmMediaServer: TfrmMediaServer
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'Media Server'
-  ClientHeight = 721
+  ClientHeight = 769
   ClientWidth = 845
   Color = 9216
   Ctl3D = False
@@ -196,9 +196,9 @@ object frmMediaServer: TfrmMediaServer
       OnMouseDown = pnlCaptionMouseDown
     end
     object btnMinimize: TMPxpButton
-      Left = 778
+      Left = 788
       Top = 1
-      Width = 66
+      Width = 56
       Height = 35
       Margins.Left = 2
       Margins.Top = 2
@@ -252,13 +252,14 @@ object frmMediaServer: TfrmMediaServer
     Left = 0
     Top = 37
     Width = 845
-    Height = 684
+    Height = 732
     Align = alClient
     BevelOuter = bvNone
     Color = 5850948
     ParentBackground = False
     ShowCaption = False
     TabOrder = 1
+    ExplicitHeight = 684
     object pnlRdjProControls: TPanel
       Left = 0
       Top = 0
@@ -274,9 +275,9 @@ object frmMediaServer: TfrmMediaServer
       TabOrder = 0
       object pnlRecorderCtrl: TPanel
         Left = 0
-        Top = 47
+        Top = 45
         Width = 845
-        Height = 116
+        Height = 118
         Align = alClient
         BevelOuter = bvNone
         Caption = 'pnlRecorderCtrl'
@@ -284,6 +285,7 @@ object frmMediaServer: TfrmMediaServer
         ParentBackground = False
         ShowCaption = False
         TabOrder = 2
+        ExplicitTop = 46
         object Bevel1: TBevel
           Left = 10
           Top = 14
@@ -335,7 +337,7 @@ object frmMediaServer: TfrmMediaServer
         end
         object lblRecTime: TLabel
           Left = 0
-          Top = 88
+          Top = 90
           Width = 845
           Height = 28
           Align = alBottom
@@ -941,6 +943,8 @@ object frmMediaServer: TfrmMediaServer
           ParentBackground = False
           ShowCaption = False
           TabOrder = 4
+          ExplicitLeft = 2
+          ExplicitTop = 57
           object Bevel4: TBevel
             Left = 3
             Top = 2
@@ -961,7 +965,7 @@ object frmMediaServer: TfrmMediaServer
             ParentFont = False
           end
           object lblCastState: TLabel
-            Left = 4
+            Left = 2
             Top = 35
             Width = 228
             Height = 18
@@ -1291,7 +1295,7 @@ object frmMediaServer: TfrmMediaServer
         Left = 0
         Top = 0
         Width = 845
-        Height = 47
+        Height = 45
         Margins.Left = 0
         Margins.Top = 0
         Margins.Right = 0
@@ -1540,18 +1544,19 @@ object frmMediaServer: TfrmMediaServer
       Left = 0
       Top = 163
       Width = 845
-      Height = 497
+      Height = 545
       Align = alClient
       BevelOuter = bvNone
       Color = 9216
       ParentBackground = False
       ShowCaption = False
       TabOrder = 1
+      ExplicitHeight = 497
       object imgRdjProStaticPreview: TImage
         Left = 0
         Top = 0
         Width = 845
-        Height = 497
+        Height = 545
         Align = alClient
         Center = True
         Proportional = True
@@ -1563,7 +1568,7 @@ object frmMediaServer: TfrmMediaServer
     end
     object pnlBottom: TPanel
       Left = 0
-      Top = 660
+      Top = 708
       Width = 845
       Height = 24
       Margins.Left = 0
@@ -1583,6 +1588,7 @@ object frmMediaServer: TfrmMediaServer
       ParentDoubleBuffered = False
       ParentFont = False
       TabOrder = 2
+      ExplicitTop = 660
       object lblRecorderStatus: TLabel
         AlignWithMargins = True
         Left = 394

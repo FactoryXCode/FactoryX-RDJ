@@ -122,6 +122,7 @@ type
     destructor Destroy(); override;
 
     procedure Open(const ADbFileName: string);
+    procedure OpenReadOnly(const ADbFileName: string);
     procedure Close();
     procedure CreateSchema();
 
@@ -232,6 +233,46 @@ begin
   FConnected := True;
 
   CreateSchema();
+end;
+
+
+procedure TRDJPlaylistDb.OpenReadOnly(const ADbFileName: string);
+var
+  Stream: TFileStream;
+  Header: array[0..19] of Byte;
+
+begin
+
+  if not FileExists(ADbFileName) then
+    raise Exception.Create('RDJ Pro database not found.');
+
+  Close();
+  SetupConnection();
+  FDbFileName := ExpandFileName(ADbFileName);
+  // XE7 FireDAC always sets journal_mode while connecting, even in read-only
+  // mode. Match the persistent SQLite header to avoid changing a WAL database.
+  Stream := TFileStream.Create(FDbFileName,
+                                fmOpenRead or fmShareDenyNone);
+
+  try
+
+    Stream.ReadBuffer(Header,
+                        SizeOf(Header));
+  finally
+
+    Stream.Free;
+  end;
+
+  if (Header[18] = 2) or (Header[19] = 2) then
+    FConnection.Params.Values['JournalMode'] := 'WAL'
+  else
+    FConnection.Params.Values['JournalMode'] := 'Delete';
+
+  FConnection.Params.Values['OpenMode'] := 'ReadOnly';
+  FConnection.Params.Values['SharedCache'] := 'False';
+  FConnection.Params.Values['Database'] := FDbFileName;
+  FConnection.Connected := True;
+  FConnected := True;
 end;
 
 

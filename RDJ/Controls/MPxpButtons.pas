@@ -335,9 +335,6 @@ var
    iCapY,
    iGlX,
    iGlY: Integer;
-   wR,
-   wG,
-   wB: Word;
    aRect: TRect;
    FArrowGlyph: TPicture;
 

@@ -38,6 +38,14 @@ uses
   RDJ.JSon in 'RDJ.JSon.pas',
   RDJ.FilenameParser in 'RDJ.FilenameParser.pas',
   dlgMediaServer in 'dlgMediaServer.pas' {frmMediaServer},
+  dlgHeosRemote in 'dlgHeosRemote.pas' {HeosRemoteFrm},
+  Heos in 'HEOSRemote\Heos.pas',
+  HEOSTransport in 'HEOSRemote\HEOSTransport.pas',
+  HEOSSockets in 'HEOSRemote\HEOSSockets.pas',
+  HEOSDiscovery in 'HEOSRemote\HEOSDiscovery.pas',
+  RDJ.HeosOutput in 'RDJ.HeosOutput.pas',
+  RDJ.HeosAudioServer in 'RDJ.HeosAudioServer.pas',
+  RDJ.HeosAacEncoder in 'RDJ.HeosAacEncoder.pas',
   dlgAudioDevices in 'dlgAudioDevices.pas' {AudioDevicesDlg},
   LWFileBrowserExDlg in 'LWFileBrowserExDlg.pas' {LWFileBrowserExDlg},
   RDJ_NetWorkStationsScanner in 'RDJ_NetWorkStationsScanner.pas',
@@ -62,7 +70,8 @@ begin
       Application.Initialize;
       Application.MainFormOnTaskbar := True;
       Application.Title := 'RDJ Pro';
-      Application.CreateForm(TMainMDIFrm, MainMDIFrm);
+      Application.CreateForm(frmMainMDI.TMainMDIFrm,
+                             frmMainMDI.MainMDIFrm);
       // Autocreate these forms for less UI load during rendering in loopback.
       Application.CreateForm(TLWFileBrowserExDlg, DlgLWFileBrowserEx);
       Application.CreateForm(TfrmMediaServer, fMediaServer);

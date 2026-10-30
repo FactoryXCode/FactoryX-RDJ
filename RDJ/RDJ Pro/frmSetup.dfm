@@ -1806,9 +1806,9 @@ object frmSetup: TfrmSetup
       Height = 63
     end
     object lblMainOut: TLabel
-      Left = 17
+      Left = 26
       Top = 40
-      Width = 160
+      Width = 151
       Height = 16
       Alignment = taRightJustify
       Caption = 'Main output (MASTER):'
@@ -1820,9 +1820,9 @@ object frmSetup: TfrmSetup
       ParentFont = False
     end
     object lblCueOut: TLabel
-      Left = 20
+      Left = 35
       Top = 124
-      Width = 157
+      Width = 142
       Height = 16
       Alignment = taRightJustify
       Caption = 'Cue output (PHONES):'
