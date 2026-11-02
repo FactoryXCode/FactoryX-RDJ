@@ -109,7 +109,6 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
       Color = 6303744
       ColorWhenDown = 11363625
       ColorWhenUp = 6303744
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -195,7 +194,6 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
       Color = 6303744
       ColorWhenDown = 11363625
       ColorWhenUp = 6303744
-      Checked = False
       Enabled = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
@@ -228,7 +226,6 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
       Color = 6303744
       ColorWhenDown = 11363625
       ColorWhenUp = 6303744
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13

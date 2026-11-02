@@ -198,6 +198,7 @@ type
     function GetPaintGlyph(): TBitmap;
     function GetPaintNumGlyphs(): Integer;
 
+    procedure CMEnabledChanged(var Msg: TMessage); message CM_ENABLEDCHANGED;
     procedure CMColorChanged(var Msg: TMessage); message CM_COLORCHANGED;
 
   protected
@@ -385,6 +386,25 @@ begin
   FreeAndNil(FGlyphChecked);
 
   inherited;
+end;
+
+
+procedure TDnButton.CMEnabledChanged(var Msg: TMessage);
+begin
+
+  inherited;
+
+  if not Enabled then
+    begin
+
+      bCursorOnButton := False;
+      FHotTrackStep := 0;
+      if Assigned(FDecTimer) then
+        FDecTimer.Enabled := False;
+    end;
+
+  // TWinControl updates the window state but does not invalidate custom painting.
+  Invalidate;
 end;
 
 

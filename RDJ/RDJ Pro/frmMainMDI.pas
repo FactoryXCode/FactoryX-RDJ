@@ -1,4 +1,4 @@
-﻿// FactoryX
+// FactoryX
 //
 // Copyright: FactoryX. All rights reserved.
 //
@@ -127,7 +127,8 @@ uses
   MfAudioRecorder,
   dlgMediaServer,
   dlgHeosRemote,
-  RDJ.HeosOutput;
+  RDJ.HeosOutput,
+  RDJ.BackgroundAudio;
 
 const
 
@@ -227,6 +228,7 @@ type
 
     FAppClosing: Boolean;
     FHeosOutput: TRdjHeosOutput;
+    FBackgroundAudio: TRdjBackgroundAudio;
     FHeosForm: TRdjHeosRemoteForm;
 
     procedure HeosVisibilityChanged(Sender: TObject);
@@ -444,6 +446,8 @@ type
     procedure RefreshMainButtonStates();
     procedure SetMediaServerButtonChecked(const AChecked: Boolean);
     procedure SetHeosMasterGains(ALeft: Single; ARight: Single);
+
+    property BackgroundAudio: TRdjBackgroundAudio read FBackgroundAudio;
 
     property Caption;
 
@@ -1107,6 +1111,7 @@ begin
   RDJLog('Lifecycle',
          'Main form created.');
   FHeosOutput := TRdjHeosOutput.Create();
+  FBackgroundAudio := TRdjBackgroundAudio.Create(ChangeFileExt(Application.ExeName, '.ini'));
   FAudioGraphRecoveryQueued := 0;
   FAudioGraphRecoveryDueTick := 0;
   FAudioGraphRecoveryReason := '';
@@ -1188,6 +1193,11 @@ begin
   // Audio callbacks have stopped before releasing their HEOS output target.
   FreeAndNil(FHeosForm);
   FreeAndNil(FHeosOutput);
+
+  if Assigned(FMediaServer) then
+    FMediaServer.BindBackgroundAudio(nil);
+
+  FreeAndNil(FBackgroundAudio);
   RDJLog('Shutdown',
          'Audio outputs and mixer destruction: complete.');
 
@@ -1556,7 +1566,10 @@ procedure TMainMDIFrm.OpenMediaServerGUI();
 begin
 
   if not assigned(FMediaServer) then
-    FMediaServer := TfrmMediaServer.Create(Self);
+    begin
+      FMediaServer := TfrmMediaServer.Create(Self);
+      FMediaServer.BindBackgroundAudio(FBackgroundAudio);
+    end;
 
   FMediaServer.Show;
   FMediaServer.WindowState := wsNormal;
@@ -2422,6 +2435,9 @@ begin
 
   if Assigned(FHeosOutput) then
     FHeosOutput.SetMasterGains(ALeft, ARight);
+
+  if Assigned(FBackgroundAudio) then
+    FBackgroundAudio.SetMasterGains(ALeft, ARight);
 end;
 
 
@@ -3412,6 +3428,9 @@ begin
   // Copy the Masterdeck mix to the bounded HEOS queue; encoding is off-thread.
   if Assigned(FHeosOutput) then
     FHeosOutput.PushFloat32(OutBuffer, Frames, pwfx.nSamplesPerSec);
+
+  if Assigned(FBackgroundAudio) then
+    FBackgroundAudio.PushFloat32(OutBuffer, Frames, pwfx.nSamplesPerSec);
 
   // POST-FX tap for recorder.
   if IsRecordingPostFx() then

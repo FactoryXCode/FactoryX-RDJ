@@ -52,3 +52,11 @@ The integration was checked with Delphi XE7 Win32/Win64, a local mock HEOS recei
 See the [technical handout](<Docs/RDJPro TechStuff.md>) for the full signal path
 and source-unit responsibilities, and the [setup guide](<Docs/RDJPro Step-by-Step Setup.md>)
 for component packages and project search paths.
+
+## Background AAC audio
+
+The public broadcast automatically supplies a separate AAC stream for audio-only
+listeners, with no extra controls. Browser/PWA playback continues using MP4
+fragments. AAC follows broadcast start/stop and Master volume/balance, stays
+independent of private HEOS output and retries failures without stopping MP4.
+See [background AAC setup and technical notes](AUDIO-RADIO.md).

@@ -162,6 +162,8 @@ type
     btnExit: TMPxpButton;
     lblAppTitle: TLabel;
     Bevel1: TBevel;
+    Label6: TLabel;
+    Label7: TLabel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormHidden(Sender: TObject);
@@ -799,10 +801,11 @@ procedure TRdjHeosRemoteForm.UpdateToneDisplay();
 var
   Available: Boolean;
 
-  function ToneCaption(const Name: string; Value: Integer): string;
+  function ToneCaption(const Name: string;
+                       Value: Integer): string;
   begin
 
-    Result := Name + ': ';
+    Result := Name;
 
     if (Value > 0) then
       Result := Result + '+';
@@ -818,11 +821,12 @@ begin
     if not FTonePending then
       btnTone.Checked := FToneEnabled;
 
-    lblBass.Caption := ToneCaption('Bass',
+    lblBass.Caption := ToneCaption('',
                                    tbBass.Position);
 
-    lblTreble.Caption := ToneCaption('Treble',
+    lblTreble.Caption := ToneCaption('',
                                      tbTreble.Position);
+
     Available := (FPowerText = 'On') and
                   FToneKnown and not
                   ContainsText(FToneMode,

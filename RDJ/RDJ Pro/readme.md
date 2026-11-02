@@ -46,7 +46,7 @@ remains available when the server hosts more websites or needs extra routing and
 proxy features.
 
 For setup paths, router settings, and switching instructions, see
-[RDJ Web Server Setup](https://github.com/FactoryXCode/MfPack/blob/main/Proxy%20Servers/FxServe/RDJ-Web-Server-Setup.md).
+[RDJ Web Server Setup](../../FxServe/RDJ-Web-Server-Setup.md).
   
 The aim of this sample project is: Combine all kinds of MfPack (coreAudio WASAPI ) challenges in a single project.  
 Now, the example has become pretty large for a sample but usefull for audio/video knights..  
@@ -56,15 +56,16 @@ Advised minimum Delphi version: Delphi XE7 and higher.
 NOTES:  
   
 * The code is not suitable for starters and knowledge of audio manipulation/algo's is also required.
-* Before opening the project, install `RDJ\Controls\RDJControls.dpk`,
-MfPack's `Samples\MfComponents\MfComponents.dpk`, and
-`RDJ Pro\HEOSRemote\Controls\HEOSControls.dpk`.
+* Before opening the project, install the MfRdjJ controls (..\\MfPack\\Samples\\MfRdjPro\\Controls\\RDJControls.dpk)
+and MfPack MfComponents (..\\MfPack\\Samples\\MfComponents\\MfComponents.dpk)
+Add "..\\MfPack\\Samples\\MfComponents", "..\\MfPack\\Samples\\MfRdjPro\\Controls" and
+"..\\MfPack\\src" to the RDJ Pro project search path.
 
-Open `MfRdjJ.dproj`. Its `MfPackRoot` property defaults to the `MfPack` repository
-beside this FactoryX-RDJ checkout. `HeosCliRoot` points to
-`D:\GitHub\FactoryX-HEOS-CLI`. Set these properties if your folders differ;
-see the [setup guide](<Docs/RDJPro Step-by-Step Setup.md>) for exact paths and
-build examples. The project includes the required source and control paths.
+For the HEOS window, also install `HEOSRemote\Controls\HEOSControls.dpk` before
+opening its form in the designer. The project includes the embedded HEOS unit and
+control search paths. Keep FactoryX-HEOS-CLI available at the location specified
+by the `HeosCliRoot` project property (see the
+[setup guide](<Docs/RDJPro Step-by-Step Setup.md>)).
   
 Project: MFPack - Samples - MfRdjPro  
 Project location: https://github.com/FactoryXCode/MfPack  
@@ -75,3 +76,11 @@ Final release date: 22/06/2026
   
 Copyright  FactoryX. All rights reserved.
 
+
+## Background AAC audio
+
+The public broadcast automatically supplies a separate AAC stream for audio-only
+listeners, with no extra controls. Browser/PWA playback continues using MP4
+fragments. AAC follows broadcast start/stop and Master volume/balance, stays
+independent of private HEOS output and retries failures without stopping MP4.
+See [background AAC setup and technical notes](AUDIO-RADIO.md).

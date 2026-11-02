@@ -72,7 +72,8 @@ uses
   System.SysUtils,
   System.SyncObjs,
   {Application}
-  RDJ.HeosAudioServer;
+  RDJ.HeosAudioServer,
+  RDJ.RadioAudioServer;
 
 type
 
@@ -111,8 +112,11 @@ type
     FGainR: Integer;
     FError: string;
     FServer: THeosAudioServer;
+    FRadioServer: TRdjRadioAudioServer;
     FWorker: TRdjHeosEncoderThread;
 
+    procedure StartOutput(const AReceiver: string; APort: Word;
+                            const ALocalAddress: string; ARadio: Boolean);
     function Pop(ABuffer: PSingle; AMaximum: Integer): Integer;
     procedure SetError(const AText: string);
 
@@ -123,6 +127,8 @@ type
 
     procedure Start(const AReceiver: string; APort: Word = 0;
                       const ALocalAddress: string = '');
+    procedure StartBroadcast(const ALocalAddress: string; APort: Word);
+    function Listeners(): Integer;
     procedure Stop();
     procedure SetMasterGains(ALeft: Single; ARight: Single);
     procedure PushFloat32(AData: PSingle; AFrames: Integer; ASampleRate: Integer);
@@ -185,6 +191,21 @@ end;
 
 procedure TRdjHeosOutput.Start(const AReceiver: string; APort: Word;
                                 const ALocalAddress: string);
+begin
+
+  StartOutput(AReceiver, APort, ALocalAddress, False);
+end;
+
+
+procedure TRdjHeosOutput.StartBroadcast(const ALocalAddress: string; APort: Word);
+begin
+
+  StartOutput('', APort, ALocalAddress, True);
+end;
+
+
+procedure TRdjHeosOutput.StartOutput(const AReceiver: string; APort: Word;
+                                      const ALocalAddress: string; ARadio: Boolean);
 var
   Rate: Integer;
   Address: string;
@@ -216,8 +237,16 @@ begin
       Address := LocalAddressFor(AReceiver);
     if not IPv4Valid(Address) then
       raise EArgumentException.Create('Enter a valid local PC IPv4 address.');
-    FServer := THeosAudioServer.Create(Address, APort);
-    FServer.Start;
+    if ARadio then
+      begin
+        FRadioServer := TRdjRadioAudioServer.Create(Address, APort);
+        FRadioServer.Start;
+      end
+    else
+      begin
+        FServer := THeosAudioServer.Create(Address, APort);
+        FServer.Start;
+      end;
     FWorker := TRdjHeosEncoderThread.Create(Self);
     InterlockedExchange(FActive, 1);
     FWorker.Start;
@@ -249,6 +278,7 @@ begin
       FreeAndNil(FWorker);
     end;
   FreeAndNil(FServer);
+  FreeAndNil(FRadioServer);
   InterlockedExchange(FReady, 0);
 end;
 
@@ -368,6 +398,8 @@ begin
   Result := '';
   if Assigned(FServer) then
     Result := FServer.Url();
+  if Assigned(FRadioServer) then
+    Result := FRadioServer.Url();
 end;
 
 
@@ -382,6 +414,12 @@ begin
   finally
     FLock.Release;
   end;
+  if (Result = '') and Assigned(FRadioServer) and FRadioServer.Finished then
+    begin
+      Result := FRadioServer.LastError();
+      if (Result = '') then
+        Result := 'The radio audio HTTP server stopped.';
+    end;
   // A receiver can close a probe/old HTTP connection and reconnect normally.
   if (Result = '') and Assigned(FServer) and FServer.Finished then
     begin
@@ -405,6 +443,17 @@ begin
   Result := 0;
   if Assigned(FServer) then
     Result := FServer.Requests();
+  if Assigned(FRadioServer) then
+    Result := FRadioServer.Requests();
+end;
+
+
+function TRdjHeosOutput.Listeners(): Integer;
+begin
+
+  Result := 0;
+  if Assigned(FRadioServer) then
+    Result := FRadioServer.Listeners();
 end;
 
 
@@ -454,7 +503,12 @@ begin
             end;
           CheckResult(Encoder.EncodeInterleavedFloat32(@Samples[0], Frames, Bytes), 'Encode HEOS Masterdeck audio');
           if (Length(Bytes) > 0) then
-            FOwner.FServer.Push(Bytes);
+            begin
+              if Assigned(FOwner.FRadioServer) then
+                FOwner.FRadioServer.Push(Bytes)
+              else
+                FOwner.FServer.Push(Bytes);
+            end;
         end;
     except
       on E: Exception do

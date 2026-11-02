@@ -81,6 +81,7 @@ uses
   System.TimeSpan,
   RDJ.BroadcastUiTiming,
   RDJ.BroadcastHeartbeat,
+  RDJ.BackgroundAudio,
   System.Services.Dbt,
   System.SyncObjs,
   {Vcl}
@@ -286,6 +287,15 @@ type
     function QueueCount(): Integer;
   end;
 
+  // The queued restart owns this token after the form has been destroyed.
+  // Cancelled is read and written only on the VCL thread.
+  TRdjBroadcastRecoveryLifetime = class(TInterfacedObject)
+  public
+
+    Cancelled: Boolean;
+  end;
+
+
   TfrmMediaServer = class(TForm)
     pnlCaption: TPanel;
     shpOnAirCap: TShape;
@@ -326,9 +336,12 @@ type
     shpBcLockedCap: TShape;
     lblLockBC: TLabel;
     lblBroadcastHealth: TLabel;
-    pnlCast: TPanel;
+    chkCastCtrl: TMPxpButton;
+    pnlCastCtrl: TPanel;
+    Bevel4: TBevel;
     lblCastDevice: TLabel;
     lblCastState: TLabel;
+    Bevel5: TBevel;
     cmbCastDevices: TComboBox;
     btnCastDiscover: TMPxpButton;
     btnCastLive: TMPxpButton;
@@ -336,8 +349,6 @@ type
     trkCastVolume: TMfTrackBar;
     chkCastMuted: TMPxpButton;
     StaticText1: TStaticText;
-    Bevel4: TBevel;
-    Bevel5: TBevel;
 
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -361,9 +372,16 @@ type
     procedure trkCastVolumeChange(Sender: TObject);
     procedure cmbCastDevicesChange(Sender: TObject);
     procedure memLogChange(Sender: TObject);
+    procedure chkCastCtrlClick(Sender: TObject);
 
   private
     { Private declarations }
+
+    FBackgroundAudio: TRdjBackgroundAudio;
+    procedure BackgroundAudioLog(const Text: string);
+    procedure UpdateBackgroundAudio();
+
+  private
 
     prStopWatch: TStopwatch;
     FTimerRunning: Boolean;
@@ -451,6 +469,11 @@ type
     FBroadcastMseMemLastLogTick: UInt64;
     FBroadcastMseRecorderRestartQueued: Integer;
     FBroadcastMseRecorderRestartCount: Integer;
+    FBroadcastRecoveryLifetime: IInterface;
+    FBroadcastRecoveryToken: TRdjBroadcastRecoveryLifetime;
+    FLastBroadcastRecoveryTick: UInt64;
+    FBroadcastRecoveryBlocked: Boolean;
+    FLastBroadcastRecoveryError: string;
     FActiveBroadcastVideoMediaType: IMFMediaType;
 
     FBroadcastHandoverLockAcquired: Boolean;
@@ -585,6 +608,7 @@ type
     function BroadcastMseKeepPatchedFragments(): Integer;
     procedure DumpBroadcastMseSegments();
     procedure QueueBroadcastMseRecorderRestart(const AReason: string);
+    procedure CheckBroadcastRecorderRecovery();
     procedure CheckBroadcastMseVideoSourceFlush();
     procedure LogBroadcastMseMemoryHeartbeat(const AWhere: string);
     function CurrentBroadcastMseGroupBytes(): Int64;
@@ -663,6 +687,7 @@ type
                              const pwfx: PWAVEFORMATEX);
 
     procedure RecoverBroadcastAfterAudioGraphRestart(const AReason: string);
+    procedure BindBackgroundAudio(AOutput: TRdjBackgroundAudio);
     function IsBroadcasting(): Boolean;
   end;
 
@@ -2128,6 +2153,7 @@ begin
   pnlRecorderCtrl.BringToFront();
   chkServerCtrl.Checked := False;
   chkRecorderCtrl.Checked := True;
+  chkCastCtrl.Checked := False;
 end;
 
 
@@ -2137,6 +2163,7 @@ begin
   pnlServerCtrl.BringToFront;
   chkServerCtrl.Checked := True;
   chkRecorderCtrl.Checked := False;
+  chkCastCtrl.Checked := False;
 end;
 
 
@@ -2751,6 +2778,16 @@ begin
 end;
 
 
+procedure TfrmMediaServer.chkCastCtrlClick(Sender: TObject);
+begin
+
+  pnlCastCtrl.BringToFront();
+  chkServerCtrl.Checked := False;
+  chkRecorderCtrl.Checked := False;
+  chkCastCtrl.Checked := True;
+end;
+
+
 procedure TfrmMediaServer.btnCastDiscoverClick(Sender: TObject);
 begin
 
@@ -2869,8 +2906,58 @@ begin
 end;
 
 
+procedure TfrmMediaServer.BindBackgroundAudio(AOutput: TRdjBackgroundAudio);
+begin
+
+  if (FBackgroundAudio = AOutput) then
+    Exit;
+
+  if Assigned(FBackgroundAudio) then
+    begin
+      FBackgroundAudio.OnLog := nil;
+      FBackgroundAudio.Stop();
+    end;
+
+  FBackgroundAudio := AOutput;
+
+  if Assigned(FBackgroundAudio) then
+    FBackgroundAudio.OnLog := BackgroundAudioLog;
+
+  UpdateBackgroundAudio();
+end;
+
+
+procedure TfrmMediaServer.BackgroundAudioLog(const Text: string);
+begin
+
+  RDJLog('Audio radio', Text);
+
+  if Assigned(memLog) then
+    begin
+      memLog.Lines.Append(FormatDateTime('hh:nn:ss  ', Now) + Text);
+
+      while (memLog.Lines.Count > 250) do
+        memLog.Lines.Delete(0);
+    end;
+end;
+
+
+procedure TfrmMediaServer.UpdateBackgroundAudio();
+begin
+
+  if Assigned(FBackgroundAudio) then
+    FBackgroundAudio.Update(FBroadcastPublishing and
+                            FBroadcastHandoverLockAcquired and
+                            (not FRecordVideoOnly) and
+                            (not FCastClosing));
+end;
+
+
 procedure TfrmMediaServer.FormCreate(Sender: TObject);
 begin
+
+  FBroadcastRecoveryToken := TRdjBroadcastRecoveryLifetime.Create();
+  FBroadcastRecoveryLifetime := FBroadcastRecoveryToken;
 
   RDJLog('MediaServer',
          'Media server form created.');
@@ -3001,6 +3088,9 @@ begin
 
   UpdateCastControls();
 
+  if Assigned(MainMDIFrm) then
+    BindBackgroundAudio(MainMDIFrm.BackgroundAudio);
+
   RegisterForDeviceNotification(Handle,
                                 FPtrDevNotify);
 end;
@@ -3015,6 +3105,11 @@ var
 begin
 
   tmrTime.Enabled := False;
+  BindBackgroundAudio(nil);
+
+  if Assigned(FBroadcastRecoveryToken) then
+    FBroadcastRecoveryToken.Cancelled := True;
+
   FreeAndNil(FUiTiming);
 
   RDJLog('Shutdown',
@@ -3329,14 +3424,40 @@ begin
       Exit;
     end;
 
+  if (FBroadcastMseRecorderRestartQueued <> 0) then
+    begin
+      SetBroadcastHealth('HEALTH: RECOVERING',
+                         HEALTH_WARNING_COLOR,
+                         'Broadcast encoder is restarting; browser playback will reconnect.');
+      Exit;
+    end;
+
+  if FBroadcastRecoveryBlocked then
+    begin
+      SetBroadcastHealth('HEALTH: ERROR',
+                         HEALTH_ERROR_COLOR,
+                         'Broadcast recorder cleanup failed; restart RDJ Pro.');
+      Exit;
+    end;
+
   RecorderActive := Assigned(FRdjProBroadcastMp4Recorder) and
                     FRdjProBroadcastMp4Recorder.Active;
 
   if not RecorderActive then
     begin
+      if (FLastBroadcastRecoveryError = '') then
+        begin
+          if Assigned(FRdjProBroadcastMp4Recorder) then
+            FLastBroadcastRecoveryError := Format('Broadcast recorder state=%d hr=0x%.8x; recovery pending.',
+                                                 [Ord(FRdjProBroadcastMp4Recorder.State),
+                                                  Cardinal(FRdjProBroadcastMp4Recorder.LastError)])
+          else
+            FLastBroadcastRecoveryError := 'Broadcast recorder missing; recovery pending.';
+        end;
+
       SetBroadcastHealth('HEALTH: ERROR',
                          HEALTH_ERROR_COLOR,
-                         'Broadcast health error: broadcast recorder is not active.');
+                         FLastBroadcastRecoveryError);
       Exit;
     end;
 
@@ -3423,7 +3544,12 @@ begin
     if FTimerRunning then
       UpdateTimeLabel();
 
-    if FRdjProBroadcasting and FRdjProBroadcastMp4Recorder.Active then
+    UpdateBackgroundAudio();
+    CheckBroadcastRecorderRecovery();
+
+    if FRdjProBroadcasting and
+       Assigned(FRdjProBroadcastMp4Recorder) and
+       FRdjProBroadcastMp4Recorder.Active then
       begin
         Started := GetTickCount64();
         QueueRdjProStaticVideoSample();
@@ -3448,12 +3574,14 @@ begin
         LogBroadcastMseMemoryHeartbeat('timer');
         FUiTiming.Finished('broadcast.memory-heartbeat', Started);
 
-        if FBroadcastPublishing then
-          begin
-            Started := GetTickCount64();
-            UpdateBroadcastHandoverHeartbeat();
-            FUiTiming.Finished('broadcast.server-heartbeat', Started);
-          end;
+      end;
+
+    // Keep ownership while the encoder is being replaced as well.
+    if FBroadcastPublishing then
+      begin
+        Started := GetTickCount64();
+        UpdateBroadcastHandoverHeartbeat();
+        FUiTiming.Finished('broadcast.server-heartbeat', Started);
       end;
 
     if not FBroadcastPublishing then
@@ -5710,6 +5838,9 @@ var
 
 begin
 
+  if Assigned(FBackgroundAudio) then
+    FBackgroundAudio.Stop();
+
   FreeAndNil(FHeartbeatWorker);
 
   if FBroadcastHandoverLockBypassed then
@@ -5795,6 +5926,7 @@ procedure TfrmMediaServer.DisableBroadcastPublishingAfterLockConflict(const AMes
 begin
 
   FBroadcastPublishing := False;
+  UpdateBackgroundAudio();
   FBroadcastHandoverLockAcquired := False;
   FBroadcastHandoverConnectionLost := False;
   FBroadcastHandoverOwnerId := '';
@@ -6837,15 +6969,65 @@ begin
 end;
 
 
+procedure TfrmMediaServer.CheckBroadcastRecorderRecovery();
+var
+  NowTick: UInt64;
+  Reason: string;
+
+begin
+
+  if FCastClosing or FBroadcastRecoveryBlocked or FPendingBroadcastRecording or
+     (not (FBroadcastPublishing or FCastProducerRequested)) or
+     (FBroadcastMseRecorderRestartQueued <> 0) then
+    Exit;
+
+  if FBroadcastPublishing and (not FBroadcastHandoverLockAcquired) then
+    Exit;
+
+  NowTick := GetTickCount64();
+
+  if (FLastBroadcastRecoveryTick <> 0) and
+     ((NowTick - FLastBroadcastRecoveryTick) < 30000) then
+    Exit;
+
+  Reason := '';
+
+  if not Assigned(FRdjProBroadcastMp4Recorder) then
+    Reason := 'recorder is missing'
+  else if (not FRdjProBroadcasting) or
+          (not FRdjProBroadcastMp4Recorder.Active) or
+          (not FRdjProBroadcastMp4Recorder.WorkerRunning) then
+    Reason := Format('recorder state=%d hr=0x%.8x workerRunning=%s',
+                     [Ord(FRdjProBroadcastMp4Recorder.State),
+                      Cardinal(FRdjProBroadcastMp4Recorder.LastError),
+                      System.SysUtils.BoolToStr(FRdjProBroadcastMp4Recorder.WorkerRunning, True)])
+  else if FRdjProStaticImage and
+          (FLastBroadcastPublicSegmentTick <> 0) and
+          ((NowTick - FLastBroadcastPublicSegmentTick) >= 30000) then
+    Reason := 'static-image broadcast has not produced a fragment for 30 seconds';
+
+  if (Reason <> '') then
+    QueueBroadcastMseRecorderRestart(Reason);
+end;
+
+
 procedure TfrmMediaServer.QueueBroadcastMseRecorderRestart(const AReason: string);
 var
   OldRecorder: TRdjProFMp4Recorder;
   RestartThread: TThread;
   Reason: string;
   RestartNo: Integer;
+  Lifetime: IInterface;
+  Token: TRdjBroadcastRecoveryLifetime;
 
 begin
 
+  if FCastClosing or FBroadcastRecoveryBlocked or
+     (not (FBroadcastPublishing or FCastProducerRequested)) then
+    Exit;
+
+  Lifetime := FBroadcastRecoveryLifetime;
+  Token := FBroadcastRecoveryToken;
   Reason := Trim(AReason);
 
   if (Reason = '') then
@@ -6855,6 +7037,11 @@ begin
                                   1,
                                   0) <> 0) then
     Exit;
+
+  FLastBroadcastRecoveryTick := GetTickCount64();
+  SetBroadcastHealth('HEALTH: RECOVERING',
+                     HEALTH_WARNING_COLOR,
+                     'Restarting broadcast encoder: ' + Reason);
 
   Inc(FBroadcastMseRecorderRestartCount);
   RestartNo := FBroadcastMseRecorderRestartCount;
@@ -6877,20 +7064,39 @@ begin
     var
       StopHr: HRESULT;
       RestartUiProc: TThreadProcedure;
+      CleanupError: string;
 
     begin
 
       StopHr := S_OK;
+      CleanupError := '';
 
-      if Assigned(OldRecorder) then
-        begin
-          StopHr := OldRecorder.StopRecording();
-          if FAILED(StopHr) then
-            OutputDebugString(PChar(Format('TfrmMediaServer.MSE recorder restart: StopRecording failed hr=0x%.8x; freeing recorder via destructor fallback',
-                                            [Cardinal(StopHr)])));
+      try
+        if Assigned(OldRecorder) then
+          begin
+            try
+              try
+                StopHr := OldRecorder.StopRecording();
+              except
+                on E: Exception do
+                  begin
+                    StopHr := E_FAIL;
+                    OutputDebugString(PChar('Broadcast recorder StopRecording exception: ' +
+                                           E.ClassName + ': ' + E.Message));
+                  end;
+              end;
 
-          OldRecorder.Free();
-        end;
+              if FAILED(StopHr) then
+                OutputDebugString(PChar(Format('TfrmMediaServer.MSE recorder restart: StopRecording failed hr=0x%.8x; freeing recorder via destructor fallback',
+                                               [Cardinal(StopHr)])));
+            finally
+              OldRecorder.Free();
+            end;
+          end;
+      except
+        on E: Exception do
+          CleanupError := E.ClassName + ': ' + E.Message;
+      end;
 
       RestartUiProc := procedure
                        var
@@ -6902,7 +7108,12 @@ begin
 
                        begin
 
+                         // Check the captured token before accessing Self.
+                         if (Lifetime = nil) or Token.Cancelled then
+                           Exit;
+
                          RestartOk := False;
+                         Hr := E_FAIL;
                          NewRecorder := nil;
                          RestartVideoType := nil;
 
@@ -6913,11 +7124,29 @@ begin
 
                          try
 
-                           if FAILED(StopHr) then
+                           if FCastClosing or
+                              (not (FBroadcastPublishing or FCastProducerRequested)) then
                              Exit;
 
-                           if not chkBroadcast.Down then
-                             Exit;
+                           if (CleanupError <> '') then
+                             begin
+                               // Do not create another writer when destruction
+                               // could not establish that the old worker ended.
+                               FBroadcastRecoveryBlocked := True;
+                               SetBroadcastHealth('HEALTH: ERROR',
+                                                  HEALTH_ERROR_COLOR,
+                                                  'Broadcast recorder cleanup failed; restart RDJ Pro. ' + CleanupError);
+                               Exit;
+                             end;
+
+                           // Finalize may fail after releasing the old sink.
+                           // Its destructor has now joined the worker, so a
+                           // fresh encoder can be created safely.
+                           if FAILED(StopHr) then
+                             SetBroadcastHealth('HEALTH: RECOVERING',
+                                                HEALTH_WARNING_COLOR,
+                                                Format('Old recorder closed with hr=0x%.8x; starting a new session.',
+                                                       [Cardinal(StopHr)]));
 
                            CleanupBroadcastMseArtifactsOnStop();
                            ResetBroadcastMseDebugDump();
@@ -7012,6 +7241,7 @@ begin
                              end;
 
                            RestartOk := True;
+                           FLastBroadcastRecoveryError := '';
 
                            OutputDebugString(PChar(Format('TfrmMediaServer.MSE recorder restart completed: count=%d sessionId=%s reason=%s',
                                                           [RestartNo,
@@ -7027,11 +7257,24 @@ begin
                            if not RestartOk then
                              begin
                                FRdjProBroadcasting := False;
-                               chkBroadcast.Checked := False;
+                               chkBroadcast.Checked := FBroadcastPublishing;
                                chkRdjProCamera.Enabled := not FRecordingRdjPro;
                                chkRecordVideoOnly.Enabled := not FRecordingRdjPro;
                                chkRdjProStaticImage.Enabled := not FRecordingRdjPro;
                                UpdateOnAirLamp(False);
+
+                               FLastBroadcastRecoveryTick := GetTickCount64();
+
+                               if (not FBroadcastRecoveryBlocked) and
+                                  (FBroadcastPublishing or FCastProducerRequested) then
+                                 begin
+                                   FLastBroadcastRecoveryError := Format('Broadcast restart failed: hr=0x%.8x. Retrying in 30 seconds. %s',
+                                                                         [Cardinal(Hr), CleanupError]);
+                                   SetBroadcastHealth('HEALTH: ERROR',
+                                                      HEALTH_ERROR_COLOR,
+                                                      FLastBroadcastRecoveryError);
+                                 end;
+
                                OutputDebugString(PChar(Format(
                                  'TfrmMediaServer.MSE recorder restart failed: count=%d reason=%s',
                                  [RestartNo,
@@ -7304,8 +7547,12 @@ begin
   Result := False;
   VideoType := nil;
 
-  if not Assigned(FRdjProBroadcastMp4Recorder) then
+  if FBroadcastRecoveryBlocked or
+     (FBroadcastMseRecorderRestartQueued <> 0) then
     Exit;
+
+  if not Assigned(FRdjProBroadcastMp4Recorder) then
+    FRdjProBroadcastMp4Recorder := TRdjProFMp4Recorder.Create();
 
   if FRdjProBroadcasting and FRdjProBroadcastMp4Recorder.Active then
     begin
@@ -7500,9 +7747,16 @@ begin
 
   WasPublishing := FBroadcastPublishing;
   FBroadcastPublishing := False;
+  UpdateBackgroundAudio();
 
   if not Assigned(FRdjProBroadcastMp4Recorder) then
     begin
+      FRdjProBroadcasting := False;
+      FPendingBroadcastRecording := False;
+      FPendingBroadcastFileName := '';
+      chkBroadcast.Checked := False;
+      UpdateOnAirLamp(False);
+
       if WasPublishing then
         ReleaseBroadcastHandoverLock(True);
 

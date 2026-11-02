@@ -265,6 +265,7 @@ type
     procedure DebugLogCounters(const AWhere: string);
 
     function GetActive(): Boolean;
+    function GetWorkerRunning(): Boolean;
     procedure SetState(const AState: TRdjProFmp4RecorderState;
                        const AError: HRESULT = S_OK);
 
@@ -321,6 +322,8 @@ type
     procedure Reset();
 
     property Active: Boolean read GetActive;
+    // Queried by the owner thread; it owns the worker object lifetime.
+    property WorkerRunning: Boolean read GetWorkerRunning;
     property FileName: string read FFileName;
     property State: TRdjProFmp4RecorderState read FState;
     property LastError: HRESULT read FLastError;
@@ -2397,6 +2400,14 @@ begin
 end;
 
 
+function TRdjProFmp4Recorder.GetWorkerRunning(): Boolean;
+begin
+
+  Result := Assigned(FWorker) and
+            (WaitForSingleObject(FWorker.Handle, 0) = WAIT_TIMEOUT);
+end;
+
+
 function TRdjProFmp4Recorder.GetActive(): Boolean;
 begin
   Result := FState in [mrsStarting,
@@ -2906,7 +2917,16 @@ begin
     procedure
     begin
 
-      WorkerExecute();
+      try
+        WorkerExecute();
+      except
+        on E: Exception do
+          begin
+            SetState(mrsError, E_FAIL);
+            OutputDebugString(PChar('Broadcast recorder worker exception: ' +
+                                   E.ClassName + ': ' + E.Message));
+          end;
+      end;
     end);
 
   FWorker.FreeOnTerminate := False;

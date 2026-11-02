@@ -29,9 +29,6 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     Color = 5850948
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = -1
-    ExplicitWidth = 809
-    ExplicitHeight = 508
     object AddressLabel: TLabel
       Left = 54
       Top = 31
@@ -214,8 +211,6 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       ReadOnly = True
       ScrollBars = ssVertical
       TabOrder = 7
-      ExplicitTop = 355
-      ExplicitWidth = 807
     end
     object btnSelectInput: TDnButton
       Tag = 7
@@ -327,18 +322,18 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     Color = 4865081
     ParentBackground = False
     TabOrder = 1
-    ExplicitLeft = 1
+    ExplicitLeft = -1
     object Bevel1: TBevel
       Left = 6
-      Top = 31
+      Top = 24
       Width = 124
-      Height = 446
+      Height = 453
     end
     object Bevel7: TBevel
       Left = 136
-      Top = 31
+      Top = 24
       Width = 287
-      Height = 446
+      Height = 453
     end
     object Bevel5: TBevel
       Left = 429
@@ -372,7 +367,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     object lblElapsed: TLabel
       Left = 449
       Top = 451
-      Width = 110
+      Width = 101
       Height = 17
       Margins.Left = 2
       Margins.Top = 2
@@ -403,7 +398,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object lblVol: TLabel
       Left = 16
-      Top = 23
+      Top = 15
       Width = 58
       Height = 16
       Hint = 'Channel volume'
@@ -457,13 +452,13 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object Bevel3: TBevel
       Left = 429
-      Top = 31
+      Top = 24
       Width = 160
-      Height = 71
+      Height = 78
     end
     object lblBalance: TLabel
       Left = 230
-      Top = 406
+      Top = 451
       Width = 101
       Height = 17
       Alignment = taCenter
@@ -478,7 +473,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object Label2: TLabel
       Left = 151
-      Top = 409
+      Top = 454
       Width = 47
       Height = 13
       Hint = 'Channel volume'
@@ -501,7 +496,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object Label3: TLabel
       Left = 363
-      Top = 409
+      Top = 454
       Width = 47
       Height = 13
       Hint = 'Channel volume'
@@ -523,15 +518,14 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Layout = tlCenter
     end
     object lblBass: TLabel
-      Left = 205
-      Top = 127
-      Width = 147
+      Left = 167
+      Top = 42
+      Width = 26
       Height = 17
       Alignment = taCenter
-      AutoSize = False
-      Caption = 'Bass: -- dB'
+      Caption = '0 dB'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
+      Font.Color = clAqua
       Font.Height = -13
       Font.Name = 'Segoe UI'
       Font.Style = []
@@ -539,15 +533,14 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       WordWrap = True
     end
     object lblTreble: TLabel
-      Left = 198
-      Top = 224
-      Width = 161
+      Left = 264
+      Top = 40
+      Width = 26
       Height = 17
       Alignment = taCenter
-      AutoSize = False
-      Caption = 'Treble: -- dB'
+      Caption = '0 dB'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
+      Font.Color = clAqua
       Font.Height = -13
       Font.Name = 'Segoe UI'
       Font.Style = []
@@ -555,10 +548,10 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       WordWrap = True
     end
     object lblToneStatus: TLabel
-      Left = 149
-      Top = 254
-      Width = 264
-      Height = 34
+      Left = 147
+      Top = 286
+      Width = 268
+      Height = 36
       Alignment = taCenter
       AutoSize = False
       Caption = 'Reading receiver tone settings ...'
@@ -572,7 +565,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object Label4: TLabel
       Left = 147
-      Top = 23
+      Top = 15
       Width = 112
       Height = 16
       Margins.Left = 2
@@ -595,9 +588,10 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object Label5: TLabel
       Left = 440
-      Top = 23
+      Top = 15
       Width = 132
       Height = 16
+      Hint = 'RDJ PRo Masterdeck output.'
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
@@ -616,9 +610,39 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Transparent = False
       Layout = tlCenter
     end
+    object Label6: TLabel
+      Left = 167
+      Top = 252
+      Width = 26
+      Height = 17
+      Alignment = taCenter
+      Caption = 'Bass'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+    end
+    object Label7: TLabel
+      Left = 261
+      Top = 252
+      Width = 36
+      Height = 17
+      Alignment = taCenter
+      Caption = 'Treble'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+    end
     object tbBalance: TDnTrackBar
       Left = 144
-      Top = 364
+      Top = 409
       Width = 271
       Height = 40
       Hint = 
@@ -653,29 +677,31 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       OnDblClick = BalanceDblClick
     end
     object tbBass: TDnTrackBar
-      Left = 149
-      Top = 77
-      Width = 259
-      Height = 44
+      Left = 157
+      Top = 65
+      Width = 47
+      Height = 192
       Hint = 'Bass -6 to +6 dB. Double-click to reset to 0 dB.'
       TabOrder = 5
       Color = 4865081
       ParentColor = False
       Minimum = -6
       Maximum = 6
-      ThumbWidth = 60
-      ThumbHeight = 40
+      Orientation = soVertical
+      IncreaseToward = itUp
+      ThumbWidth = 50
+      ThumbHeight = 60
       TransparentColor = clBlack
-      ThumbPictureHorz.Data = {
-        07544269746D617012010000424D120100000000000076000000280000001300
-        00000D00000001000400000000009C000000330B0000330B0000100000001000
-        000000000000959595009B9B9B00A2A2A200B9B9B900C4C4C400FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00055555554445555555000000531425454045452413500000531425454045
-        4524135000005314254540454524135000005314254540454524135000005314
-        2545404545241350000053142545404545241350000053142545404545241350
-        0000531425454045452413500000531425454045452413500000531425454045
-        452413500000531425454045452413500000055555554445555555000000}
+      ThumbPictureVert.Data = {
+        07544269746D61700E010000424D0E0100000000000076000000280000000D00
+        000013000000010004000000000098000000330B0000330B0000100000001000
+        000000000000959595009B9B9B00A2A2A200B9B9B900BFBFBF00C4C4C400C9C9
+        C900CECECE00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00044444444444000048888888888840004777777777774000455555555555
+        4000477777777777400045555555555540004777777777774000455555555555
+        4000477777777777500050000000000050005444444444445000555555555555
+        5000544444444444500055555555555550005222222222225000544444444444
+        5000511111111111500053333333333350000555555555550000}
       ShowTicks = True
       TickCount = 50
       DbFloor = -50.000000000000000000
@@ -683,46 +709,49 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       TickColor = clAqua
       TickLabelsVisible = False
       TickPlacementH = tphBoth
+      TickPlacementV = tpvBoth
       OnChange = ToneChange
       OnDblClick = ToneDblClick
     end
     object tbTreble: TDnTrackBar
-      Left = 149
-      Top = 176
-      Width = 259
-      Height = 42
+      Left = 255
+      Top = 63
+      Width = 47
+      Height = 192
       Hint = 'Treble -6 to +6 dB. Double-click to reset to 0 dB.'
       TabOrder = 2
       Color = 4865081
       ParentColor = False
       Minimum = -6
       Maximum = 6
-      ThumbWidth = 60
-      ThumbHeight = 40
+      Orientation = soVertical
+      IncreaseToward = itUp
+      ThumbWidth = 50
+      ThumbHeight = 60
       TransparentColor = clBlack
-      ThumbPictureHorz.Data = {
-        07544269746D617012010000424D120100000000000076000000280000001300
-        00000D00000001000400000000009C000000330B0000330B0000100000001000
-        000000000000959595009B9B9B00A2A2A200B9B9B900C4C4C400FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00055555554445555555000000531425454045452413500000531425454045
-        4524135000005314254540454524135000005314254540454524135000005314
-        2545404545241350000053142545404545241350000053142545404545241350
-        0000531425454045452413500000531425454045452413500000531425454045
-        452413500000531425454045452413500000055555554445555555000000}
+      ThumbPictureVert.Data = {
+        07544269746D61700E010000424D0E0100000000000076000000280000000D00
+        000013000000010004000000000098000000330B0000330B0000100000001000
+        000000000000959595009B9B9B00A2A2A200B9B9B900BFBFBF00C4C4C400C9C9
+        C900CECECE00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00044444444444000048888888888840004777777777774000455555555555
+        4000477777777777400045555555555540004777777777774000455555555555
+        4000477777777777500050000000000050005444444444445000555555555555
+        5000544444444444500055555555555550005222222222225000544444444444
+        5000511111111111500053333333333350000555555555550000}
       ShowTicks = True
       TickCount = 50
       DbFloor = -50.000000000000000000
       DbCeil = 6.000000000000000000
       TickColor = clAqua
       TickLabelsVisible = False
-      TickPlacementH = tphBoth
+      TickPlacementV = tpvBoth
       OnChange = ToneChange
       OnDblClick = ToneDblClick
     end
     object btnTone: TDnButton
-      Left = 243
-      Top = 294
+      Left = 249
+      Top = 334
       Width = 64
       Height = 50
       Hint = 'Enable Bass/Treble'
@@ -835,7 +864,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object btnStreamRdjAudio: TDnButton
       Left = 439
-      Top = 44
+      Top = 40
       Width = 140
       Height = 50
       Hint = 'Stream RDJ Masterdeck output to the receiver.'
@@ -949,9 +978,9 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object tbVolume: TDnTrackBar
       Left = 45
-      Top = 59
+      Top = 65
       Width = 47
-      Height = 346
+      Height = 340
       Hint = 'Main volume: receiver scale 0.0 to 98.0, in steps of 0.5'
       TabOrder = 0
       Color = 4865081
@@ -1337,7 +1366,6 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     ShowHint = True
     TabOrder = 2
     OnMouseDown = Panel3MouseDown
-    ExplicitTop = 2
     object imgLogo: TImage
       Left = 0
       Top = 0
@@ -1451,8 +1479,6 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Style = bsModern
       Transparent = True
       OnClick = SettingsClick
-      ExplicitLeft = 222
-      ExplicitHeight = 33
     end
     object btnPlayer: TDnButton
       Left = 105
@@ -1487,7 +1513,6 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Style = bsModern
       Transparent = True
       OnClick = PlayerClick
-      ExplicitHeight = 33
     end
     object btnMinimize: TMPxpButton
       Left = 473
@@ -1540,7 +1565,6 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Style = bsModern
       Transparent = True
       OnClick = btnMinimizeClick
-      ExplicitLeft = 542
     end
     object btnExit: TMPxpButton
       Left = 530
@@ -1593,8 +1617,6 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Style = bsModern
       Transparent = True
       OnClick = btnExitClick
-      ExplicitLeft = 1811
-      ExplicitHeight = 41
     end
   end
   object VolumeTimer: TTimer

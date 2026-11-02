@@ -12,7 +12,7 @@ is useful when the server also hosts other websites or needs more proxy options.
 
 The setup page keeps the existing **Caddy / json settings** name for
 compatibility. The same fields accept FxServe paths. See
-[RDJ Web Server Setup](https://github.com/FactoryXCode/MfPack/blob/main/Proxy%20Servers/FxServe/RDJ-Web-Server-Setup.md) for the values.
+[RDJ Web Server Setup](../../FxServe/RDJ-Web-Server-Setup.md) for the values.
 
 ## Main window
 

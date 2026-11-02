@@ -68,7 +68,7 @@ Caddy is launched through **Caddy console**; this package does not pretend that
   
 ## RDJ Pro HEOS receiver output
 
-Version **4.0.0.4** includes RDJ Pro's integrated HEOS Remote for Denon/Marantz
+Version **4.0.0.5** includes RDJ Pro's integrated HEOS Remote for Denon/Marantz
 HEOS devices in both 32-bit and 64-bit releases. It is part of RDJ Pro; there
 is no separate installer component or Delphi package to install on the target PC.
 
@@ -110,6 +110,24 @@ The installed `Docs\RDJPro` folder contains `HEOS-INTEGRATION.md`,
 operation; the source setup guide's Delphi package instructions apply only when
 building from source. End users need Windows Media Foundation with AAC encoding
 available, and no Delphi runtime packages or standalone HEOS executable.
+
+## Background AAC and broadcast recovery (4.0.0.5)
+
+RDJ Pro automatically supplies background AAC while its public broadcast is
+active. The default direct audio address is
+`http://<RDJ-PC-IP>:8098/radio/live.aac`; the browser/PWA continues to use
+fragmented MP4. No extra audio-radio controls are required. Master volume and
+balance affect both outgoing audio paths; receiver volume is independent.
+
+For public HTTPS audio, configure FxServe's INI `[Radio]` section with
+`Enabled=True`, `Host=<RDJ-PC-IP>` and `Port=8098`. FxServe then publishes
+`https://<your-hostname>/radio/live.aac`. Setup preserves existing INIs and does
+not automatically enable this upstream. Allow the AAC listener through the
+appropriate firewall rule when FxServe runs on another PC. See the installed
+`Docs\RDJPro\AUDIO-RADIO.md` for settings and lifecycle details.
+
+This release also includes RDJ Pro's broadcast-recorder recovery changes and
+FxServe's corrected WAN response handling for continuous AAC streams.
 
 ## Local PC, server and split installations
 

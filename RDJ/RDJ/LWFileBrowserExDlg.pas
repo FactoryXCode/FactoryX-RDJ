@@ -1,3 +1,63 @@
+// FactoryX
+//
+// Copyright: (c) FactoryX. All rights reserved.
+//
+// Project: MfPack - MediaFoundation
+// Project location: https://sourceforge.net/projects/MFPack
+//                   https://github.com/FactoryXCode/MfPack
+// Module: LWFileBrowserExDlg.pas
+// Kind: Pascal Unit
+// Release date: 18-11-2022
+// Language: ENU
+//
+// Revision Version: 4.0.0
+//
+// Description: A very lightweight filebrowser dialog with network support.
+//
+// Organisation: FactoryX
+// Initiator(s): Ciaran
+// Contributor(s): Ciaran, Tony (maXcomX)
+//
+//------------------------------------------------------------------------------
+// CHANGE LOG
+// Date       Person              Reason
+// ---------- ------------------- ----------------------------------------------
+// 24/08/2026 All                 Moby release  SDK 10.0.28000.2705  (Windows 11)
+// 02/11/2026 Carmen              Changed default disk names, to user disk names.
+//------------------------------------------------------------------------------
+//
+// Remarks: Requires Windows 10 (2H20) or later.
+//
+// Related objects: -
+// Related projects: MfPackX400/Samples/MFCaptureEngineVideoCapture
+//
+// Compiler version: 23 up to 35
+// SDK version: 10.0.28000.2705
+//
+// Todo: -
+//
+//==============================================================================
+// Source: -
+//==============================================================================
+//
+// LICENSE
+//
+// The contents of this file are subject to the Mozilla Public License
+// Version 2.0 (the "License"); you may not use this file except in
+// compliance with the License. You may obtain a copy of the License at
+// https://www.mozilla.org/en-US/MPL/2.0/
+//
+// Software distributed under the License is distributed on an "AS IS"
+// basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+// License for the specific language governing rights and limitations
+// under the License.
+//
+// Non commercial users may distribute this sourcecode provided that this
+// header is included in full at the top of the file.
+// Commercial users are not allowed to distribute this sourcecode as part of
+// their product.
+//
+//==============================================================================
 unit LWFileBrowserExDlg;
 
 interface
@@ -531,6 +591,11 @@ var
   Root: string;
   DriveType: UINT;
   DisplayText: string;
+  VolumeName: array[0..MAX_PATH] of Char;
+  MaximumComponentLength: DWORD;
+  FileSystemFlags: DWORD;
+  PreviousErrorMode: DWORD;
+  IgnoredErrorMode: DWORD;
 
 begin
 
@@ -563,6 +628,22 @@ begin
         else
           DisplayText := Root + '  Drive';
         end;
+
+        // Keep the drive root first: navigation extracts it from this text.
+        // Do not probe disconnected network drives while opening the dialog.
+        if (DriveType in [DRIVE_FIXED, DRIVE_REMOVABLE, DRIVE_CDROM, DRIVE_RAMDISK]) and
+           SetThreadErrorMode(SEM_FAILCRITICALERRORS, PreviousErrorMode) then
+          try
+            FillChar(VolumeName, SizeOf(VolumeName), 0);
+
+            if GetVolumeInformation(PChar(Root), @VolumeName[0], Length(VolumeName),
+                                      nil, MaximumComponentLength, FileSystemFlags, nil, 0) and
+               (VolumeName[0] <> #0) then
+              DisplayText := Root + '  ' + string(PChar(@VolumeName[0]));
+          finally
+            // Empty/offline media must not display a Windows insert-disk prompt.
+            SetThreadErrorMode(PreviousErrorMode, IgnoredErrorMode);
+          end;
 
         cbxLocations.Items.Add(DisplayText);
       end;

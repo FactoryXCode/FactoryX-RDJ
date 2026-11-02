@@ -1,6 +1,6 @@
 ﻿// FactoryX
 //
-// Copyright: � FactoryX. All rights reserved.
+// Copyright: (c) FactoryX. All rights reserved.
 //
 // Project: MfPack - MediaFoundation
 // Project location: https://sourceforge.net/projects/MFPack
@@ -23,6 +23,7 @@
 // Date       Person              Reason
 // ---------- ------------------- ----------------------------------------------
 // 24/08/2026 All                 Moby release  SDK 10.0.28000.2705  (Windows 11)
+// 02/11/2026 Carmen              Changed default disk names, to user disk names.
 //------------------------------------------------------------------------------
 //
 // Remarks: Requires Windows 10 (2H20) or later.
@@ -699,6 +700,11 @@ var
   Root: string;
   DriveType: UINT;
   DisplayText: string;
+  VolumeName: array[0..MAX_PATH] of Char;
+  MaximumComponentLength: DWORD;
+  FileSystemFlags: DWORD;
+  PreviousErrorMode: DWORD;
+  IgnoredErrorMode: DWORD;
 
 begin
 
@@ -731,6 +737,22 @@ begin
         else
           DisplayText := Root + '  Drive';
         end;
+
+        // Keep the drive root first: navigation extracts it from this text.
+        // Do not probe disconnected network drives while opening the dialog.
+        if (DriveType in [DRIVE_FIXED, DRIVE_REMOVABLE, DRIVE_CDROM, DRIVE_RAMDISK]) and
+           SetThreadErrorMode(SEM_FAILCRITICALERRORS, PreviousErrorMode) then
+          try
+            FillChar(VolumeName, SizeOf(VolumeName), 0);
+
+            if GetVolumeInformation(PChar(Root), @VolumeName[0], Length(VolumeName),
+                                      nil, MaximumComponentLength, FileSystemFlags, nil, 0) and
+               (VolumeName[0] <> #0) then
+              DisplayText := Root + '  ' + string(PChar(@VolumeName[0]));
+          finally
+            // Empty/offline media must not display a Windows insert-disk prompt.
+            SetThreadErrorMode(PreviousErrorMode, IgnoredErrorMode);
+          end;
 
         cbxLocations.Items.Add(DisplayText);
       end;
