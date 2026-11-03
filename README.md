@@ -38,7 +38,7 @@ It includes safeguards for long-running broadcasts, such as bounded queues,
 fragment cleanup, FxServe mirroring, sleep prevention options, and clean shutdown handling.  
 RDJ Pro supports casting to Cromecast devices on your local network using the MfPack Cast V2 protocols. 
 
-RDJ Pro also streams the live Masterdeck mix to Denon/Marantz HEOS receivers.
+RDJ Pro also streams the live Masterdeck mix to Denon/Marantz HEOS devices.
 Open **HEOS** and toggle **Stream RDJ** to start or stop. RDJ Master Volume and
 balance affect the outgoing audio; HEOS Remote volume independently sets the
 receiver's listening level. See the [HEOS integration notes](<RDJ/RDJ Pro/HEOS-INTEGRATION.md>).
@@ -69,7 +69,7 @@ Those you can buy from Microsoft Store or download elsewhere.
 
 ## DJSuite
 
-Current installer: [FactoryX-DJSuite-4.0.0.4-Setup.exe](Binaries/Installer/FactoryX-DJSuite-4.0.0.4-Setup.exe), including the updated RDJ Pro HEOS integration and guides.
+Current installer: [FactoryX-DJSuite-4.0.0.5-Setup.exe](Binaries/Installer/FactoryX-DJSuite-4.0.0.5-Setup.exe), including the updated RDJ Pro HEOS integration and guides.
 
 DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
 the optional tools needed to broadcast, serve and record a radio station.
@@ -106,4 +106,10 @@ See the [Setup guide](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/Bin
 
 ---
   
-**(c) FactoryX. All rights reserved.**
+Project: Media Foundation - MFRDJ  
+Project location:  
+https://github.com/FactoryXCode/FactoryX-RDJ  
+https://sourceforge.net/projects/MFPack  
+First release date: 08/05/2026  
+Final release date: 03/11/2026  
+Copyright © FactoryX. All rights reserved.
