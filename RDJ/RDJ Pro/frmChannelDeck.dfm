@@ -148,7 +148,7 @@ object frmChannelDeck: TfrmChannelDeck
     end
     object lblVolumePerc: TLabel
       Left = 65
-      Top = 18
+      Top = 17
       Width = 50
       Height = 15
       Alignment = taCenter
@@ -272,7 +272,7 @@ object frmChannelDeck: TfrmChannelDeck
       ParentFont = False
     end
     object Label3: TLabel
-      Left = 192
+      Left = 194
       Top = 460
       Width = 23
       Height = 14
@@ -291,7 +291,7 @@ object frmChannelDeck: TfrmChannelDeck
       Layout = tlCenter
     end
     object Label4: TLabel
-      Left = 191
+      Left = 193
       Top = 305
       Width = 24
       Height = 14
@@ -310,7 +310,7 @@ object frmChannelDeck: TfrmChannelDeck
       Layout = tlCenter
     end
     object Label5: TLabel
-      Left = 199
+      Left = 201
       Top = 152
       Width = 9
       Height = 14
@@ -409,7 +409,7 @@ object frmChannelDeck: TfrmChannelDeck
       Layout = tlCenter
     end
     object lblInputGainValue: TLabel
-      Left = 5
+      Left = 18
       Top = 331
       Width = 32
       Height = 15
@@ -481,8 +481,8 @@ object frmChannelDeck: TfrmChannelDeck
       OnDblClick = tbInputGainDblClick
     end
     object tbVolume: TMfTrackBar
-      Left = 69
-      Top = 36
+      Left = 70
+      Top = 33
       Width = 40
       Height = 443
       Margins.Left = 0
@@ -593,7 +593,7 @@ object frmChannelDeck: TfrmChannelDeck
       OnDblClick = tbBalanceDblClick
     end
     object tbEqQ: TMfTrackBar
-      Left = 184
+      Left = 186
       Top = 17
       Width = 39
       Height = 133
@@ -631,7 +631,7 @@ object frmChannelDeck: TfrmChannelDeck
       OnDblClick = tbEqQDblClick
     end
     object tbEqCenterFreqHz: TMfTrackBar
-      Left = 185
+      Left = 187
       Top = 171
       Width = 39
       Height = 133
@@ -670,7 +670,7 @@ object frmChannelDeck: TfrmChannelDeck
       OnDblClick = tbEqCenterFreqHzDblClick
     end
     object tbEqGainDb: TMfTrackBar
-      Left = 185
+      Left = 187
       Top = 325
       Width = 39
       Height = 133

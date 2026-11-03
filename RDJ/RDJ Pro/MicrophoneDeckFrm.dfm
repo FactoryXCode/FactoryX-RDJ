@@ -282,7 +282,7 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
       Layout = tlCenter
     end
     object lblGain: TLabel
-      Left = 16
+      Left = 19
       Top = 484
       Width = 26
       Height = 14
@@ -326,7 +326,7 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
       Layout = tlCenter
     end
     object lblInputGainValue: TLabel
-      Left = 15
+      Left = 17
       Top = 324
       Width = 32
       Height = 15
@@ -538,7 +538,7 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
       OnDblClick = tbEqGainDbDblClick
     end
     object tbInputGain: TMfTrackBar
-      Left = 7
+      Left = 10
       Top = 342
       Width = 46
       Height = 137
@@ -587,7 +587,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -741,7 +740,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -856,7 +854,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -2256,7 +2253,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
       ColorWhenDown = 20480
       ColorWhenUp = clGreen
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 0
       ImageIndexChecked = 0
       ShowFocusRect = False
@@ -2289,7 +2285,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
       ColorWhenDown = clMaroon
       ColorWhenUp = clRed
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 0
       ImageIndexChecked = 0
       ShowFocusRect = False
@@ -2336,7 +2331,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
         Color = 6899524
         ColorWhenDown = 10045252
         ColorWhenUp = 6899524
-        Down = True
         Behavior = bbCheckBox
         Checked = True
         GlyphUnchecked.Data = {
@@ -2455,7 +2449,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
         ColorWhenDown = 10045252
         ColorWhenUp = 6899524
         Behavior = bbCheckBox
-        Checked = False
         GlyphUnchecked.Data = {
           C6040000424DC60400000000000036040000280000000C0000000C0000000100
           08000000000090000000230B0000230B00000001000000010000000000000000
@@ -2572,7 +2565,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
         ColorWhenDown = 10045252
         ColorWhenUp = 6899524
         Behavior = bbCheckBox
-        Checked = False
         GlyphUnchecked.Data = {
           C6040000424DC60400000000000036040000280000000C0000000C0000000100
           08000000000090000000230B0000230B00000001000000010000000000000000
@@ -2689,7 +2681,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -2803,7 +2794,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
     Color = 4865081
     ParentBackground = False
     TabOrder = 2
-    ExplicitLeft = -8
     object lblCaption: TLabel
       Left = 8
       Top = 10
@@ -2869,7 +2859,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
     ColorWhenDown = 10045252
     ColorWhenUp = 6899524
     Behavior = bbCheckBox
-    Checked = False
     GlyphUnchecked.Data = {
       C6040000424DC60400000000000036040000280000000C0000000C0000000100
       08000000000090000000230B0000230B00000001000000010000000000000000
@@ -2984,7 +2973,6 @@ object frmMicrophoneDeck: TfrmMicrophoneDeck
     ColorWhenDown = 10045252
     ColorWhenUp = 6899524
     Behavior = bbCheckBox
-    Checked = False
     GlyphUnchecked.Data = {
       C6040000424DC60400000000000036040000280000000C0000000C0000000100
       08000000000090000000230B0000230B00000001000000010000000000000000

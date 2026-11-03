@@ -36,7 +36,7 @@ The current RDJ engine uses 44100 Hz stereo float PCM; the sender also accepts 4
 
 The separate window uses the TDn controls and glyphs from `FactoryX-HEOS-CLI/AVR/Samples/HEOSRemote`. It contains the Masterdeck stream toggle, elapsed streaming time, receiver discovery and connection settings, zone power, volume, balance, input, mute and bass/treble. All controls are designed in the DFM. Closing the window hides it while streaming continues.
 
-This embedded remote has no file browser, playlist editor, file transport, seek bar or loop controls. RDJ Pro manages the music and playlists; the HEOS window sends the resulting Masterdeck mix. Its embedded HEOS request worker only starts the live URL or ends that stream. The build inn HEOS Remote is a bare bone version of the [FactoryX HEOS Remote applications](https://github.com/FactoryXCode/FactoryX-HEOS-CLI).
+This embedded remote has no file browser, playlist editor, file transport, seek bar or loop controls. RDJ Pro manages the music and playlists; the HEOS window sends the resulting Masterdeck mix. Its embedded HEOS request worker only starts the live URL or ends that stream. The standalone HEOS Remote sample is maintained separately.
 
 The integration was checked with Delphi XE7 Win32/Win64, a local mock HEOS receiver and the actual Windows AAC encoder/HTTP stream. Validation covers gain application without altering the local PCM buffer, bounded queues, format-change reporting, device selection, close-to-hide behavior, normal HTTP disconnects and shutdown. Final listening/latency verification should be done with your receiver and normal RDJ audio setup.
 
