@@ -8,7 +8,7 @@ object frmMasterFxRack: TfrmMasterFxRack
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'Master FX Rack'
-  ClientHeight = 988
+  ClientHeight = 987
   ClientWidth = 385
   Color = clNone
   Constraints.MaxHeight = 1538
@@ -34,14 +34,13 @@ object frmMasterFxRack: TfrmMasterFxRack
     Left = 0
     Top = 91
     Width = 385
-    Height = 897
+    Height = 896
     Align = alClient
     BevelOuter = bvNone
     Color = 5850948
     ParentBackground = False
     TabOrder = 2
-    ExplicitTop = 102
-    ExplicitHeight = 886
+    ExplicitTop = 89
     object Label1: TLabel
       Left = 8
       Top = 8
@@ -192,7 +191,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object lblWetValue: TLabel
-      Left = 299
+      Left = 300
       Top = 73
       Width = 62
       Height = 17
@@ -207,9 +206,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object tbBaseDelayMs: TMfTrackBar
-      Left = 34
+      Left = 29
       Top = 91
-      Width = 30
+      Width = 40
       Height = 438
       TabOrder = 0
       Color = 5850948
@@ -222,7 +221,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Maximum = 8000
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -244,9 +243,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       OnChange = tbBaseDelayMsChange
     end
     object tbDepthMs: TMfTrackBar
-      Left = 102
+      Left = 97
       Top = 91
-      Width = 30
+      Width = 40
       Height = 438
       TabOrder = 1
       Color = 5850948
@@ -259,7 +258,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Maximum = 500
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -281,9 +280,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       OnChange = tbDepthMsChange
     end
     object tbRateHz: TMfTrackBar
-      Left = 171
+      Left = 166
       Top = 91
-      Width = 30
+      Width = 40
       Height = 438
       TabOrder = 2
       Color = 5850948
@@ -296,7 +295,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Maximum = 2000
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -318,9 +317,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       OnChange = tbRateHzChange
     end
     object tbFeedback: TMfTrackBar
-      Left = 243
+      Left = 238
       Top = 91
-      Width = 30
+      Width = 40
       Height = 438
       TabOrder = 3
       Color = 5850948
@@ -334,7 +333,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Maximum = 98
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -356,9 +355,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       OnChange = tbFeedbackChange
     end
     object tbWet: TMfTrackBar
-      Left = 315
+      Left = 310
       Top = 91
-      Width = 30
+      Width = 40
       Height = 438
       TabOrder = 4
       Color = 5850948
@@ -370,7 +369,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Font.Style = []
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -402,7 +401,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -518,7 +516,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -634,7 +631,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -744,7 +740,7 @@ object frmMasterFxRack: TfrmMasterFxRack
     Left = 0
     Top = 91
     Width = 385
-    Height = 897
+    Height = 896
     Align = alClient
     BevelOuter = bvNone
     Color = 5850948
@@ -756,8 +752,6 @@ object frmMasterFxRack: TfrmMasterFxRack
     ParentBackground = False
     ParentFont = False
     TabOrder = 3
-    ExplicitTop = 90
-    ExplicitWidth = 507
     object Bevel4: TBevel
       Left = 3
       Top = 443
@@ -900,9 +894,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       Transparent = False
     end
     object lblLimiterCeilingDb: TLabel
-      Left = 3
+      Left = 22
       Top = 615
-      Width = 62
+      Width = 43
       Height = 17
       Alignment = taRightJustify
       Caption = 'Ceiling'
@@ -914,9 +908,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object lblLimiterReleaseMs: TLabel
-      Left = 89
+      Left = 105
       Top = 615
-      Width = 62
+      Width = 46
       Height = 17
       Alignment = taRightJustify
       Caption = 'Release'
@@ -928,9 +922,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object lblLimiterLookaheadMs: TLabel
-      Left = 185
+      Left = 195
       Top = 615
-      Width = 77
+      Width = 67
       Height = 17
       Alignment = taRightJustify
       Caption = 'Lookahead'
@@ -1137,10 +1131,10 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentColor = False
       Minimum = -60
       Maximum = 0
-      Position = -18
+      Position = -22
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1178,7 +1172,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Position = 20
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1216,7 +1210,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Position = 20
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1254,7 +1248,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Position = 155
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1290,7 +1284,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Maximum = 24
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1327,7 +1321,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Position = 6
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1359,7 +1353,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1475,7 +1468,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1592,7 +1584,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1716,7 +1707,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Position = -4
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1754,7 +1745,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Position = 80
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1790,7 +1781,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Maximum = 20
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1823,7 +1814,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1939,7 +1929,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -2061,7 +2050,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Position = -10
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 30
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -2117,7 +2106,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenUp = 6303744
       ColorStyle = lcsQuicken
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 1
       ImageIndexChecked = 0
       Font.Charset = DEFAULT_CHARSET
@@ -2150,15 +2138,20 @@ object frmMasterFxRack: TfrmMasterFxRack
     Left = 0
     Top = 91
     Width = 385
-    Height = 897
+    Height = 896
     Align = alClient
     BevelOuter = bvNone
     Color = 5850948
     ParentBackground = False
     TabOrder = 1
-    ExplicitTop = 149
-    ExplicitWidth = 453
-    ExplicitHeight = 839
+    ExplicitLeft = -1
+    ExplicitTop = 89
+    object Bevel1: TBevel
+      Left = 8
+      Top = 588
+      Width = 318
+      Height = 41
+    end
     object lblTitle: TLabel
       Left = 11
       Top = 18
@@ -2174,10 +2167,12 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object lblHighValue: TLabel
-      Left = 248
-      Top = 70
-      Width = 26
+      Left = 243
+      Top = 174
+      Width = 40
       Height = 17
+      Alignment = taCenter
+      AutoSize = False
       Caption = '0 dB'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clAqua
@@ -2187,10 +2182,12 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object lblMidValue: TLabel
-      Left = 147
-      Top = 70
-      Width = 26
+      Left = 145
+      Top = 174
+      Width = 40
       Height = 17
+      Alignment = taCenter
+      AutoSize = False
       Caption = '0 dB'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clAqua
@@ -2200,10 +2197,12 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object lblLowValue: TLabel
-      Left = 53
-      Top = 70
-      Width = 26
+      Left = 49
+      Top = 173
+      Width = 40
       Height = 17
+      Alignment = taCenter
+      AutoSize = False
       Caption = '0 dB'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clAqua
@@ -2213,8 +2212,8 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object lblHighGainDb: TLabel
-      Left = 230
-      Top = 447
+      Left = 235
+      Top = 550
       Width = 57
       Height = 17
       Caption = 'High Gain'
@@ -2226,8 +2225,8 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object lblMidGainDb: TLabel
-      Left = 133
-      Top = 447
+      Left = 138
+      Top = 550
       Width = 53
       Height = 17
       Caption = 'Mid Gain'
@@ -2239,14 +2238,40 @@ object frmMasterFxRack: TfrmMasterFxRack
       ParentFont = False
     end
     object lblLowGainDb: TLabel
-      Left = 36
-      Top = 447
+      Left = 41
+      Top = 550
       Width = 53
       Height = 17
       Caption = 'Low Gain'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lblRamp: TLabel
+      Left = 23
+      Top = 599
+      Width = 65
+      Height = 15
+      Caption = 'Ramp mode'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lblRampMs: TLabel
+      Left = 180
+      Top = 598
+      Width = 85
+      Height = 15
+      Caption = 'Ramp time (ms)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -12
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
@@ -2261,7 +2286,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       Color = 6899524
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
-      Down = True
       Behavior = bbCheckBox
       Checked = True
       GlyphUnchecked.Data = {
@@ -2368,9 +2392,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       OnClick = chkEqEnableClick
     end
     object tbLowGainDb: TMfTrackBar
-      Left = 45
-      Top = 93
-      Width = 36
+      Left = 49
+      Top = 196
+      Width = 40
       Height = 347
       TabOrder = 1
       Color = 5850948
@@ -2384,7 +2408,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Maximum = 24
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -2398,7 +2422,7 @@ object frmMasterFxRack: TfrmMasterFxRack
         5000544444444444500055555555555550005222222222225000544444444444
         5000511111111111500053333333333350000555555555550000}
       ShowTicks = True
-      TickCount = 21
+      TickCount = 25
       DbFloor = -50.000000000000000000
       DbCeil = 6.000000000000000000
       TickColor = clAqua
@@ -2408,9 +2432,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       OnDblClick = tbLowGainDbDblClick
     end
     object tbMidGainDb: TMfTrackBar
-      Left = 143
-      Top = 93
-      Width = 36
+      Left = 145
+      Top = 197
+      Width = 40
       Height = 347
       TabOrder = 2
       Color = 5850948
@@ -2424,7 +2448,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Maximum = 24
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -2438,7 +2462,7 @@ object frmMasterFxRack: TfrmMasterFxRack
         5000544444444444500055555555555550005222222222225000544444444444
         5000511111111111500053333333333350000555555555550000}
       ShowTicks = True
-      TickCount = 21
+      TickCount = 25
       DbFloor = -50.000000000000000000
       DbCeil = 6.000000000000000000
       TickColor = clAqua
@@ -2448,9 +2472,9 @@ object frmMasterFxRack: TfrmMasterFxRack
       OnDblClick = tbMidGainDbDblClick
     end
     object tbHighGainDb: TMfTrackBar
-      Left = 241
-      Top = 93
-      Width = 36
+      Left = 243
+      Top = 197
+      Width = 40
       Height = 347
       TabOrder = 3
       Color = 5850948
@@ -2464,7 +2488,7 @@ object frmMasterFxRack: TfrmMasterFxRack
       Maximum = 24
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -2478,7 +2502,7 @@ object frmMasterFxRack: TfrmMasterFxRack
         5000544444444444500055555555555550005222222222225000544444444444
         5000511111111111500053333333333350000555555555550000}
       ShowTicks = True
-      TickCount = 21
+      TickCount = 25
       DbFloor = -50.000000000000000000
       DbCeil = 6.000000000000000000
       TickColor = clAqua
@@ -2486,6 +2510,84 @@ object frmMasterFxRack: TfrmMasterFxRack
       TickPlacementV = tpvBoth
       OnChange = tbHighGainDbChange
       OnDblClick = tbHighGainDbDblClick
+    end
+    object pnlSpectrumAnalyser: TPanel
+      Left = 41
+      Top = 58
+      Width = 254
+      Height = 96
+      Color = 6656
+      ParentBackground = False
+      TabOrder = 4
+      OnResize = pnlSpectrumAnalyserResize
+      object imgSpectrumAnalizer: TImage
+        Left = 1
+        Top = 1
+        Width = 252
+        Height = 94
+        ParentCustomHint = False
+        Align = alClient
+        ParentShowHint = False
+        ShowHint = False
+        ExplicitLeft = 32
+        ExplicitTop = 21
+        ExplicitWidth = 178
+        ExplicitHeight = 54
+      end
+    end
+    object cbxRamp: TComboBox
+      Left = 94
+      Top = 596
+      Width = 71
+      Height = 22
+      Hint = 'Gain transition: Off, Fast (10 ms), Smooth (30 ms), or Manual.'
+      Style = csOwnerDrawFixed
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ItemIndex = 2
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      Text = 'Smooth'
+      OnChange = cbxRampChange
+      Items.Strings = (
+        'Off'
+        'Fast'
+        'Smooth'
+        'Manual')
+    end
+    object edtRampMs: TEdit
+      AlignWithMargins = True
+      Left = 271
+      Top = 598
+      Width = 40
+      Height = 23
+      Hint = 'Manual gain transition time, 0 to 5000 milliseconds.'
+      Margins.Bottom = 0
+      BevelInner = bvNone
+      BevelKind = bkSoft
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = 9216
+      Enabled = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      NumbersOnly = True
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 6
+      Text = '30'
+      OnChange = edtRampMsChange
+      OnExit = edtRampMsExit
     end
   end
   object pnlCtrls: TPanel
@@ -2497,10 +2599,9 @@ object frmMasterFxRack: TfrmMasterFxRack
     Color = 5850948
     ParentBackground = False
     TabOrder = 0
-    ExplicitWidth = 453
     object btnCompressorLimiter: TMPxpButton
       Left = 233
-      Top = 6
+      Top = 8
       Width = 107
       Height = 40
       Alignment = taCenter
@@ -2511,7 +2612,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenUp = 6303744
       ColorStyle = lcsQuicken
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 1
       ImageIndexChecked = 0
       Font.Charset = DEFAULT_CHARSET
@@ -2539,7 +2639,7 @@ object frmMasterFxRack: TfrmMasterFxRack
     end
     object btnEQ: TMPxpButton
       Left = 7
-      Top = 5
+      Top = 7
       Width = 106
       Height = 40
       Alignment = taCenter
@@ -2550,7 +2650,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenUp = 6303744
       ColorStyle = lcsQuicken
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 1
       ImageIndexChecked = 0
       Font.Charset = DEFAULT_CHARSET
@@ -2577,7 +2676,7 @@ object frmMasterFxRack: TfrmMasterFxRack
     end
     object btnFlangerEcho: TMPxpButton
       Left = 120
-      Top = 5
+      Top = 7
       Width = 107
       Height = 40
       Alignment = taCenter
@@ -2588,7 +2687,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenUp = 6303744
       ColorStyle = lcsQuicken
       Behavior = bbPushButton
-      Checked = False
       ImageIndexUnchecked = 1
       ImageIndexChecked = 0
       Font.Charset = DEFAULT_CHARSET
@@ -2624,7 +2722,6 @@ object frmMasterFxRack: TfrmMasterFxRack
     Color = 4865081
     ParentBackground = False
     TabOrder = 4
-    ExplicitWidth = 453
     object lblCaption: TLabel
       Left = 8
       Top = 11
@@ -2663,7 +2760,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       ColorWhenDown = 11363625
       ColorWhenUp = 5914932
       Behavior = bbPushButton
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -2698,7 +2794,6 @@ object frmMasterFxRack: TfrmMasterFxRack
       Style = bsModern
       Transparent = True
       OnClick = btnMinimizeClick
-      ExplicitLeft = 385
     end
   end
 end

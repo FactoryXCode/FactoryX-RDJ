@@ -8,6 +8,12 @@ Use Windows 10 22H2 or later. Windows N editions and Windows Server may need the
 After installing, choose the actual audio devices and broadcast settings in the
 mixer's setup; personal device assignments are not bundled.
   
+## 4.0.0.5 refresh — 4 November 2026
+
+This refreshed package includes the RDJ Pro microphone On/Off toggle, percentage-scaled relative crossfade, Masterdeck visualizer recovery and master EQ response graph with gain smoothing (Smooth, 30 ms, by default). RDJ also includes the updated file browser and shared components. All six FactoryX applications were rebuilt for 32-bit and 64-bit; the bundled third-party versions are unchanged.
+
+The installed RDJ Pro update notes and GUI guide describe the new controls. This is a refreshed build of 4.0.0.5.
+
 ## Install
   
 1. Run `FactoryX-DJSuite-x.x.x-Setup.exe` on the PC being installed.

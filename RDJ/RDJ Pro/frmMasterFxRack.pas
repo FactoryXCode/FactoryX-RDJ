@@ -174,6 +174,13 @@ type
     pnlCaption: TPanel;
     lblCaption: TLabel;
     btnMinimize: TMPxpButton;
+    pnlSpectrumAnalyser: TPanel;
+    imgSpectrumAnalizer: TImage;
+    lblRamp: TLabel;
+    cbxRamp: TComboBox;
+    lblRampMs: TLabel;
+    edtRampMs: TEdit;
+    Bevel1: TBevel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -217,6 +224,10 @@ type
     procedure FormShow(Sender: TObject);
     procedure btnMinimizeClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure pnlSpectrumAnalyserResize(Sender: TObject);
+    procedure cbxRampChange(Sender: TObject);
+    procedure edtRampMsChange(Sender: TObject);
+    procedure edtRampMsExit(Sender: TObject);
 
   private
 
@@ -246,6 +257,7 @@ type
 
     // EQ
     procedure UpdateGainLabels();
+    procedure UpdateSpectrumPlot();
     // Flanger/Echo
     procedure UpdateFlangerEchoValueLabels();
     // Compressor/Limiter
@@ -270,12 +282,15 @@ implementation
 {$R *.dfm}
 
 uses
-  frmMainMDI;
+  frmMainMDI,
+  MfAudioEffectMFTBase,
+  RDJ.EqPlot;
 
 procedure TfrmMasterFxRack.FormCreate(Sender: TObject);
 begin
 
   FormStyle := fsMDIChild;
+  UpdateSpectrumPlot();
 end;
 
 
@@ -300,6 +315,7 @@ begin
  // Width := 722 - 10;
   // Set the MasterEq on top.
   pnlEQ.BringToFront;
+  UpdateSpectrumPlot();
 end;
 
 
@@ -320,6 +336,17 @@ begin
     tbLowGainDb.Position := Round(FMasterEq.LowGainDb);
     tbMidGainDb.Position := Round(FMasterEq.MidGainDb);
     tbHighGainDb.Position := Round(FMasterEq.HighGainDb);
+
+    cbxRamp.Enabled := True;
+    case FMasterEq.RampMs of
+      0: cbxRamp.ItemIndex := 0;
+      10: cbxRamp.ItemIndex := 1;
+      30: cbxRamp.ItemIndex := 2;
+    else
+      cbxRamp.ItemIndex := 3;
+    end;
+    edtRampMs.Text := IntToStr(FMasterEq.RampMs);
+    edtRampMs.Enabled := cbxRamp.ItemIndex = 3;
 
     UpdateGainLabels();
   finally
@@ -412,6 +439,7 @@ begin
   FMasterEq.MidGainDb := tbMidGainDb.Position;
   FMasterEq.HighGainDb := tbHighGainDb.Position;
   UpdateGainLabels();
+  UpdateSpectrumPlot();
 end;
 
 
@@ -500,6 +528,7 @@ begin
 
     FUpdatingGui := False;
   end;
+  UpdateSpectrumPlot();
 end;
 
 
@@ -511,6 +540,7 @@ procedure TfrmMasterFxRack.btnEQClick(Sender: TObject);
 begin
   //
   pnlEQ.BringToFront;
+  UpdateSpectrumPlot();
 end;
 
 
@@ -521,6 +551,7 @@ begin
     Exit;
 
   FMasterEq.Enabled := chkEqEnable.Checked;
+  UpdateSpectrumPlot();
 end;
 
 
@@ -566,6 +597,100 @@ begin
 
   tbLowGainDb.AnimateTrackBarToPosition(0,
                                         2);
+end;
+
+
+procedure TfrmMasterFxRack.cbxRampChange(Sender: TObject);
+var
+  RampMs: Integer;
+
+begin
+
+  if not CanWriteToEffect(FMasterEq) then
+    Exit;
+
+  edtRampMs.Enabled := cbxRamp.ItemIndex = 3;
+  case cbxRamp.ItemIndex of
+    0: RampMs := 0;
+    1: RampMs := 10;
+    2: RampMs := 30;
+    3: begin
+         RampMs := StrToIntDef(edtRampMs.Text, 30);
+         if RampMs < 0 then
+           RampMs := 0
+         else if RampMs > 5000 then
+           RampMs := 5000;
+       end;
+  else
+    Exit;
+  end;
+
+  FMasterEq.RampMs := RampMs;
+  edtRampMs.Text := IntToStr(RampMs);
+end;
+
+
+procedure TfrmMasterFxRack.edtRampMsChange(Sender: TObject);
+var
+  RampMs: Integer;
+
+begin
+
+  if not CanWriteToEffect(FMasterEq) or (cbxRamp.ItemIndex <> 3) then
+    Exit;
+
+  if TryStrToInt(edtRampMs.Text, RampMs) and
+     (RampMs >= 0) and (RampMs <= 5000) then
+    FMasterEq.RampMs := RampMs;
+end;
+
+
+procedure TfrmMasterFxRack.edtRampMsExit(Sender: TObject);
+begin
+
+  if Assigned(FMasterEq) then
+    edtRampMs.Text := IntToStr(FMasterEq.RampMs);
+end;
+
+
+procedure TfrmMasterFxRack.UpdateSpectrumPlot();
+var
+  R: TRect;
+  Low, Mid, High: TBiquadCoeffs;
+  SampleRate: Double;
+
+begin
+
+  if not Assigned(imgSpectrumAnalizer) then
+    Exit;
+
+  R := Rect(0, 0, imgSpectrumAnalizer.Width, imgSpectrumAnalizer.Height);
+  if (R.Width <= 0) or (R.Height <= 0) then
+    Exit;
+
+  FillChar(Low, SizeOf(Low), 0);
+  Low.b0 := 1.0;
+  Mid := Low;
+  High := Low;
+  SampleRate := 48000;
+  if Assigned(FMasterEq) then
+    FMasterEq.GetBiquadCoeffs(Low, Mid, High, SampleRate);
+
+  imgSpectrumAnalizer.Picture.Bitmap.SetSize(R.Width, R.Height);
+  PlotEqResponse(imgSpectrumAnalizer.Picture.Bitmap.Canvas,
+                   R,
+                   SampleRate,
+                   Low,
+                   Mid,
+                   High);
+  imgSpectrumAnalizer.Invalidate();
+end;
+
+
+procedure TfrmMasterFxRack.pnlSpectrumAnalyserResize(Sender: TObject);
+begin
+
+  UpdateSpectrumPlot();
 end;
 
 

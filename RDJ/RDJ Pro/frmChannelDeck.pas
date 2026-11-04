@@ -250,8 +250,9 @@ type
     FAudioDuration: LONGLONG;
     FAudioPosition100ns: LONGLONG;
     FCueEnabled: Boolean;
-    FVolPosLast: Integer;
     FApplyingXFade: Boolean;
+    FLastXFadePosition: Integer;
+    FXFadeRemainder: Double;
     FMixerChannel: TRDJMixerChannel;
     FDeckEngine: TMfChannelDeckEngine;
     FAudioRack: TMfWasApiEffectsRack;
@@ -351,7 +352,7 @@ type
     procedure RepublishBroadcastNowPlaying();
 
     procedure SyncToDeck(AMasterDeck: TfrmChannelDeck);
-    procedure ApplyExternalCrossFadeDelta(const ADelta: Integer);
+    procedure ApplyExternalCrossFadeDelta(const ADelta: Double);
 
     property ChannelIndex: Integer read FChannelIndex write FChannelIndex;
     property CueEnabled: Boolean read FCueEnabled write FCueEnabled;
@@ -476,6 +477,9 @@ var
 
 begin
 
+  FLastXFadePosition := tbVolume.Position;
+  FXFadeRemainder := 0.0;
+
   if not chkCrossFade.Checked then
     Exit;
 
@@ -558,6 +562,8 @@ begin
   ResetBeatLamp();
 
   FFileNameParser := TFileNameParser.Create;
+  FLastXFadePosition := tbVolume.Position;
+  FXFadeRemainder := 0.0;
 end;
 
 
@@ -1084,120 +1090,88 @@ end;
 
 procedure TfrmChannelDeck.ApplyTwoDeckXFade(const NewPos: Integer);
 var
-  Delta: Integer;
-  i: Integer;
-  Other: TfrmChannelDeck;
-
-  function ClampI(const x,
-                  a,
-                  b: Integer): Integer; inline;
-  begin
-
-    if (x < a) then
-      Exit(a);
-    if (x > b) then
-      Exit(b);
-    Result := x;
-  end;
+  Delta: Double;
+  PreviousPosition: Integer;
+  Range: Integer;
+  I: Integer;
 
 begin
 
-  if FApplyingXFade then
+  PreviousPosition := FLastXFadePosition;
+  FLastXFadePosition := tbVolume.Position;
+
+  if FApplyingXFade or
+     (not chkCrossFade.Checked) then
     Exit;
 
-  if not chkCrossFade.Checked then
+  Range := tbVolume.Maximum - tbVolume.Minimum;
+  if Range <= 0 then
     Exit;
 
-  Delta := NewPos - FVolPosLast;
-  if (Delta = 0) then
+  // Move the other fader by the same percentage, from its current level.
+  Delta := (NewPos - PreviousPosition) / Range;
+  if Delta = 0.0 then
     Exit;
 
-  Other := nil;
-  for i := 0 to MainMDIFrm.Setup.ChannelCount - 1 do
-    if (MainMDIFrm.FChannelDecks[i] <> nil) and
-       (MainMDIFrm.FChannelDecks[i] <> Self) and
-       MainMDIFrm.FChannelDecks[i].chkCrossFade.Checked then
+  FXFadeRemainder := 0.0;
+
+  for I := 0 to Screen.FormCount - 1 do
     begin
+      if Screen.Forms[I] = Self then
+        Continue;
 
-      Other := MainMDIFrm.FChannelDecks[i];
-      Break;
-    end;
-
-  if Other = nil then
-    begin
-      for i := 0 to Screen.FormCount - 1 do
+      if Screen.Forms[I] is TfrmChannelDeck then
         begin
-          if Screen.Forms[i] is TfrmLoopbackDeck then
+          if TfrmChannelDeck(Screen.Forms[I]).chkCrossFade.Checked then
             begin
-              if TfrmLoopbackDeck(Screen.Forms[i]).chkCrossFade.Checked then
-                begin
-                  TfrmLoopbackDeck(Screen.Forms[i]).ApplyExternalCrossFadeDelta(Delta);
-                  Exit;
-                end;
-            end
-          else if Screen.Forms[i] is TfrmMicrophoneDeck then
+              TfrmChannelDeck(Screen.Forms[I]).ApplyExternalCrossFadeDelta(Delta);
+              Exit;
+            end;
+        end
+      else if Screen.Forms[I] is TfrmLoopbackDeck then
+        begin
+          if TfrmLoopbackDeck(Screen.Forms[I]).chkCrossFade.Checked then
             begin
-              if TfrmMicrophoneDeck(Screen.Forms[i]).chkCrossFade.Checked then
-                begin
-                  TfrmMicrophoneDeck(Screen.Forms[i]).ApplyExternalCrossFadeDelta(Delta);
-                  Exit;
-                end;
+              TfrmLoopbackDeck(Screen.Forms[I]).ApplyExternalCrossFadeDelta(Delta);
+              Exit;
+            end;
+        end
+      else if Screen.Forms[I] is TFrmMicrophoneDeck then
+        begin
+          if TFrmMicrophoneDeck(Screen.Forms[I]).chkCrossFade.Checked then
+            begin
+              TFrmMicrophoneDeck(Screen.Forms[I]).ApplyExternalCrossFadeDelta(Delta);
+              Exit;
             end;
         end;
-
-      Exit;
     end;
-
-  FApplyingXFade := True;
-  try
-
-    Other.FApplyingXFade := True;
-
-    try
-
-      Other.tbVolume.Position := ClampI(Other.tbVolume.Position - Delta,
-                                        Other.tbVolume.Minimum,
-                                        Other.tbVolume.Maximum);
-
-      Other.FVolPosLast := Other.tbVolume.Position;
-      Other.UpdateMixerChannelState();
-    finally
-
-      Other.FApplyingXFade := False;
-    end;
-  finally
-
-    FApplyingXFade := False;
-  end;
 end;
 
 
-procedure TfrmChannelDeck.ApplyExternalCrossFadeDelta(const ADelta: Integer);
-
-  function ClampI(const x, a, b: Integer): Integer; inline;
-  begin
-    if (x < a) then
-      Exit(a);
-    if (x > b) then
-      Exit(b);
-    Result := x;
-  end;
+procedure TfrmChannelDeck.ApplyExternalCrossFadeDelta(const ADelta: Double);
+var
+  Position: Double;
 
 begin
 
-  if (ADelta = 0) then
+  if ADelta = 0.0 then
     Exit;
+
+  Position := tbVolume.Position + FXFadeRemainder -
+              ADelta * (tbVolume.Maximum - tbVolume.Minimum);
+  if Position < tbVolume.Minimum then
+    Position := tbVolume.Minimum
+  else if Position > tbVolume.Maximum then
+    Position := tbVolume.Maximum;
 
   FApplyingXFade := True;
   try
-
-    tbVolume.Position := ClampI(tbVolume.Position - ADelta,
-                                tbVolume.Minimum,
-                                tbVolume.Maximum);
-    FVolPosLast := tbVolume.Position;
+    tbVolume.Position := Round(Position);
+    FLastXFadePosition := tbVolume.Position;
+    // Retain sub-step movement, but discard excess travel at either endpoint.
+    FXFadeRemainder := Position - tbVolume.Position;
     UpdateMixerChannelState();
   finally
-
     FApplyingXFade := False;
   end;
 end;
@@ -2392,7 +2366,6 @@ begin
   if not FApplyingXFade then
     ApplyTwoDeckXFade(tbVolume.Position);
 
-  FVolPosLast := tbVolume.Position;
 
   UpdateMixerChannelState();
 

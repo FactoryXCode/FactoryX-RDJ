@@ -415,7 +415,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       ParentColor = False
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -453,7 +453,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       ParentColor = False
       Minimum = -100
       ThumbWidth = 60
-      ThumbHeight = 50
+      ThumbHeight = 40
       TransparentColor = clBlack
       ThumbPictureHorz.Data = {
         07544269746D617012010000424D120100000000000076000000280000001300
@@ -490,7 +490,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       Minimum = -100
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -514,7 +514,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       OnDblClick = tbPitchDblClick
     end
     object tbEqQ: TMfTrackBar
-      Left = 205
+      Left = 204
       Top = 23
       Width = 39
       Height = 134
@@ -529,7 +529,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       Position = 10
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -568,7 +568,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       Position = 1500
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -606,7 +606,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       Maximum = 18
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -644,7 +644,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       Maximum = 60
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -812,6 +812,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
     Color = 4865081
     ParentBackground = False
     TabOrder = 3
+    ExplicitTop = 616
     object Bevel1: TBevel
       Left = 0
       Top = 222
@@ -880,8 +881,8 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       Text = '-'
     end
     object btnSelectProcess: TMPxpButton
-      Left = 33
-      Top = 7
+      Left = 32
+      Top = 6
       Width = 93
       Height = 53
       Margins.Left = 2
@@ -894,7 +895,6 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       Color = clNavy
       ColorWhenUp = clNavy
       Behavior = bbPushButton
-      Checked = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -917,8 +917,8 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       OnClick = btnSelectProcessClick
     end
     object btnPlayStop: TMPxpButton
-      Left = 131
-      Top = 7
+      Left = 130
+      Top = 6
       Width = 93
       Height = 53
       Alignment = taCenter
@@ -926,7 +926,6 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       Color = 5668864
       ColorWhenDown = 164
       ColorWhenUp = 5668864
-      Checked = False
       ImageIndexUnchecked = 0
       ImageIndexChecked = 0
       ShowFocusRect = False
@@ -950,7 +949,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       OnClick = btnPlayStopClick
     end
     object chkMute: TMPxpButton
-      Left = 95
+      Left = 94
       Top = 87
       Width = 67
       Height = 40
@@ -960,7 +959,6 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1065,7 +1063,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       OnClick = chkMuteClick
     end
     object chkCrossFade: TMPxpButton
-      Left = 168
+      Left = 167
       Top = 87
       Width = 67
       Height = 40
@@ -1075,7 +1073,6 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1180,7 +1177,7 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       OnClick = chkCrossFadeClick
     end
     object btnPFL: TMPxpButton
-      Left = 23
+      Left = 22
       Top = 87
       Width = 66
       Height = 40
@@ -1190,7 +1187,6 @@ object frmLoopbackDeck: TfrmLoopbackDeck
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000

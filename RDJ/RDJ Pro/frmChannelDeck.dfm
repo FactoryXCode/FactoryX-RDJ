@@ -8,7 +8,7 @@ object frmChannelDeck: TfrmChannelDeck
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'Channel'
-  ClientHeight = 988
+  ClientHeight = 987
   ClientWidth = 301
   Color = 4865081
   Constraints.MaxHeight = 1538
@@ -836,7 +836,7 @@ object frmChannelDeck: TfrmChannelDeck
     Left = 0
     Top = 617
     Width = 301
-    Height = 299
+    Height = 298
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
@@ -848,6 +848,7 @@ object frmChannelDeck: TfrmChannelDeck
     ParentBackground = False
     ParentDoubleBuffered = False
     TabOrder = 1
+    ExplicitHeight = 299
     object Bevel6: TBevel
       Left = 224
       Top = 136
@@ -2011,7 +2012,7 @@ object frmChannelDeck: TfrmChannelDeck
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 916
+    Top = 915
     Width = 301
     Height = 72
     Margins.Left = 0
@@ -2031,6 +2032,7 @@ object frmChannelDeck: TfrmChannelDeck
     ParentDoubleBuffered = False
     ParentFont = False
     TabOrder = 3
+    ExplicitTop = 916
     object Bevel8: TBevel
       Left = 0
       Top = 13

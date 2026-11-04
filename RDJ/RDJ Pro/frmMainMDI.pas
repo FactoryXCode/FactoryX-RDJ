@@ -1,4 +1,4 @@
-// FactoryX
+﻿// FactoryX
 //
 // Copyright: FactoryX. All rights reserved.
 //
@@ -1673,6 +1673,7 @@ begin
   // Always-present master 3-band EQ comes first in the end-FX chain.
   FMasterLowMidHighEq := TMfLowMidHighEqEffect.Create(nil);
   FMasterLowMidHighEq.Enabled := True;
+  FMasterLowMidHighEq.RampMs := 30;
 
   Slot := FMasterFXRack.Slots.Add as TMfWasApiFxSlot;
   Slot.Enabled := True;

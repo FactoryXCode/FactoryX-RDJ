@@ -8,7 +8,7 @@ object MasterDeckFrm: TMasterDeckFrm
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'Master'
-  ClientHeight = 988
+  ClientHeight = 987
   ClientWidth = 322
   Color = clNone
   Constraints.MaxHeight = 1538
@@ -34,7 +34,7 @@ object MasterDeckFrm: TMasterDeckFrm
     Left = 0
     Top = 483
     Width = 322
-    Height = 505
+    Height = 504
     Align = alClient
     BevelOuter = bvNone
     Color = 4865081
@@ -44,6 +44,7 @@ object MasterDeckFrm: TMasterDeckFrm
     ParentCtl3D = False
     ParentDoubleBuffered = False
     TabOrder = 0
+    ExplicitHeight = 505
     object avMixGraph: TRdjAudioMixVisualizer
       Left = 0
       Top = 0
@@ -78,7 +79,7 @@ object MasterDeckFrm: TMasterDeckFrm
     end
     object pnlRecIcecast: TPanel
       Left = 0
-      Top = 204
+      Top = 203
       Width = 322
       Height = 301
       Align = alBottom
@@ -88,6 +89,7 @@ object MasterDeckFrm: TMasterDeckFrm
       ParentBackground = False
       ShowCaption = False
       TabOrder = 0
+      ExplicitTop = 204
       object pnlRecorder: TPanel
         Left = 0
         Top = 21
@@ -219,7 +221,6 @@ object MasterDeckFrm: TMasterDeckFrm
           ColorWhenDown = clRed
           ColorWhenUp = clMaroon
           Behavior = bbPushButton
-          Checked = False
           ImageIndexUnchecked = 0
           ImageIndexChecked = 0
           TabStop = True
@@ -259,7 +260,6 @@ object MasterDeckFrm: TMasterDeckFrm
           ColorWhenDown = 10045252
           ColorWhenUp = 6899524
           Behavior = bbCheckBox
-          Checked = False
           GlyphUnchecked.Data = {
             C6040000424DC60400000000000036040000280000000C0000000C0000000100
             08000000000090000000230B0000230B00000001000000010000000000000000
@@ -377,7 +377,6 @@ object MasterDeckFrm: TMasterDeckFrm
           Color = 6899524
           ColorWhenDown = 10045252
           ColorWhenUp = 6899524
-          Down = True
           Behavior = bbCheckBox
           Checked = True
           GlyphUnchecked.Data = {
@@ -528,7 +527,6 @@ object MasterDeckFrm: TMasterDeckFrm
           Color = 5914932
           ColorWhenDown = 11363625
           ColorWhenUp = 5914932
-          Checked = False
           ShowFocusRect = False
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWhite
@@ -870,7 +868,7 @@ object MasterDeckFrm: TMasterDeckFrm
       ParentColor = False
       Minimum = -100
       ThumbWidth = 60
-      ThumbHeight = 50
+      ThumbHeight = 40
       TransparentColor = clBlack
       ThumbPictureHorz.Data = {
         07544269746D617012010000424D120100000000000076000000280000001300
@@ -895,8 +893,8 @@ object MasterDeckFrm: TMasterDeckFrm
       OnDblClick = tbBalanceDblClick
     end
     object tbMasterVolL: TMfTrackBar
-      Left = 19
-      Top = 76
+      Left = 21
+      Top = 78
       Width = 40
       Height = 293
       TabOrder = 1
@@ -904,7 +902,7 @@ object MasterDeckFrm: TMasterDeckFrm
       ParentColor = False
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -938,7 +936,7 @@ object MasterDeckFrm: TMasterDeckFrm
       ParentColor = False
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -972,7 +970,7 @@ object MasterDeckFrm: TMasterDeckFrm
       ParentColor = False
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -1007,7 +1005,6 @@ object MasterDeckFrm: TMasterDeckFrm
       Color = 6899524
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
-      Down = True
       Behavior = bbCheckBox
       Checked = True
       GlyphUnchecked.Data = {
@@ -1126,7 +1123,6 @@ object MasterDeckFrm: TMasterDeckFrm
       ColorWhenDown = 10045252
       ColorWhenUp = 6899524
       Behavior = bbCheckBox
-      Checked = False
       GlyphUnchecked.Data = {
         C6040000424DC60400000000000036040000280000000C0000000C0000000100
         08000000000090000000230B0000230B00000001000000010000000000000000
@@ -1301,8 +1297,7 @@ object MasterDeckFrm: TMasterDeckFrm
   object epPFL: TMfAudioEndPoint
     DeviceID = '{0.0.0.00000000}.{d7e13618-ca94-4b30-a916-0934986710a9}'
     DeviceState = 'Active'
-    MasterScalarVolume = 0.200000002980232200
-    MasterDbVolume = -24.354431152343750000
+    MasterDbVolume = -96.000000000000000000
     Left = 244
     Top = 272
   end

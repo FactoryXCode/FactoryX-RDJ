@@ -35,6 +35,16 @@ See the [Setup guide](Setup.md) for the optional public AAC configuration.
 
 &#x20; 
 
+### Refreshed build — 4 November 2026
+
+Version **4.0.0.5** now includes the RDJ Pro microphone toggle, corrected relative
+crossfade for channel/microphone/loopback decks, Masterdeck visualizer recovery,
+and the master EQ response graph with Smooth (30 ms) as its default. RDJ includes
+the updated file browser and shared components. All six FactoryX apps were rebuilt
+for 32-bit and 64-bit. The bundled third-party versions are unchanged.
+
+SHA256: `076480985CA17819B1874973A128B509FD969A7EA603997714C878BA540314E4`
+
 ## What's included
 
 * **RDJ** — audio mixer application that supports Caddy/IceCast if needed.

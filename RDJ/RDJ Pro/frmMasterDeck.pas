@@ -259,6 +259,8 @@ begin
   if not Assigned(MainMDIFrm) then
     Exit;
 
+  // Rebind after the render endpoint is prepared, even if an earlier worker failed.
+  avMixGraph.Active := False;
   avMixGraph.Enabled := False;
 
   setup := MainMDIFrm.Setup;
