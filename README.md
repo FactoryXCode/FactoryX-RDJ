@@ -18,9 +18,8 @@ RDJ Pro is the extended version of RDJ.
   
 Where RDJ mainly demonstrates DJ-style audio playback and mixing,  
 RDJ Pro adds a complete live broadcast layer around the mixer.  
-RDJ Pro still provides the familiar RDJ functions: channel decks,  
-loopback decks, microphone input, effects, PFL/cue monitoring, playlist editing,  
-tag editing, and local recording.  
+RDJ Pro provides all RDJ functions: Channel decks, loopback decks, microphone input, effects, 
+PFL/cue monitoring, playlist editing, tag editing, and local recording.  
   
 The Pro version expands this into an audio/video streaming application.  
 It can combine the live program audio with camera video or a static video source,  
