@@ -13,7 +13,7 @@ Important: install the required Delphi components before opening the RDJPro proj
 - FxServe or Caddy, if you want to use the browser broadcast page.
 
 FxServe is the normal choice for a small RDJ Pro server. Caddy is also supported.
-See [RDJ Web Server Setup](https://github.com/FactoryXCode/MfPack/blob/main/Proxy%20Servers/FxServe/RDJ-Web-Server-Setup.md) for a short
+See [RDJ Web Server Setup](../../../FxServe/RDJ-Web-Server-Setup.md) for a short
 comparison and the current server paths.
 
 ## 2. Install Required Delphi Packages First
@@ -24,7 +24,7 @@ Before opening `MfRdjJ.dproj`, install these packages in Delphi:
 2. Open and build/install:
 
 ```text
-<MfPackRoot>\Samples\MfComponents\MfComponents.dpk
+MfPack\Samples\MfComponents\MfComponents.dpk
 ```
 
 3. Open and build/install:
@@ -36,7 +36,7 @@ RDJ\RDJ Pro\Controls\RDJControls.dpk
 4. Build/install the TDn controls used by the HEOS Remote window:
 
 ```text
-RDJ\RDJ Pro\HEOSRemote\Controls\HEOSControls.dpk
+MfRdjPro\HEOSRemote\Controls\HEOSControls.dpk
 ```
 
 If these TDn controls are already installed from the standalone HEOS Remote,
@@ -107,36 +107,38 @@ RDJ\RDJ Pro\MfRdjJ.dproj
 
 ## 5. Set The Delphi Search Paths
 
-Open the supplied `MfRdjJ.dproj`. It includes the embedded HEOS/control
-directories and `..\Controls`, plus these external source paths:
+In the RDJPro project options, add these paths to the Delphi search path:
 
 ```text
-$(MfPackRoot)\src
-$(MfPackRoot)\Cast
-$(MfPackRoot)\Cast\Media
-$(MfPackRoot)\Samples\MfComponents
+..\..\src
+..\MfComponents
+.\Controls
+```
+
+If your folder layout is different, use the equivalent absolute paths, for example:
+
+```text
+D:\PROJECTS\MfPack\src
+D:\PROJECTS\MfPack\Samples\MfComponents
+D:\PROJECTS\RDJ\RDJ Pro\Controls
+```
+
+For the integrated HEOS sender, the project also includes:
+
+```text
+HEOSRemote
+HEOSRemote\Controls
 $(HeosCliRoot)\Source
 ```
 
-`MfPackRoot` defaults to `..\..\..\..\MfPack`, relative to `RDJ\RDJ Pro`.
 `HeosCliRoot` is configured as `D:\GitHub\FactoryX-HEOS-CLI`.
-For this checkout at `D:\GitHub\FactoryX-RDJ\FactoryX-RDJ`, the MfPack default
-resolves to `D:\GitHub\MfPack`. Override `MfPackRoot` if your MfPack source is
-elsewhere. Change `HeosCliRoot` only if you move the HEOS API repository.
-
-For example, build with the current dependencies on this machine:
-
-```powershell
-msbuild MfRdjJ.dproj /t:Build /p:Config=Release /p:Platform=Win32 /p:MfPackRoot=D:\PROJECTS\MfPack /p:HeosCliRoot=D:\GitHub\FactoryX-HEOS-CLI
-```
-
-Use `Platform=Win64` for the 64-bit build. Set the same properties through your
-Delphi/MSBuild configuration when building in the IDE. Do not copy DCUs between
-Delphi versions or architectures.
+This project uses the API source from that repository. Change the project
+property only if you move the API checkout. Keep the paths in the project so both Win32 and Win64
+find the matching source; do not copy DCUs between platforms.
 
 ## 6. Check The Recommended Project Settings
 
-Before building, check the RDJ Pro project options and make sure they follow the recommended settings from `readme.md`.
+Before building, check the RDJ Pro project options and make sure they follow the recommended settings from `readme.txt`.
 
 In Project Options, set:
 

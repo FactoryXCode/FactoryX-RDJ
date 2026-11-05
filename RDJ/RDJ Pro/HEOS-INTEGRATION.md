@@ -32,6 +32,8 @@ when judging a change to RDJ Master Volume.
 
 `RDJ.HeosOutput` copies PCM into a bounded preallocated queue. The render callback does not encode, perform network I/O, access VCL controls or wait for the encoder. A background worker initializes COM/Media Foundation and produces AAC/ADTS. `RDJ.HeosAudioServer` serves that stream on the PC interface routed to the selected receiver, using the PC address and TCP port configured in the HEOS remote. Allow the RDJ application through the private-network firewall if the device cannot fetch the stream.
 
+HEOS Setup offers 96, 128, 160 and 192 kbps AAC-LC, with stereo or mono output. The default is 192 kbps stereo. Choices are saved in the RDJ setup INI under `[HEOS]` and apply when Stream RDJ starts. Stop streaming to edit them. Mono averages left and right after Master gains; the local mix stays stereo. The public broadcast keeps its independent 192 kbps stereo format. ADTS framing and the sample rate are automatic.
+
 The current RDJ engine uses 44100 Hz stereo float PCM; the sender also accepts 48000 Hz. Changing sample rate while streaming is reported in the HEOS log and requires restarting the sender. Queue overflow drops network-copy blocks instead of delaying local playback; the window displays a dropped-block count.
 
 The separate window uses the TDn controls and glyphs from `FactoryX-HEOS-CLI/AVR/Samples/HEOSRemote`. It contains the Masterdeck stream toggle, elapsed streaming time, receiver discovery and connection settings, zone power, volume, balance, input, mute and bass/treble. All controls are designed in the DFM. Closing the window hides it while streaming continues.

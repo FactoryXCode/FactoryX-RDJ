@@ -29,6 +29,43 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     Color = 5850948
     ParentBackground = False
     TabOrder = 0
+    ExplicitLeft = -1
+    object Bevel4: TBevel
+      Left = 20
+      Top = 242
+      Width = 559
+      Height = 57
+    end
+    object lblAacBitrate: TLabel
+      Left = 36
+      Top = 262
+      Width = 79
+      Height = 22
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Bit Rate:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lblAacChannels: TLabel
+      Left = 229
+      Top = 262
+      Width = 70
+      Height = 17
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Channels:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
     object AddressLabel: TLabel
       Left = 54
       Top = 31
@@ -67,7 +104,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object PcAddressLabel: TLabel
       Left = 30
-      Top = 263
+      Top = 191
       Width = 118
       Height = 17
       Caption = 'PC IP (blank = auto):'
@@ -80,7 +117,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     end
     object PortLabel: TLabel
       Left = 364
-      Top = 263
+      Top = 191
       Width = 62
       Height = 17
       Caption = 'HTTP port:'
@@ -98,7 +135,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Height = 22
       Alignment = taRightJustify
       AutoSize = False
-      Caption = 'Select Source'
+      Caption = 'Select Source:'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -13
@@ -106,12 +143,77 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Font.Style = []
       ParentFont = False
     end
+    object Label8: TLabel
+      Left = 33
+      Top = 233
+      Width = 92
+      Height = 22
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'AAC Settings'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      Transparent = False
+    end
+    object cbxAacBitrate: TComboBox
+      Left = 121
+      Top = 259
+      Width = 102
+      Height = 25
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ItemIndex = 3
+      ParentFont = False
+      TabOrder = 7
+      Text = '192 Kbps'
+      OnChange = AacSettingsChange
+      Items.Strings = (
+        '96   Kbps'
+        '128 Kbps'
+        '160 Kbps'
+        '192 Kbps')
+    end
+    object cbxAacChannels: TComboBox
+      Left = 308
+      Top = 259
+      Width = 90
+      Height = 25
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ItemIndex = 0
+      ParentFont = False
+      TabOrder = 9
+      Text = 'Stereo'
+      OnChange = AacSettingsChange
+      Items.Strings = (
+        'Stereo'
+        'Mono')
+    end
     object edHost: TEdit
       Left = 157
       Top = 29
       Width = 102
       Height = 25
       Hint = 'Find the HEOS receiver'#39's IP in the receiver'
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
       Text = '192.168.50.103'
     end
@@ -120,22 +222,42 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Top = 60
       Width = 290
       Height = 25
-      Style = csDropDownList
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 1
       OnChange = HEOSDeviceChange
     end
     object PcAddressEdit: TEdit
       Left = 157
-      Top = 260
+      Top = 188
       Width = 185
       Height = 25
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 2
     end
     object StreamPortEdit: TEdit
       Left = 432
-      Top = 260
+      Top = 188
       Width = 90
       Height = 25
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 3
       Text = '8890'
     end
@@ -175,11 +297,17 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     object FSource: TComboBox
       Left = 157
       Top = 100
-      Width = 285
+      Width = 290
       Height = 25
-      Style = csDropDownList
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
       ItemIndex = 0
-      TabOrder = 5
+      ParentFont = False
+      TabOrder = 4
       Text = 'TV Audio'
       Items.Strings = (
         'TV Audio'
@@ -210,12 +338,12 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       ParentFont = False
       ReadOnly = True
       ScrollBars = ssVertical
-      TabOrder = 7
+      TabOrder = 5
     end
     object btnSelectInput: TDnButton
       Tag = 7
       Left = 157
-      Top = 134
+      Top = 140
       Width = 104
       Height = 30
       Alignment = taCenter
@@ -247,8 +375,8 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       OnClick = ActionClick
     end
     object btnWebInterface: TDnButton
-      Left = 157
-      Top = 173
+      Left = 267
+      Top = 140
       Width = 104
       Height = 30
       Alignment = taCenter
@@ -280,8 +408,8 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       OnClick = BrowserClick
     end
     object btnReadStatus: TDnButton
-      Left = 157
-      Top = 212
+      Left = 377
+      Top = 140
       Width = 104
       Height = 30
       Alignment = taCenter
@@ -322,7 +450,6 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     Color = 4865081
     ParentBackground = False
     TabOrder = 1
-    ExplicitLeft = -1
     object Bevel1: TBevel
       Left = 6
       Top = 24
@@ -1623,13 +1750,13 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     Enabled = False
     Interval = 150
     OnTimer = VolumeTick
-    Left = 486
-    Top = 256
+    Left = 350
+    Top = 12
   end
   object StreamTimer: TTimer
     Interval = 500
     OnTimer = StreamTick
-    Left = 486
-    Top = 312
+    Left = 422
+    Top = 12
   end
 end

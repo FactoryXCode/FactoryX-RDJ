@@ -76,7 +76,7 @@ uses
 
 const
 
-  MAX_CHANNELS = 8;
+  MAX_CHANNELS = 16;
   MAX_LOOPBACK_DECKS = 4;
   MAX_FX_SLOTS = 16;
 

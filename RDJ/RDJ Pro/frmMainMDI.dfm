@@ -1226,6 +1226,7 @@ object MainMDIFrm: TMainMDIFrm
     end
   end
   object tmrClock: TTimer
+    Enabled = False
     OnTimer = tmrClockTimer
     Left = 1130
     Top = 78

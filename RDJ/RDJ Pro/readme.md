@@ -21,6 +21,15 @@ Uses MDI adding channeldecks, loopbackdecks, a microphonedeck,
 effectsdeck (mft's) and enddeck (pa \& pfl, recorder (saves to WAV or FLAC) and browser broadcasting support),  
 playlisteditor and a tag editor (currently mp3 only).  
 
+For the latest mixer and EQ changes, see the [4.0.0.5 update notes](Docs/RDJPro-4.0.0.5-Update.md).
+
+## Next version: GUI refresh scheduling
+
+The main clock, audio recovery checks and listener refresh scheduling now use
+MfPack's shared threaded GUI refresh component. It avoids missed `WM_TIMER`
+refreshes when the message queue stays busy, and collapses pending updates.
+See [implementation and component notes](Docs/GUI-REFRESH-SCHEDULER.md).
+
 ## HEOS receiver output
 
 Use the **HEOS** button to open the separate HEOS Remote window, find your

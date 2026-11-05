@@ -302,6 +302,10 @@ var
 
 begin
 
+  FOutputType := nil;
+  FInputType := nil;
+  FTransform := nil;
+
   FSampleRate := ASettings.SampleRate;
   if (FSampleRate <= 0) then
     FSampleRate := 44100;
@@ -313,6 +317,12 @@ begin
   FBitrateKbps := ASettings.BitrateKbps;
   if (FBitrateKbps <= 0) then
     FBitrateKbps := 128;
+
+  // Windows AAC-LC supports these rates for mono and stereo.
+  if ((FSampleRate <> 44100) and (FSampleRate <> 48000)) or
+     ((FChannels <> 1) and (FChannels <> 2)) or
+     not (FBitrateKbps in [96, 128, 160, 192]) then
+    Exit(E_INVALIDARG);
 
   FBytesPerFrame := FChannels * SizeOf(SmallInt);
   FNextSampleTime100ns := 0;
@@ -608,6 +618,9 @@ begin
             0);
   SetLength(Combined,
             0);
+
+  if not Assigned(FTransform) then
+    Exit(MF_E_NOT_INITIALIZED);
 
   hr := CreateInputSample(pData,
                           AFrames,

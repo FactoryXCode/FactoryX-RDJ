@@ -19,909 +19,6 @@ object frmSetup: TfrmSetup
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 16
-  object pnlBroadCastSettings: TPanel
-    Left = 0
-    Top = 41
-    Width = 687
-    Height = 718
-    Align = alClient
-    BevelOuter = bvNone
-    Color = 5850948
-    Padding.Left = 12
-    Padding.Top = 12
-    Padding.Right = 12
-    Padding.Bottom = 12
-    ParentBackground = False
-    ShowCaption = False
-    TabOrder = 3
-    DesignSize = (
-      687
-      718)
-    object Bevel9: TBevel
-      Left = 9
-      Top = 16
-      Width = 670
-      Height = 281
-      ParentCustomHint = False
-      ParentShowHint = False
-      ShowHint = False
-    end
-    object Bevel8: TBevel
-      Left = 8
-      Top = 316
-      Width = 671
-      Height = 78
-      ParentCustomHint = False
-      ParentShowHint = False
-      ShowHint = False
-    end
-    object Bevel10: TBevel
-      Left = 7
-      Top = 416
-      Width = 671
-      Height = 70
-      ParentCustomHint = False
-      ParentShowHint = False
-      ShowHint = False
-    end
-    object Label18: TLabel
-      Left = 18
-      Top = 7
-      Width = 201
-      Height = 17
-      Alignment = taCenter
-      AutoSize = False
-      Caption = 'ProxyServer / json settings'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clAqua
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      Transparent = False
-    end
-    object lblCaddyPath: TLabel
-      Left = 21
-      Top = 37
-      Width = 127
-      Height = 23
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Root Path:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object lblCaddyConfigPath: TLabel
-      Left = 21
-      Top = 67
-      Width = 127
-      Height = 23
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Config Path:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object lblCaddyJsonNowPlayingPath: TLabel
-      Left = 21
-      Top = 99
-      Width = 127
-      Height = 23
-      Hint = 'Caddy'#39's NowPlaying.json path'
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'json Path:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object lblCaddyCmdLine: TLabel
-      Left = 20
-      Top = 244
-      Width = 128
-      Height = 23
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Server Command:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object Label21: TLabel
-      Left = 21
-      Top = 133
-      Width = 127
-      Height = 23
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Artwork Path:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object Label35: TLabel
-      Left = 20
-      Top = 409
-      Width = 75
-      Height = 17
-      Alignment = taCenter
-      AutoSize = False
-      Caption = 'Camera'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clAqua
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      Transparent = False
-    end
-    object Label25: TLabel
-      Left = 97
-      Top = 443
-      Width = 50
-      Height = 16
-      Alignment = taRightJustify
-      BiDiMode = bdLeftToRight
-      Caption = 'Camera:'
-      ParentBiDiMode = False
-    end
-    object Label22: TLabel
-      Left = 21
-      Top = 165
-      Width = 127
-      Height = 23
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Video Path:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object Label24: TLabel
-      Left = 21
-      Top = 196
-      Width = 127
-      Height = 23
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Content Type URL:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object Label27: TLabel
-      Left = 17
-      Top = 346
-      Width = 130
-      Height = 22
-      Hint = 'MP4 segment file size in milliseconds. Default is 2000 ms'
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'MP4 Segmentsize:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object lblMp4SegmentSize: TLabel
-      Left = 540
-      Top = 347
-      Width = 107
-      Height = 16
-      AutoSize = False
-      Caption = '2000 ms'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label8: TLabel
-      Left = 20
-      Top = 309
-      Width = 75
-      Height = 17
-      Alignment = taCenter
-      AutoSize = False
-      Caption = 'Mse MP4'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clAqua
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      Transparent = False
-    end
-    object Bevel11: TBevel
-      Left = 9
-      Top = 506
-      Width = 671
-      Height = 105
-    end
-    object lblLocalNetwork: TLabel
-      Left = 20
-      Top = 497
-      Width = 130
-      Height = 17
-      Alignment = taCenter
-      AutoSize = False
-      Caption = 'Local network'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clAqua
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      Transparent = False
-    end
-    object lblLocalNetworkHint: TLabel
-      Left = 22
-      Top = 562
-      Width = 638
-      Height = 39
-      AutoSize = False
-      Caption = 'Discover this computer'#39's active IPv4 address.'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clSilver
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      WordWrap = True
-    end
-    object edtCaddyPath: TEdit
-      Left = 153
-      Top = 34
-      Width = 474
-      Height = 26
-      Hint = 'Leave empty if Icecast/Caddy is on a server.'
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      AutoSize = False
-      BevelInner = bvNone
-      BevelKind = bkTile
-      BevelOuter = bvRaised
-      BorderStyle = bsNone
-      Color = 9216
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 0
-      TextHint = 'C:\ProxyServer'
-    end
-    object edtCaddyConfigPath: TEdit
-      Left = 155
-      Top = 64
-      Width = 474
-      Height = 26
-      Hint = 'Leave empty if Icecast/Caddy is o'
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      AutoSize = False
-      BevelInner = bvNone
-      BevelKind = bkTile
-      BevelOuter = bvRaised
-      BorderStyle = bsNone
-      Color = 9216
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 1
-      TextHint = 'C:\ProxyServer\ProxyServer.cff'
-    end
-    object edtCaddyJsonNowPlayingPath: TEdit
-      Left = 155
-      Top = 96
-      Width = 474
-      Height = 26
-      Hint = 'nowplaying.json path (Path on Server or local)'
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      AutoSize = False
-      BevelInner = bvNone
-      BevelKind = bkTile
-      BevelOuter = bvRaised
-      BorderStyle = bsNone
-      Color = 9216
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 2
-      TextHint = 'C:\ProxyServer\nowplaying.json'
-    end
-    object edtCaddyCmdLine: TEdit
-      Left = 155
-      Top = 241
-      Width = 474
-      Height = 26
-      Hint = 
-        'Caddy commandline.'#13#10'Leave empty if the server is starting as a s' +
-        'ervice.'
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      AutoSize = False
-      BevelInner = bvNone
-      BevelKind = bkTile
-      BevelOuter = bvRaised
-      BorderStyle = bsNone
-      Color = 9216
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 3
-      TextHint = 'FxServe.exe --install --config "C:\FxServe\FxServe.ini'
-    end
-    object btnGetCaddyPath: TMPxpButton
-      Left = 631
-      Top = 35
-      Width = 40
-      Height = 26
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taCenter
-      AllowAllUp = True
-      Caption = '...'
-      Color = 6303744
-      ColorWhenDown = 11363625
-      ColorWhenUp = 6303744
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      GlyphTransparentColor = clFuchsia
-      GlyphTransparent = True
-      HotTrackColor = clAqua
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -18
-      HotTrackFont.Name = 'Segoe UI'
-      HotTrackFont.Style = []
-      Layout = blGlyphRight
-      LightColor = 12348265
-      ParentColor = False
-      ParentFont = False
-      ShadowColor = clSkyBlue
-      Style = bsModern
-      OnClick = btnGetCaddyPathClick
-    end
-    object btnGetCaddyConfigPath: TMPxpButton
-      Left = 631
-      Top = 66
-      Width = 40
-      Height = 26
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taCenter
-      AllowAllUp = True
-      Caption = '...'
-      Color = 6303744
-      ColorWhenDown = 11363625
-      ColorWhenUp = 6303744
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      GlyphTransparentColor = clFuchsia
-      GlyphTransparent = True
-      HotTrackColor = clAqua
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -18
-      HotTrackFont.Name = 'Segoe UI'
-      HotTrackFont.Style = []
-      Layout = blGlyphRight
-      LightColor = 12348265
-      ParentColor = False
-      ParentFont = False
-      ShadowColor = clSkyBlue
-      Style = bsModern
-      OnClick = btnGetCaddyConfigPathClick
-    end
-    object btnGetCaddyJsonPath: TMPxpButton
-      Left = 631
-      Top = 99
-      Width = 40
-      Height = 26
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taCenter
-      AllowAllUp = True
-      Caption = '...'
-      Color = 6303744
-      ColorWhenDown = 11363625
-      ColorWhenUp = 6303744
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      GlyphTransparentColor = clFuchsia
-      GlyphTransparent = True
-      HotTrackColor = clAqua
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -18
-      HotTrackFont.Name = 'Segoe UI'
-      HotTrackFont.Style = []
-      Layout = blGlyphRight
-      LightColor = 12348265
-      ParentColor = False
-      ParentFont = False
-      ShadowColor = clSkyBlue
-      Style = bsModern
-      OnClick = btnGetCaddyJsonPathClick
-    end
-    object edtCaddyArtworkPath: TEdit
-      Left = 153
-      Top = 130
-      Width = 474
-      Height = 26
-      Hint = 'Enter the Caddy artwork location '
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      AutoSize = False
-      BevelInner = bvNone
-      BevelKind = bkTile
-      BevelOuter = bvRaised
-      BorderStyle = bsNone
-      Color = 9216
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 7
-      TextHint = 'C:\ProxyServer\Artwork'
-    end
-    object btnCaddyArtworkPath: TMPxpButton
-      Left = 631
-      Top = 131
-      Width = 40
-      Height = 26
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taCenter
-      AllowAllUp = True
-      Caption = '...'
-      Color = 6303744
-      ColorWhenDown = 11363625
-      ColorWhenUp = 6303744
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      GlyphTransparentColor = clFuchsia
-      GlyphTransparent = True
-      HotTrackColor = clAqua
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -18
-      HotTrackFont.Name = 'Segoe UI'
-      HotTrackFont.Style = []
-      Layout = blGlyphRight
-      LightColor = 12348265
-      ParentColor = False
-      ParentFont = False
-      ShadowColor = clSkyBlue
-      Style = bsModern
-      OnClick = btnCaddyArtworkPathClick
-    end
-    object cbSelectCamera: TComboBox
-      Left = 153
-      Top = 440
-      Width = 390
-      Height = 22
-      Style = csOwnerDrawFixed
-      Anchors = [akLeft, akTop, akRight]
-      BiDiMode = bdLeftToRight
-      Color = 9216
-      ParentBiDiMode = False
-      TabOrder = 9
-      OnChange = cbSelectCameraChange
-    end
-    object btnRefreshCameras: TMPxpButton
-      Left = 565
-      Top = 430
-      Width = 106
-      Height = 40
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taCenter
-      AllowAllUp = True
-      Caption = 'Refresh Cameras'
-      Color = 6303744
-      ColorWhenDown = 11363625
-      ColorWhenUp = 6303744
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      GlyphTransparentColor = clFuchsia
-      GlyphTransparent = True
-      HotTrackColor = clAqua
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -18
-      HotTrackFont.Name = 'Segoe UI'
-      HotTrackFont.Style = []
-      Layout = blGlyphRight
-      LightColor = 12348265
-      ParentColor = False
-      ParentFont = False
-      ShadowColor = clSkyBlue
-      Style = bsModern
-      WordWrap = True
-      OnClick = btnRefreshCamerasClick
-    end
-    object edtCaddyVideoPath: TEdit
-      Left = 155
-      Top = 162
-      Width = 474
-      Height = 26
-      Hint = 'Enter the Caddy video location '
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      AutoSize = False
-      BevelInner = bvNone
-      BevelKind = bkTile
-      BevelOuter = bvRaised
-      BorderStyle = bsNone
-      Color = 9216
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 11
-      TextHint = 'C:\ProxyServer\Video'
-    end
-    object btnCaddyVideoPath: TMPxpButton
-      Left = 633
-      Top = 163
-      Width = 40
-      Height = 26
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taCenter
-      AllowAllUp = True
-      Caption = '...'
-      Color = 6303744
-      ColorWhenDown = 11363625
-      ColorWhenUp = 6303744
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      GlyphTransparentColor = clFuchsia
-      GlyphTransparent = True
-      HotTrackColor = clAqua
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -18
-      HotTrackFont.Name = 'Segoe UI'
-      HotTrackFont.Style = []
-      Layout = blGlyphRight
-      LightColor = 12348265
-      ParentColor = False
-      ParentFont = False
-      ShadowColor = clSkyBlue
-      Style = bsModern
-      OnClick = btnCaddyVideoPathClick
-    end
-    object edtCaddyContentTypeURL: TEdit
-      Left = 155
-      Top = 193
-      Width = 474
-      Height = 26
-      Hint = 'Content default = video/mp4'
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      AutoSize = False
-      BevelInner = bvNone
-      BevelKind = bkTile
-      BevelOuter = bvRaised
-      BorderStyle = bsNone
-      Color = 9216
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 13
-      TextHint = 'video/mp4'
-    end
-    object tbMp4SegmentSize: TMfTrackBar
-      Left = 154
-      Top = 338
-      Width = 377
-      Height = 34
-      TabOrder = 14
-      Color = 5850948
-      ParentColor = False
-      Minimum = 2000
-      Maximum = 9000
-      Position = 2000
-      ThumbWidth = 50
-      ThumbHeight = 60
-      TransparentColor = clBlack
-      ThumbPictureHorz.Data = {
-        07544269746D617012010000424D120100000000000076000000280000001300
-        00000D00000001000400000000009C000000330B0000330B0000100000001000
-        000000000000959595009B9B9B00A2A2A200B9B9B900C4C4C400FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00055555554445555555000000531425454045452413500000531425454045
-        4524135000005314254540454524135000005314254540454524135000005314
-        2545404545241350000053142545404545241350000053142545404545241350
-        0000531425454045452413500000531425454045452413500000531425454045
-        452413500000531425454045452413500000055555554445555555000000}
-      ShowTicks = True
-      DbFloor = -50.000000000000000000
-      DbCeil = 6.000000000000000000
-      TickColor = clAqua
-      TickTextColor = clSilver
-      TickPlacementH = tphBoth
-      TickPlacementV = tpvBoth
-      SmallChange = 100
-      LargeChange = 100
-      OnChange = tbMp4SegmentSizeChange
-    end
-    object cbLocalIPv4: TComboBox
-      Left = 20
-      Top = 527
-      Width = 299
-      Height = 22
-      Style = csOwnerDrawFixed
-      Color = 9216
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 15
-    end
-    object btnDiscoverNetwork: TMPxpButton
-      Left = 331
-      Top = 525
-      Width = 99
-      Height = 30
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taCenter
-      AllowAllUp = True
-      Caption = 'Refresh'
-      Color = 6303744
-      ColorWhenDown = 11363625
-      ColorWhenUp = 6303744
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      GlyphTransparentColor = clFuchsia
-      GlyphTransparent = True
-      HotTrackColor = clAqua
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -18
-      HotTrackFont.Name = 'Segoe UI'
-      HotTrackFont.Style = []
-      Layout = blGlyphRight
-      LightColor = 12348265
-      ParentColor = False
-      ParentFont = False
-      ShadowColor = clSkyBlue
-      Style = bsModern
-      WordWrap = True
-      OnClick = btnDiscoverNetworkClick
-    end
-    object btnUseLocalIPv4: TMPxpButton
-      Left = 440
-      Top = 525
-      Width = 99
-      Height = 30
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taCenter
-      AllowAllUp = True
-      Caption = 'Use address'
-      Color = 6303744
-      ColorWhenDown = 11363625
-      ColorWhenUp = 6303744
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      GlyphTransparentColor = clFuchsia
-      GlyphTransparent = True
-      HotTrackColor = clAqua
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -18
-      HotTrackFont.Name = 'Segoe UI'
-      HotTrackFont.Style = []
-      Layout = blGlyphRight
-      LightColor = 12348265
-      ParentColor = False
-      ParentFont = False
-      ShadowColor = clSkyBlue
-      Style = bsModern
-      WordWrap = True
-      OnClick = btnUseLocalIPv4Click
-    end
-    object btnRemoveLocalIPv4: TMPxpButton
-      Left = 549
-      Top = 525
-      Width = 99
-      Height = 30
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Alignment = taCenter
-      AllowAllUp = True
-      Caption = 'Remove LAN'
-      Color = 6303744
-      ColorWhenDown = 11363625
-      ColorWhenUp = 6303744
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      GlyphTransparentColor = clFuchsia
-      GlyphTransparent = True
-      HotTrackColor = clAqua
-      HotTrackFont.Charset = DEFAULT_CHARSET
-      HotTrackFont.Color = clWindowText
-      HotTrackFont.Height = -18
-      HotTrackFont.Name = 'Segoe UI'
-      HotTrackFont.Style = []
-      Layout = blGlyphRight
-      LightColor = 12348265
-      ParentColor = False
-      ParentFont = False
-      ShadowColor = clSkyBlue
-      Style = bsModern
-      WordWrap = True
-      OnClick = btnUseLocalIPv4Click
-    end
-  end
   object pnlAudioRecorderSettings: TPanel
     Left = 0
     Top = 41
@@ -1976,7 +1073,7 @@ object frmSetup: TfrmSetup
     end
     object cbChannels: TComboBox
       Left = 179
-      Top = 234
+      Top = 233
       Width = 80
       Height = 22
       Style = csOwnerDrawFixed
@@ -2673,6 +1770,909 @@ object frmSetup: TfrmSetup
       SlowDecease = True
     end
   end
+  object pnlBroadCastSettings: TPanel
+    Left = 0
+    Top = 41
+    Width = 687
+    Height = 718
+    Align = alClient
+    BevelOuter = bvNone
+    Color = 5850948
+    Padding.Left = 12
+    Padding.Top = 12
+    Padding.Right = 12
+    Padding.Bottom = 12
+    ParentBackground = False
+    ShowCaption = False
+    TabOrder = 3
+    DesignSize = (
+      687
+      718)
+    object Bevel9: TBevel
+      Left = 9
+      Top = 16
+      Width = 670
+      Height = 281
+      ParentCustomHint = False
+      ParentShowHint = False
+      ShowHint = False
+    end
+    object Bevel8: TBevel
+      Left = 8
+      Top = 316
+      Width = 671
+      Height = 78
+      ParentCustomHint = False
+      ParentShowHint = False
+      ShowHint = False
+    end
+    object Bevel10: TBevel
+      Left = 7
+      Top = 416
+      Width = 671
+      Height = 70
+      ParentCustomHint = False
+      ParentShowHint = False
+      ShowHint = False
+    end
+    object Label18: TLabel
+      Left = 18
+      Top = 7
+      Width = 201
+      Height = 17
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'ProxyServer / json settings'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clAqua
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = False
+    end
+    object lblCaddyPath: TLabel
+      Left = 21
+      Top = 37
+      Width = 127
+      Height = 23
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Root Path:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object lblCaddyConfigPath: TLabel
+      Left = 21
+      Top = 67
+      Width = 127
+      Height = 23
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Config Path:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object lblCaddyJsonNowPlayingPath: TLabel
+      Left = 21
+      Top = 99
+      Width = 127
+      Height = 23
+      Hint = 'Caddy'#39's NowPlaying.json path'
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'json Path:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object lblCaddyCmdLine: TLabel
+      Left = 20
+      Top = 244
+      Width = 128
+      Height = 23
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Server Command:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object Label21: TLabel
+      Left = 21
+      Top = 133
+      Width = 127
+      Height = 23
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Artwork Path:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object Label35: TLabel
+      Left = 20
+      Top = 409
+      Width = 75
+      Height = 17
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Camera'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clAqua
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = False
+    end
+    object Label25: TLabel
+      Left = 97
+      Top = 443
+      Width = 50
+      Height = 16
+      Alignment = taRightJustify
+      BiDiMode = bdLeftToRight
+      Caption = 'Camera:'
+      ParentBiDiMode = False
+    end
+    object Label22: TLabel
+      Left = 21
+      Top = 165
+      Width = 127
+      Height = 23
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Video Path:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object Label24: TLabel
+      Left = 21
+      Top = 196
+      Width = 127
+      Height = 23
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Content Type URL:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object Label27: TLabel
+      Left = 17
+      Top = 346
+      Width = 130
+      Height = 22
+      Hint = 'MP4 segment file size in milliseconds. Default is 2000 ms'
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'MP4 Segmentsize:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object lblMp4SegmentSize: TLabel
+      Left = 540
+      Top = 347
+      Width = 107
+      Height = 16
+      AutoSize = False
+      Caption = '2000 ms'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label8: TLabel
+      Left = 20
+      Top = 309
+      Width = 75
+      Height = 17
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Mse MP4'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clAqua
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = False
+    end
+    object Bevel11: TBevel
+      Left = 9
+      Top = 506
+      Width = 671
+      Height = 105
+    end
+    object lblLocalNetwork: TLabel
+      Left = 20
+      Top = 497
+      Width = 130
+      Height = 17
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Local network'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clAqua
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = False
+    end
+    object lblLocalNetworkHint: TLabel
+      Left = 22
+      Top = 562
+      Width = 638
+      Height = 39
+      AutoSize = False
+      Caption = 'Discover this computer'#39's active IPv4 address.'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clSilver
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+    end
+    object edtCaddyPath: TEdit
+      Left = 153
+      Top = 34
+      Width = 474
+      Height = 26
+      Hint = 'Leave empty if Icecast/Caddy is on a server.'
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      AutoSize = False
+      BevelInner = bvNone
+      BevelKind = bkTile
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      TextHint = 'C:\ProxyServer'
+    end
+    object edtCaddyConfigPath: TEdit
+      Left = 155
+      Top = 64
+      Width = 474
+      Height = 26
+      Hint = 'Leave empty if Icecast/Caddy is o'
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      AutoSize = False
+      BevelInner = bvNone
+      BevelKind = bkTile
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      TextHint = 'C:\ProxyServer\ProxyServer.cff'
+    end
+    object edtCaddyJsonNowPlayingPath: TEdit
+      Left = 155
+      Top = 96
+      Width = 474
+      Height = 26
+      Hint = 'nowplaying.json path (Path on Server or local)'
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      AutoSize = False
+      BevelInner = bvNone
+      BevelKind = bkTile
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      TextHint = 'C:\ProxyServer\nowplaying.json'
+    end
+    object edtCaddyCmdLine: TEdit
+      Left = 155
+      Top = 241
+      Width = 474
+      Height = 26
+      Hint = 
+        'Caddy commandline.'#13#10'Leave empty if the server is starting as a s' +
+        'ervice.'
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      AutoSize = False
+      BevelInner = bvNone
+      BevelKind = bkTile
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+      TextHint = 'FxServe.exe --install --config "C:\FxServe\FxServe.ini'
+    end
+    object btnGetCaddyPath: TMPxpButton
+      Left = 631
+      Top = 35
+      Width = 40
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taCenter
+      AllowAllUp = True
+      Caption = '...'
+      Color = 6303744
+      ColorWhenDown = 11363625
+      ColorWhenUp = 6303744
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      GlyphTransparentColor = clFuchsia
+      GlyphTransparent = True
+      HotTrackColor = clAqua
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -18
+      HotTrackFont.Name = 'Segoe UI'
+      HotTrackFont.Style = []
+      Layout = blGlyphRight
+      LightColor = 12348265
+      ParentColor = False
+      ParentFont = False
+      ShadowColor = clSkyBlue
+      Style = bsModern
+      OnClick = btnGetCaddyPathClick
+    end
+    object btnGetCaddyConfigPath: TMPxpButton
+      Left = 631
+      Top = 66
+      Width = 40
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taCenter
+      AllowAllUp = True
+      Caption = '...'
+      Color = 6303744
+      ColorWhenDown = 11363625
+      ColorWhenUp = 6303744
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      GlyphTransparentColor = clFuchsia
+      GlyphTransparent = True
+      HotTrackColor = clAqua
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -18
+      HotTrackFont.Name = 'Segoe UI'
+      HotTrackFont.Style = []
+      Layout = blGlyphRight
+      LightColor = 12348265
+      ParentColor = False
+      ParentFont = False
+      ShadowColor = clSkyBlue
+      Style = bsModern
+      OnClick = btnGetCaddyConfigPathClick
+    end
+    object btnGetCaddyJsonPath: TMPxpButton
+      Left = 631
+      Top = 99
+      Width = 40
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taCenter
+      AllowAllUp = True
+      Caption = '...'
+      Color = 6303744
+      ColorWhenDown = 11363625
+      ColorWhenUp = 6303744
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      GlyphTransparentColor = clFuchsia
+      GlyphTransparent = True
+      HotTrackColor = clAqua
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -18
+      HotTrackFont.Name = 'Segoe UI'
+      HotTrackFont.Style = []
+      Layout = blGlyphRight
+      LightColor = 12348265
+      ParentColor = False
+      ParentFont = False
+      ShadowColor = clSkyBlue
+      Style = bsModern
+      OnClick = btnGetCaddyJsonPathClick
+    end
+    object edtCaddyArtworkPath: TEdit
+      Left = 153
+      Top = 130
+      Width = 474
+      Height = 26
+      Hint = 'Enter the Caddy artwork location '
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      AutoSize = False
+      BevelInner = bvNone
+      BevelKind = bkTile
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 7
+      TextHint = 'C:\ProxyServer\Artwork'
+    end
+    object btnCaddyArtworkPath: TMPxpButton
+      Left = 631
+      Top = 131
+      Width = 40
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taCenter
+      AllowAllUp = True
+      Caption = '...'
+      Color = 6303744
+      ColorWhenDown = 11363625
+      ColorWhenUp = 6303744
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      GlyphTransparentColor = clFuchsia
+      GlyphTransparent = True
+      HotTrackColor = clAqua
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -18
+      HotTrackFont.Name = 'Segoe UI'
+      HotTrackFont.Style = []
+      Layout = blGlyphRight
+      LightColor = 12348265
+      ParentColor = False
+      ParentFont = False
+      ShadowColor = clSkyBlue
+      Style = bsModern
+      OnClick = btnCaddyArtworkPathClick
+    end
+    object cbSelectCamera: TComboBox
+      Left = 153
+      Top = 440
+      Width = 390
+      Height = 22
+      Style = csOwnerDrawFixed
+      Anchors = [akLeft, akTop, akRight]
+      BiDiMode = bdLeftToRight
+      Color = 9216
+      ParentBiDiMode = False
+      TabOrder = 9
+      OnChange = cbSelectCameraChange
+    end
+    object btnRefreshCameras: TMPxpButton
+      Left = 565
+      Top = 430
+      Width = 106
+      Height = 40
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taCenter
+      AllowAllUp = True
+      Caption = 'Refresh Cameras'
+      Color = 6303744
+      ColorWhenDown = 11363625
+      ColorWhenUp = 6303744
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      GlyphTransparentColor = clFuchsia
+      GlyphTransparent = True
+      HotTrackColor = clAqua
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -18
+      HotTrackFont.Name = 'Segoe UI'
+      HotTrackFont.Style = []
+      Layout = blGlyphRight
+      LightColor = 12348265
+      ParentColor = False
+      ParentFont = False
+      ShadowColor = clSkyBlue
+      Style = bsModern
+      WordWrap = True
+      OnClick = btnRefreshCamerasClick
+    end
+    object edtCaddyVideoPath: TEdit
+      Left = 155
+      Top = 162
+      Width = 474
+      Height = 26
+      Hint = 'Enter the Caddy video location '
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      AutoSize = False
+      BevelInner = bvNone
+      BevelKind = bkTile
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 11
+      TextHint = 'C:\ProxyServer\Video'
+    end
+    object btnCaddyVideoPath: TMPxpButton
+      Left = 633
+      Top = 163
+      Width = 40
+      Height = 26
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taCenter
+      AllowAllUp = True
+      Caption = '...'
+      Color = 6303744
+      ColorWhenDown = 11363625
+      ColorWhenUp = 6303744
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      GlyphTransparentColor = clFuchsia
+      GlyphTransparent = True
+      HotTrackColor = clAqua
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -18
+      HotTrackFont.Name = 'Segoe UI'
+      HotTrackFont.Style = []
+      Layout = blGlyphRight
+      LightColor = 12348265
+      ParentColor = False
+      ParentFont = False
+      ShadowColor = clSkyBlue
+      Style = bsModern
+      OnClick = btnCaddyVideoPathClick
+    end
+    object edtCaddyContentTypeURL: TEdit
+      Left = 155
+      Top = 193
+      Width = 474
+      Height = 26
+      Hint = 'Content default = video/mp4'
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      AutoSize = False
+      BevelInner = bvNone
+      BevelKind = bkTile
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 13
+      TextHint = 'video/mp4'
+    end
+    object tbMp4SegmentSize: TMfTrackBar
+      Left = 154
+      Top = 338
+      Width = 377
+      Height = 34
+      TabOrder = 14
+      Color = 5850948
+      ParentColor = False
+      Minimum = 2000
+      Maximum = 9000
+      Position = 2000
+      ThumbWidth = 50
+      ThumbHeight = 60
+      TransparentColor = clBlack
+      ThumbPictureHorz.Data = {
+        07544269746D617012010000424D120100000000000076000000280000001300
+        00000D00000001000400000000009C000000330B0000330B0000100000001000
+        000000000000959595009B9B9B00A2A2A200B9B9B900C4C4C400FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00055555554445555555000000531425454045452413500000531425454045
+        4524135000005314254540454524135000005314254540454524135000005314
+        2545404545241350000053142545404545241350000053142545404545241350
+        0000531425454045452413500000531425454045452413500000531425454045
+        452413500000531425454045452413500000055555554445555555000000}
+      ShowTicks = True
+      DbFloor = -50.000000000000000000
+      DbCeil = 6.000000000000000000
+      TickColor = clAqua
+      TickTextColor = clSilver
+      TickPlacementH = tphBoth
+      TickPlacementV = tpvBoth
+      SmallChange = 100
+      LargeChange = 100
+      OnChange = tbMp4SegmentSizeChange
+    end
+    object cbLocalIPv4: TComboBox
+      Left = 20
+      Top = 527
+      Width = 299
+      Height = 22
+      Style = csOwnerDrawFixed
+      Color = 9216
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 15
+    end
+    object btnDiscoverNetwork: TMPxpButton
+      Left = 331
+      Top = 525
+      Width = 99
+      Height = 30
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taCenter
+      AllowAllUp = True
+      Caption = 'Refresh'
+      Color = 6303744
+      ColorWhenDown = 11363625
+      ColorWhenUp = 6303744
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      GlyphTransparentColor = clFuchsia
+      GlyphTransparent = True
+      HotTrackColor = clAqua
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -18
+      HotTrackFont.Name = 'Segoe UI'
+      HotTrackFont.Style = []
+      Layout = blGlyphRight
+      LightColor = 12348265
+      ParentColor = False
+      ParentFont = False
+      ShadowColor = clSkyBlue
+      Style = bsModern
+      WordWrap = True
+      OnClick = btnDiscoverNetworkClick
+    end
+    object btnUseLocalIPv4: TMPxpButton
+      Left = 440
+      Top = 525
+      Width = 99
+      Height = 30
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taCenter
+      AllowAllUp = True
+      Caption = 'Use address'
+      Color = 6303744
+      ColorWhenDown = 11363625
+      ColorWhenUp = 6303744
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      GlyphTransparentColor = clFuchsia
+      GlyphTransparent = True
+      HotTrackColor = clAqua
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -18
+      HotTrackFont.Name = 'Segoe UI'
+      HotTrackFont.Style = []
+      Layout = blGlyphRight
+      LightColor = 12348265
+      ParentColor = False
+      ParentFont = False
+      ShadowColor = clSkyBlue
+      Style = bsModern
+      WordWrap = True
+      OnClick = btnUseLocalIPv4Click
+    end
+    object btnRemoveLocalIPv4: TMPxpButton
+      Left = 549
+      Top = 525
+      Width = 99
+      Height = 30
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Alignment = taCenter
+      AllowAllUp = True
+      Caption = 'Remove LAN'
+      Color = 6303744
+      ColorWhenDown = 11363625
+      ColorWhenUp = 6303744
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      GlyphTransparentColor = clFuchsia
+      GlyphTransparent = True
+      HotTrackColor = clAqua
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -18
+      HotTrackFont.Name = 'Segoe UI'
+      HotTrackFont.Style = []
+      Layout = blGlyphRight
+      LightColor = 12348265
+      ParentColor = False
+      ParentFont = False
+      ShadowColor = clSkyBlue
+      Style = bsModern
+      WordWrap = True
+      OnClick = btnUseLocalIPv4Click
+    end
+  end
   object pnlButtons: TPanel
     Left = 0
     Top = 759
@@ -2687,7 +2687,6 @@ object frmSetup: TfrmSetup
     Padding.Bottom = 8
     ParentBackground = False
     TabOrder = 1
-    ExplicitTop = 761
     object btnOk: TMPxpButton
       Left = 445
       Top = 7
@@ -2776,7 +2775,6 @@ object frmSetup: TfrmSetup
     ParentBackground = False
     ShowCaption = False
     TabOrder = 2
-    ExplicitTop = 2
     object chkGeneralSettings: TMPxpButton
       Left = 4
       Top = 4

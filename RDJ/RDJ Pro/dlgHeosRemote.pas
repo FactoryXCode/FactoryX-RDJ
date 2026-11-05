@@ -67,6 +67,7 @@ uses
   {System}
   System.Classes,
   System.SysUtils,
+  System.IniFiles,
   System.Generics.Collections,
   {Vcl}
   Vcl.Forms,
@@ -164,6 +165,14 @@ type
     Bevel1: TBevel;
     Label6: TLabel;
     Label7: TLabel;
+    lblAacBitrate: TLabel;
+    lblAacChannels: TLabel;
+    cbxAacBitrate: TComboBox;
+    cbxAacChannels: TComboBox;
+    Bevel4: TBevel;
+    Label8: TLabel;
+
+    procedure AacSettingsChange(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure FormHidden(Sender: TObject);
@@ -196,6 +205,7 @@ type
       Shift: TShiftState; X, Y: Integer);
 
   private
+    FAudioSettingsFile: string;
     FWorker: TDenonRequest;
     FUpdatingTone: Boolean;
     FToneKnown: Boolean;
@@ -303,6 +313,7 @@ type
     destructor Destroy(); override;
 
     procedure BindOutput(AOutput: TRdjHeosOutput);
+    procedure LoadAudioSettings(const AFileName: string);
     property OnVisibilityChanged: TNotifyEvent read FOnVisibilityChanged write FOnVisibilityChanged;
   end;
 
@@ -1917,6 +1928,45 @@ begin
 end;
 
 
+procedure TRdjHeosRemoteForm.LoadAudioSettings(const AFileName: string);
+var
+  Ini: TIniFile;
+  Index: Integer;
+begin
+  FAudioSettingsFile := '';
+  Ini := TIniFile.Create(AFileName);
+  try
+    Index := cbxAacBitrate.Items.IndexOf(IntToStr(Ini.ReadInteger('HEOS', 'AacBitrateKbps', 192)));
+    if (Index < 0) then
+      Index := cbxAacBitrate.Items.IndexOf('192');
+    cbxAacBitrate.ItemIndex := Index;
+    if (Ini.ReadInteger('HEOS', 'AacChannels', 2) = 1) then
+      cbxAacChannels.ItemIndex := 1
+    else
+      cbxAacChannels.ItemIndex := 0;
+  finally
+    Ini.Free;
+  end;
+  FAudioSettingsFile := AFileName;
+end;
+
+
+procedure TRdjHeosRemoteForm.AacSettingsChange(Sender: TObject);
+var
+  Ini: TIniFile;
+begin
+  if (FAudioSettingsFile = '') then
+    Exit;
+  Ini := TIniFile.Create(FAudioSettingsFile);
+  try
+    Ini.WriteInteger('HEOS', 'AacBitrateKbps', StrToInt(cbxAacBitrate.Text));
+    Ini.WriteInteger('HEOS', 'AacChannels', 2 - cbxAacChannels.ItemIndex);
+  finally
+    Ini.Free;
+  end;
+end;
+
+
 procedure TRdjHeosRemoteForm.FormHidden(Sender: TObject);
 begin
 
@@ -2057,7 +2107,9 @@ begin
 
         FMasterOutput.Start(FStreamReceiver,
                             Port,
-                            Trim(PcAddressEdit.Text));
+                            Trim(PcAddressEdit.Text),
+                            StrToInt(cbxAacBitrate.Text),
+                            2 - cbxAacChannels.ItemIndex);
 
         FMasterWaiting := True;
         FMasterConfirmed := False;
@@ -2104,6 +2156,9 @@ begin
 
   btnStreamRdjAudio.Enabled := Assigned(FMasterOutput);
   btnStreamRdjAudio.Checked := FMasterDesired;
+  cbxAacBitrate.Enabled := not FMasterDesired and
+    (not Assigned(FMasterOutput) or not FMasterOutput.Active());
+  cbxAacChannels.Enabled := cbxAacBitrate.Enabled;
 end;
 
 

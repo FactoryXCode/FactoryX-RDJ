@@ -457,7 +457,7 @@ object frmChannelDeck: TfrmChannelDeck
       Maximum = 60
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -494,7 +494,7 @@ object frmChannelDeck: TfrmChannelDeck
       ParentColor = False
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -533,7 +533,7 @@ object frmChannelDeck: TfrmChannelDeck
       Minimum = -100
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -558,7 +558,7 @@ object frmChannelDeck: TfrmChannelDeck
     end
     object tbBalance: TMfTrackBar
       Left = 1
-      Top = 520
+      Top = 519
       Width = 295
       Height = 40
       Margins.Left = 0
@@ -570,7 +570,7 @@ object frmChannelDeck: TfrmChannelDeck
       ParentColor = False
       Minimum = -100
       ThumbWidth = 60
-      ThumbHeight = 50
+      ThumbHeight = 40
       TransparentColor = clBlack
       ThumbPictureHorz.Data = {
         07544269746D617012010000424D120100000000000076000000280000001300
@@ -608,7 +608,7 @@ object frmChannelDeck: TfrmChannelDeck
       Position = 10
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -647,7 +647,7 @@ object frmChannelDeck: TfrmChannelDeck
       Position = 1500
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -685,7 +685,7 @@ object frmChannelDeck: TfrmChannelDeck
       Maximum = 18
       Orientation = soVertical
       IncreaseToward = itUp
-      ThumbWidth = 60
+      ThumbWidth = 40
       ThumbHeight = 50
       TransparentColor = clBlack
       ThumbPictureVert.Data = {
@@ -848,7 +848,6 @@ object frmChannelDeck: TfrmChannelDeck
     ParentBackground = False
     ParentDoubleBuffered = False
     TabOrder = 1
-    ExplicitHeight = 299
     object Bevel6: TBevel
       Left = 224
       Top = 136
@@ -2032,7 +2031,6 @@ object frmChannelDeck: TfrmChannelDeck
     ParentDoubleBuffered = False
     ParentFont = False
     TabOrder = 3
-    ExplicitTop = 916
     object Bevel8: TBevel
       Left = 0
       Top = 13

@@ -12,7 +12,7 @@ is useful when the server also hosts other websites or needs more proxy options.
 
 The setup page keeps the existing **Caddy / json settings** name for
 compatibility. The same fields accept FxServe paths. See
-[RDJ Web Server Setup](https://github.com/FactoryXCode/MfPack/blob/main/Proxy%20Servers/FxServe/RDJ-Web-Server-Setup.md) for the values.
+[RDJ Web Server Setup](../../../FxServe/RDJ-Web-Server-Setup.md) for the values.
 
 ## Main window
 
@@ -165,12 +165,13 @@ Each channel deck plays an audio file or playlist.
 | BPM and beat light | Show the detected tempo/beat. |
 | Status, Played, and Duration | Show the loaded item and playback times. |
 
+X Fade uses relative percentage movement across channel, microphone and loopback decks. If both faders are at zero, raising one leaves the other at zero rather than jumping it to full volume.
+
 ## Microphone deck
 
 | Control | What it does |
 |---|---|
-| On | Starts the microphone. |
-| Off | Stops the microphone. |
+| On / Off toggle | Green and checked starts the microphone; red and unchecked stops it. |
 | Volume | Sets the microphone level in the main mix. |
 | Balance | Moves the microphone towards the left or right speaker. |
 | Input Gain | Adjusts the microphone level before effects and volume. |
@@ -312,6 +313,9 @@ Use **3-Band EQ**, **Compressor Limiter**, and **Flanger / Echo** to switch betw
 | Low Gain | Changes bass. |
 | Mid Gain | Changes middle tones. |
 | High Gain | Changes treble. |
+| EQ response graph | Shows the requested combined frequency response; bypass shows a flat line. |
+| Ramp | Off, Fast (10 ms), Smooth (30 ms, default), or Manual gain transitions. |
+| Ramp ms | Sets 0–5000 ms when Manual is selected. |
 
 ### Compressor and limiter
 
@@ -408,3 +412,11 @@ Use **3-Band EQ**, **Compressor Limiter**, and **Flanger / Echo** to switch betw
 | Selected file and Duration | Show the current choice and its playing time. |
 | OK | Uses the selected file. |
 | Cancel | Closes without selecting a file. |
+
+## Background AAC audio
+
+The public broadcast automatically supplies a separate AAC stream for audio-only
+listeners, with no extra controls. Browser/PWA playback continues using MP4
+fragments. AAC follows broadcast start/stop and Master volume/balance, stays
+independent of private HEOS output and retries failures without stopping MP4.
+See [background AAC setup and technical notes](../AUDIO-RADIO.md).

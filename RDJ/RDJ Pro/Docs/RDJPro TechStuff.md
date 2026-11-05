@@ -27,7 +27,7 @@ RDJ Pro uses these main Windows and web technologies:
 - FxServe as the small RDJ-focused web server, or Caddy as a general web server and reverse proxy.
 - Browser Media Source Extensions, usually called MSE, for live fMP4 playback in the browser.
 - JSON files for now-playing metadata and the live stream manifest.
-- HEOS CLI and AVR network control, with direct HTTP AAC streaming from the RDJ Pro Masterdeck.
+- HEOS CLI and AVR network control, with direct HTTP AAC streaming from the Masterdeck.
 
 ## Local Audio And Video Flow
 
@@ -48,10 +48,18 @@ On the video side:
 3. Audio samples from the RDJ program output are batched and timestamped.
 4. Audio and video are passed to the broadcast fMP4 recorder.
 
+## Master EQ graph and gain smoothing
+
+`frmMasterFxRack.imgSpectrumAnalizer` uses the plotting code adapted from MfPack WasApiPlayer Example4 in `RDJ.EqPlot.pas`. The plot uses the same filter design functions as the low/mid/high EQ and reads a snapshot without changing the audio filter state. The active sample rate is used; before audio starts, the preview uses 48 kHz. The plot shows the requested target curve and stays below Nyquist.
+
+The master EQ is initialized with `RampMs = 30` (Smooth). Off uses 0 ms, Fast 10 ms, Smooth 30 ms and Manual accepts 0–5000 ms. Gains move linearly in dB on the audio processing thread, counted in sample frames. Filter histories are retained; coefficients update every 32 frames during a transition and at its exact endpoint. Retargeting begins from current gains, and unchanged settings do not restart the transition. A new stream format starts at the configured tuning. Bypass remains immediate.
+
+Offline native tests compare the plotted response with the MFT impulse response at 44.1/48 kHz and verify ramp timing, retargeting, packet-size-independent audio output, VCL mode selection and input validation on Win32/Win64. The microphone/channel/loopback crossfade tests cover different slider ranges, both faders at zero, unequal starting levels and endpoint reversal.
+
 ## HEOS Masterdeck Output
 
 RDJ Pro can send its live stereo Masterdeck mix to a Denon or Marantz HEOS
-device. The separate **HEOS Remote** window opens from the main **HEOS** button.
+receiver. The separate **HEOS Remote** window opens from the main **HEOS** button.
 **Stream RDJ** is an on/off toggle: checked requests streaming, and clicking it
 again stops the local sender and queues a HEOS stop command. A checked button is
 not proof that the receiver is already audible; check the status/log and HTTP
@@ -136,7 +144,7 @@ freeing the HEOS window and sender. The window uses VCL DFM resources and TDn
 controls from `HEOSRemote\Controls`; the separate FactoryX-HEOS-CLI repository
 supplies `Heos.Sockets` through the `HeosCliRoot` project property.
 
-The integration has been built and tested with Delphi XE7 for Win32 and Win64. Local mock
+The integration has been built with Delphi XE7 for Win32 and Win64. Local mock
 receiver checks cover the trimmed DFM, AAC delivery, elapsed display, queued
 restart, close-to-hide and shutdown. Actual receiver buffering and listening
 level depend on the device and network. See [HEOS integration notes](../HEOS-INTEGRATION.md)
@@ -242,7 +250,7 @@ This grouping reduces:
 ## The Web Server Mirror
 
 RDJPro can publish directly to a local web root or mirror files to a web root on
-another machine. The normal FxServe path is for example:
+another machine. The normal FxServe path is:
 
 ```text
 \\PCHP001\FxServe\www\Stream
@@ -352,7 +360,7 @@ High-frequency logs are therefore throttled. Important state changes, errors, an
 
 For a stable RDJPro browser broadcast:
 
-1. Use Windows 10 22H2 or later.
+1. Use Windows 10 or later.
 2. Configure the RDJ Pro web-server paths correctly.
 3. Make sure FxServe or Caddy serves the RDJ Pro web folder.
 4. Enable Caddy JSON access logging if its listener count is needed.
@@ -408,9 +416,9 @@ The needed hardware as the best configuration is:
 - Studio microphone 
 - Studio camera
 - Internet connection
-- Remote server that has as minimum Windows 10 22H2 running on it, running FxServe or Caddy.
+- Remote server that has as minimum Windows 10 running on it, running FxServe or Caddy.
 - Router that supports DDNS or your own registered domain.
-- An amplifier + speakers for master sound. If your amplifier supports HEOS, you do not need hardware connection and you are able to use the RDJ Pro build inn HEOS Remote from the masterdeck.
+- An amplifier + speakers for master sound
 
 ## Test conditions
   
@@ -428,3 +436,11 @@ RDJ Pro uses Media Foundation for the hard media work: capture, encode, mux, and
 RDJ Pro adds the live-broadcast layer around it: observing the fMP4 byte stream, extracting and patching fragments, grouping fragments for practical browser delivery, publishing a rolling manifest, mirroring to the web server, and feeding a browser MSE player.
 
 The result is a Windows desktop DJ application that can broadcast synchronized audio/video to modern browsers using standard web playback technology and FxServe or Caddy.
+
+## Background AAC audio
+
+The public broadcast automatically supplies a separate AAC stream for audio-only
+listeners, with no extra controls. Browser/PWA playback continues using MP4
+fragments. AAC follows broadcast start/stop and Master volume/balance, stays
+independent of private HEOS output and retries failures without stopping MP4.
+See [background AAC setup and technical notes](../AUDIO-RADIO.md).

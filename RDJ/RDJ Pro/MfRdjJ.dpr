@@ -56,6 +56,7 @@ uses
   RDJ.RdjPro.Mp4Recorder in 'RDJ.RdjPro.Mp4Recorder.pas',
   RDJ.RdjPro.BroadcastFmp4Recorder in 'RDJ.RdjPro.BroadcastFmp4Recorder.pas',
   RDJ.RdjPro.CastFmp4Rebaser in 'RDJ.RdjPro.CastFmp4Rebaser.pas',
+  RDJ.EqPlot in 'RDJ.EqPlot.pas',
   RDJ.Log in 'RDJ.Log.pas';
 
 {$R *.res}

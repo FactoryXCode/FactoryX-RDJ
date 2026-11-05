@@ -104,6 +104,8 @@ type
     FCount: Integer;
     FObservedRate: Integer;
     FSampleRate: Integer;
+    FBitrateKbps: Integer;
+    FChannels: Integer;
     FActive: Integer;
     FReady: Integer;
     FFormatChanged: Integer;
@@ -116,7 +118,8 @@ type
     FWorker: TRdjHeosEncoderThread;
 
     procedure StartOutput(const AReceiver: string; APort: Word;
-                            const ALocalAddress: string; ARadio: Boolean);
+                            const ALocalAddress: string; ARadio: Boolean;
+                            ABitrateKbps: Integer; AChannels: Integer);
     function Pop(ABuffer: PSingle; AMaximum: Integer): Integer;
     procedure SetError(const AText: string);
 
@@ -126,7 +129,8 @@ type
     destructor Destroy(); override;
 
     procedure Start(const AReceiver: string; APort: Word = 0;
-                      const ALocalAddress: string = '');
+                      const ALocalAddress: string = '';
+                      ABitrateKbps: Integer = 192; AChannels: Integer = 2);
     procedure StartBroadcast(const ALocalAddress: string; APort: Word);
     function Listeners(): Integer;
     procedure Stop();
@@ -190,27 +194,34 @@ end;
 
 
 procedure TRdjHeosOutput.Start(const AReceiver: string; APort: Word;
-                                const ALocalAddress: string);
+                                const ALocalAddress: string;
+                                ABitrateKbps: Integer; AChannels: Integer);
 begin
 
-  StartOutput(AReceiver, APort, ALocalAddress, False);
+  StartOutput(AReceiver, APort, ALocalAddress, False, ABitrateKbps, AChannels);
 end;
 
 
 procedure TRdjHeosOutput.StartBroadcast(const ALocalAddress: string; APort: Word);
 begin
 
-  StartOutput('', APort, ALocalAddress, True);
+  StartOutput('', APort, ALocalAddress, True, 192, 2);
 end;
 
 
 procedure TRdjHeosOutput.StartOutput(const AReceiver: string; APort: Word;
-                                      const ALocalAddress: string; ARadio: Boolean);
+                                      const ALocalAddress: string; ARadio: Boolean;
+                            ABitrateKbps: Integer; AChannels: Integer);
 var
   Rate: Integer;
   Address: string;
 
 begin
+
+  if not (ABitrateKbps in [96, 128, 160, 192]) then
+    raise EArgumentException.Create('Choose an AAC bitrate of 96, 128, 160 or 192 kbps.');
+  if (AChannels <> 1) and (AChannels <> 2) then
+    raise EArgumentException.Create('Choose mono or stereo AAC audio.');
 
   Stop();
   Rate := InterlockedCompareExchange(FObservedRate, 0, 0);
@@ -224,6 +235,8 @@ begin
     FCount := 0;
     FError := '';
     FSampleRate := Rate;
+    FBitrateKbps := ABitrateKbps;
+    FChannels := AChannels;
   finally
     FLock.Release;
   end;
@@ -473,6 +486,7 @@ var
   Samples: array[0..HEOS_ENCODER_FRAMES * 2 - 1] of Single;
   Bytes: TBytes;
   Frames: Integer;
+  I: Integer;
   ComStarted: Boolean;
   MfStarted: Boolean;
 
@@ -489,8 +503,8 @@ begin
       MfStarted := True;
       Encoder := THeosAacEncoder.Create();
       Settings.SampleRate := FOwner.FSampleRate;
-      Settings.Channels := 2;
-      Settings.BitrateKbps := 192;
+      Settings.Channels := FOwner.FChannels;
+      Settings.BitrateKbps := FOwner.FBitrateKbps;
       CheckResult(Encoder.Initialize(Settings), 'Initialize HEOS AAC encoder');
       InterlockedExchange(FOwner.FReady, 1);
       while not Terminated do
@@ -501,6 +515,10 @@ begin
               FOwner.FWake.WaitFor(100);
               Continue;
             end;
+          // The queue is always stereo, with Master gains already applied.
+          if (Settings.Channels = 1) then
+            for I := 0 to Frames - 1 do
+              Samples[I] := Samples[I * 2] * 0.5 + Samples[I * 2 + 1] * 0.5;
           CheckResult(Encoder.EncodeInterleavedFloat32(@Samples[0], Frames, Bytes), 'Encode HEOS Masterdeck audio');
           if (Length(Bytes) > 0) then
             begin

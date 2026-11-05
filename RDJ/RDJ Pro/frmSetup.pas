@@ -651,7 +651,8 @@ begin
     cur := EnsureRange(Current,
                        1,
                        MAX_CHANNELS);
-      cbChannels.ItemIndex := cur - 1;
+
+    cbChannels.ItemIndex := cur - 1;
   finally
 
     cbChannels.Items.EndUpdate;
@@ -777,6 +778,7 @@ begin
             if (Item <> nil) and (Item.State = DEVICE_STATE_ACTIVE) then
               Break;
           end;
+
         if (selIdx >= cb.Items.Count) then
           selIdx := 0;
       end;
@@ -839,9 +841,8 @@ begin
         cb.Items.AddObject(DisplayName,
                            Item);
 
-        if (CurrentSymbolicLink <> '') and
-           SameText(CurrentSymbolicLink,
-                    SymbolicLink) then
+        if (CurrentSymbolicLink <> '') and SameText(CurrentSymbolicLink,
+                                                    SymbolicLink) then
           SelIdx := cb.Items.Count - 1;
       end;
 

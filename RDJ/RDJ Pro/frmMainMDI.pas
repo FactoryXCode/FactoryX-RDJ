@@ -114,6 +114,7 @@ uses
   MfParametricEqComponent,
   MfCompressorLimiterComponent,
   MfLowMidHighEqComponent,
+  MfGuiRefreshTimer,
   MfFlangerEchoComponent,
   frmChannelDeck,
   frmMasterDeck,
@@ -281,6 +282,7 @@ type
 
     // FX ----------------------------------------------------------------------
     FMasterLowMidHighEq: TMfLowMidHighEqEffect;
+    FUiRefreshTimer: TMfGuiRefreshTimer;
     FMasterFlangerEcho: TMfFlangerEchoEffect;
     FMasterCompLim: TMfCompressorLimiterEffect;
     FfrmMasterFxRack: TfrmMasterFxRack;
@@ -752,6 +754,8 @@ begin
   RDJLog('Shutdown',
          'Disabling main timer and restoring lid policy.');
   tmrClock.Enabled:= False;
+  if Assigned(FUiRefreshTimer) then
+    FUiRefreshTimer.Enabled := False;
   RestoreLidClosePolicyOverride();
 
   lblLocalTime.Caption := 'Closing RDJ Pro, please wait...';
@@ -1110,6 +1114,14 @@ begin
 
   RDJLog('Lifecycle',
          'Main form created.');
+  // Keep the existing DFM timer as a designer interval/event reference.
+  // Runtime refreshes use the shared posted-message scheduler.
+  tmrClock.Enabled := False;
+  FUiRefreshTimer := TMfGuiRefreshTimer.Create(Self);
+  FUiRefreshTimer.Enabled := False;
+  FUiRefreshTimer.Interval := tmrClock.Interval;
+  FUiRefreshTimer.OnTimer := tmrClockTimer;
+
   FHeosOutput := TRdjHeosOutput.Create();
   FBackgroundAudio := TRdjBackgroundAudio.Create(ChangeFileExt(Application.ExeName, '.ini'));
   FAudioGraphRecoveryQueued := 0;
@@ -1139,6 +1151,8 @@ var
   i: Integer;
 
 begin
+
+  FreeAndNil(FUiRefreshTimer);
 
   // The worker owns only an immutable path, not this form or its controls.
   // Cancel any pending synchronous server read before releasing it.
@@ -1425,6 +1439,7 @@ begin
                         True);
 
   FUiInitialized := True;
+  FUiRefreshTimer.Enabled := True;
 end;
 
 
@@ -2412,6 +2427,7 @@ begin
         begin
           FHeosForm := TRdjHeosRemoteForm.Create(Self);
           FHeosForm.BindOutput(FHeosOutput);
+          FHeosForm.LoadAudioSettings(FSetupFileName);
           FHeosForm.OnVisibilityChanged := HeosVisibilityChanged;
         end;
       FHeosForm.Show;
@@ -3197,6 +3213,9 @@ end;
 
 procedure TMainMDIFrm.tmrClockTimer(Sender: TObject);
 begin
+
+  if FAppClosing or not FUiInitialized then
+    Exit;
 
   lblLocalTime.Caption := TimeToStr(Time);
   ServiceAudioGraphRecovery();
