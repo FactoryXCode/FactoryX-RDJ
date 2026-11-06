@@ -6,14 +6,14 @@ Select **All configurations / All platforms** so the paths apply to Win32 and Wi
 Enter these absolute paths, one entry per line, in this order, for example:
 
 ```text
+E:\PROJECTS\MfPack\src
+E:\PROJECTS\MfPack\Samples\MfComponents
+E:\PROJECTS\MfPack\Cast
+E:\PROJECTS\MfPack\Cast\Media
+E:\PROJECTS\FactoryX-RDJ\FactoryX-RDJ\RDJ\Controls
 E:\PROJECTS\FactoryX-HEOS-CLI\Source
 E:\PROJECTS\FactoryX-HEOS-CLI\AVR\Source
 E:\PROJECTS\FactoryX-HEOS-CLI\AVR\Samples\HEOSRemote\Controls
-E:\PROJECTS\MfPack\src
-E:\PROJECTS\MfPack\Cast
-E:\PROJECTS\MfPack\Cast\Media
-E:\PROJECTS\MfPack\Samples\MfComponents
-E:\PROJECTS\FactoryX-RDJ\FactoryX-RDJ\RDJ\Controls
 ```
 
 These provide the HEOS API, AVR API, TDn controls, MfPack units, Cast units and RDJ controls. Adjust the absolute paths if your checkouts are elsewhere.
@@ -21,6 +21,7 @@ These provide the HEOS API, AVR API, TDn controls, MfPack units, Cast units and 
 For the form designer, install these component packages once:
 
 ```text
+E:\PROJECTS\MfPack\Samples\MfComponents\MfComponents.dpk
 E:\PROJECTS\RDJ\Controls\RDJControls.dpk
 E:\PROJECTS\FactoryX-HEOS-CLI\AVR\Samples\HEOSRemote\Controls\HEOSControls.dpk
 ```
