@@ -1,6 +1,6 @@
 # RDJ Pro project search paths
 
-Open `MfRdjJ.dproj`, then go to **Project > Options > Delphi Compiler > Search path**.
+Open `MfRdjJ.dpr`, then - in the IDE - go to **Project > Options > Delphi Compiler > Search path**.
 Select **All configurations / All platforms** so the paths apply to Win32 and Win64, Debug and Release.
 
 Enter these absolute paths, one entry per line, in this order, for example:
