@@ -11,6 +11,12 @@ This mixer is primarily intended for live music, but it's capable of WAN/LAN bro
   
 ![](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RDJ/Pic/RDJ_Interface_s.png)
   
+## Dependencies for Delphi development
+- [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher. 
+- Delphi XE7 up to and including Delphi 13.1.
+- Read [here](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RDJ/RDJ/Docs/RDJ%20Project%20search%20paths.md) for IDE Project settings.  
+- Windows 10 22H2 or higher.  
+
   
 **RDJ Pro**  
   
