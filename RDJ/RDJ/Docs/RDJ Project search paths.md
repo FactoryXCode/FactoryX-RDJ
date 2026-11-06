@@ -11,7 +11,7 @@ E:\PROJECTS\MfPack\Samples\MfComponents
 E:\PROJECTS\FactoryX-RDJ\FactoryX-RDJ\RDJ\Controls
 ```
 
-These provide the HEOS API, AVR API, TDn controls, MfPack units, Cast units and RDJ controls. Adjust the absolute paths if your checkouts are elsewhere.
+These provide the MfPack units, MfPack components and RDJ controls. Adjust the absolute paths if your checkouts are elsewhere.
 
 For the form designer, install these component packages once:
 
