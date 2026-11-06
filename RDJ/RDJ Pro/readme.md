@@ -70,7 +70,7 @@ and MfPack MfComponents (..\\MfPack\\Samples\\MfComponents\\MfComponents.dpk)
 Add "..\\MfPack\\Samples\\MfComponents", "..\\MfPack\\Samples\\MfRdjPro\\Controls" and
 "..\\MfPack\\src" to the RDJ Pro project search path.
 
-For the HEOS window, also install `HEOSRemote\Controls\HEOSControls.dpk` before
+For the HEOS window, also install `D:\PROJECTS\FactoryX-HEOS-CLI\AVR\Samples\HEOSRemote\Controls\HEOSControls.dpk` before
 opening its form in the designer. The project includes the embedded HEOS unit and
 control search paths. Keep FactoryX-HEOS-CLI available at the location specified
 by the `HeosCliRoot` project property (see the

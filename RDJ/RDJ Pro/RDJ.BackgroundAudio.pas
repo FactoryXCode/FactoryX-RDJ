@@ -65,9 +65,12 @@ interface
 
 uses
 
+  {WinApi}
   WinApi.Windows,
+  {System}
   System.SysUtils,
   System.Classes,
+  {Application}
   RDJ.HeosOutput;
 
 type
@@ -81,6 +84,7 @@ type
     FEnabled: Boolean;
     FAddress: string;
     FPort: Word;
+    FSettingsFile: string;
     FConfigError: string;
     FSampleRate: Integer;
     FLastAttemptTick: DWORD;
@@ -88,6 +92,9 @@ type
     FReadyReported: Boolean;
     FOnLog: TRdjBackgroundAudioLogEvent;
     procedure Log(const Text: string);
+    function TryReadAudioSettings(out BitrateKbps: Integer;
+                                  out Channels: Integer;
+                                  out ErrorText: string): Boolean;
 
   protected
 
@@ -97,18 +104,29 @@ type
 
     constructor Create(const SettingsFile: string);
     destructor Destroy(); override;
+
     procedure Update(ABroadcasting: Boolean);
     procedure Stop();
-    procedure SetMasterGains(ALeft: Single; ARight: Single);
-    procedure PushFloat32(Data: PSingle; Frames: Integer; SampleRate: Integer);
+
+    procedure SetMasterGains(ALeft: Single;
+                             ARight: Single);
+
+    procedure PushFloat32(Data: PSingle;
+                          Frames: Integer;
+                          SampleRate: Integer);
+
     property OnLog: TRdjBackgroundAudioLogEvent read FOnLog write FOnLog;
   end;
+
 
 implementation
 
 uses
 
-  System.IniFiles;
+  {System}
+  System.IniFiles,
+  {Application}
+  Heos.Files;
 
 constructor TRdjBackgroundAudio.Create(const SettingsFile: string);
 var
@@ -122,23 +140,35 @@ begin
   FEnabled := True;
   FAddress := '0.0.0.0';
   FPort := 8098;
+  FSettingsFile := SettingsFile;
   Settings := nil;
 
   try
     try
       Settings := TIniFile.Create(SettingsFile);
-      FEnabled := Settings.ReadBool('AudioRadio', 'Enabled', True);
-      FAddress := Trim(Settings.ReadString('AudioRadio', 'Bind', FAddress));
-      Port := Settings.ReadInteger('AudioRadio', 'Port', FPort);
+
+      FEnabled := Settings.ReadBool('AudioRadio',
+                                    'Enabled',
+                                    True);
+
+      FAddress := Trim(Settings.ReadString('AudioRadio',
+                                           'Bind',
+                                           FAddress));
+
+      Port := Settings.ReadInteger('AudioRadio',
+                                   'Port',
+                                   FPort);
 
       if (Port < 1) or (Port > 65535) then
-        raise EArgumentException.Create('AudioRadio Port must be between 1 and 65535.');
+        FConfigError := 'AudioRadio Port must be between 1 and 65535.'
+      else
+        FPort := Port;
 
-      FPort := Port;
     except
       on E: Exception do
         FConfigError := E.Message;
     end;
+
   finally
     Settings.Free();
   end;
@@ -150,6 +180,7 @@ begin
 
   FOnLog := nil;
   FOutput.Free();
+
   inherited;
 end;
 
@@ -169,12 +200,50 @@ begin
 end;
 
 
+function TRdjBackgroundAudio.TryReadAudioSettings(out BitrateKbps: Integer;
+                                                   out Channels: Integer;
+                                                   out ErrorText: string): Boolean;
+var
+  Settings: TMemIniFile;
+
+begin
+
+  Settings := TMemIniFile.Create('');
+
+  try
+    Result := TryLoadHeosIni(FSettingsFile,
+                             Settings,
+                             ErrorText);
+    if not Result then
+      Exit;
+
+    // Match HEOS Setup defaults for missing or unsupported saved values.
+    BitrateKbps := Settings.ReadInteger('HEOS',
+                                        'AacBitrateKbps',
+                                        192);
+    if not (BitrateKbps in [96, 128, 160, 192]) then
+      BitrateKbps := 192;
+
+    Channels := Settings.ReadInteger('HEOS',
+                                      'AacChannels',
+                                      2);
+    if (Channels <> 1) and (Channels <> 2) then
+      Channels := 2;
+
+  finally
+    Settings.Free();
+  end;
+end;
+
+
 procedure TRdjBackgroundAudio.Update(ABroadcasting: Boolean);
 var
   Tick: DWORD;
   Elapsed: DWORD;
   Rate: Integer;
   Error: string;
+  BitrateKbps: Integer;
+  Channels: Integer;
 
 begin
 
@@ -216,7 +285,7 @@ begin
   if (Rate <> 44100) and (Rate <> 48000) then
     Exit;
 
-  if Tick >= FLastAttemptTick then
+  if (Tick >= FLastAttemptTick) then
     Elapsed := Tick - FLastAttemptTick
   else
     Elapsed := (High(DWORD) - FLastAttemptTick) + Tick + 1;
@@ -229,11 +298,32 @@ begin
 
   try
     if (FConfigError <> '') then
-      raise EInvalidOperation.Create(FConfigError);
+      begin
+        Log('Background AAC start failed: ' + FConfigError + ' Retrying in 30 seconds.');
+        Exit;
+      end;
 
-    FOutput.StartBroadcast(FAddress, FPort);
+    // Reload when starting, without interrupting an active broadcast.
+    if not TryReadAudioSettings(BitrateKbps,
+                                Channels,
+                                Error) then
+      begin
+        Log('Background AAC start failed: ' + Error + ' Retrying in 30 seconds.');
+        Exit;
+      end;
+
+    if Failed(FOutput.StartBroadcast(FAddress,
+                                     FPort,
+                                     BitrateKbps,
+                                     Channels)) then
+      begin
+        Log('Background AAC start failed: ' + FOutput.ErrorText() + ' Retrying in 30 seconds.');
+        Exit;
+      end;
+
     FReadyReported := False;
     Log('Background AAC started on port ' + IntToStr(FPort) + ' (/radio/live.aac).');
+
   except
     on E: Exception do
       Log('Background AAC start failed: ' + E.Message + ' Retrying in 30 seconds.');
@@ -260,19 +350,25 @@ begin
 end;
 
 
-procedure TRdjBackgroundAudio.SetMasterGains(ALeft: Single; ARight: Single);
+procedure TRdjBackgroundAudio.SetMasterGains(ALeft: Single;
+                                             ARight: Single);
 begin
 
   FOutput.SetMasterGains(ALeft, ARight);
 end;
 
 
-procedure TRdjBackgroundAudio.PushFloat32(Data: PSingle; Frames: Integer;
-                                           SampleRate: Integer);
+procedure TRdjBackgroundAudio.PushFloat32(Data: PSingle;
+                                          Frames: Integer;
+                                          SampleRate: Integer);
 begin
 
-  InterlockedExchange(FSampleRate, SampleRate);
-  FOutput.PushFloat32(Data, Frames, SampleRate);
+  InterlockedExchange(FSampleRate,
+                      SampleRate);
+
+  FOutput.PushFloat32(Data,
+                      Frames,
+                      SampleRate);
 end;
 
 end.

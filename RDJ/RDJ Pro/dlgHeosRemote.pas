@@ -68,6 +68,7 @@ uses
   System.Classes,
   System.SysUtils,
   System.IniFiles,
+  Heos.Files,
   System.Generics.Collections,
   {Vcl}
   Vcl.Forms,
@@ -79,10 +80,8 @@ uses
   Vcl.Dialogs,
   Vcl.Imaging.jpeg,
   {Application}
-  HEOSTransport,
-  Heos,
+  RDJ.HeosControl,
   RDJ.HeosOutput,
-  HEOSDiscovery,
   // Controls
   HEOSButton,
   HEOSTrackBar, MPxpButton;
@@ -264,8 +263,8 @@ type
     FDesiredBalance: Integer;
     FMuteText: string;
     FInputText: string;
-    FDiscovery: THEOSDiscovery;
-    FDevices: TArray<THEOSDevice>;
+    FDiscovery: TRdjHeosDiscovery;
+    FDevices: TArray<TRdjHeosDevice>;
     FMasterOutput: TRdjHeosOutput;
     FMasterWaiting: Boolean;
     FMasterDesired: Boolean;
@@ -278,18 +277,22 @@ type
     FLastHeosAction: THeosAction;
     FStreamReceiver: string;
 
+    function TryReadAudioSettings(out BitrateKbps: Integer;
+                                  out Channels: Integer): Boolean;
+
     procedure DiscoveryFinished(Sender: TObject);
     procedure BeginReceiverCheck(ReadAll: Boolean = False;
-                                  Discover: Boolean = True);
+                                 Discover: Boolean = True);
     procedure BeginDiscovery(Reconnect: Boolean; ReadAll: Boolean);
     procedure CompleteReceiverCheck();
     procedure ProcessMasterStream();
-    procedure SendHeos(Action: THeosAction; const Url: string = '');
+    procedure SendHeos(Action: THeosAction;
+                       const Url: string = '');
     procedure UpdateStreamButtons();
     function ValidAddress(): Boolean;
 
     procedure StartRequest(const Commands: array of string;
-                            const ExpectedPowerReply: string = '');
+                           const ExpectedPowerReply: string = '');
 
     procedure RequestFinished(Sender: TObject);
     procedure ParseStatus(const Line: string);
@@ -336,7 +339,7 @@ uses
   {System}
   System.StrUtils,
   {Application}
-  HEOSSockets;
+  Heos.Sockets;
 
 const
 
@@ -364,9 +367,9 @@ procedure TReceiverAvailabilityProbe.Execute();
 begin
 
   FAvailable := ProbeReceiver(FHost,
-                                23,
-                                2000,
-                                FErrorText);
+                               23,
+                               2000,
+                               FErrorText);
 end;
 
 
@@ -515,7 +518,7 @@ begin
   FStatus.Caption := 'Searching local network interfaces for HEOS devices ...';
   lblStreamInfo.Caption := FStatus.Caption;
   memFLog.Lines.Add(FStatus.Caption);
-  FDiscovery := THEOSDiscovery.Create;
+  FDiscovery := TRdjHeosDiscovery.Create;
   FDiscovery.OnTerminate := DiscoveryFinished;
   FDiscovery.Start;
 end;
@@ -554,8 +557,7 @@ begin
         Description := Description + ' (HEOS only; AVR control unavailable)';
 
       cbxHEOSDevices.Items.Add(Description);
-      memFLog.Lines.Add('Found HEOS device: ' + Description + ' (' +
-                        FDevices[I].Model + ')');
+      memFLog.Lines.Add('Found HEOS device: ' + Description + ' (' + FDevices[I].Model + ')');
     end;
 
   if (ReceiverCount = 1) then
@@ -586,6 +588,7 @@ begin
 
   lblStreamInfo.Caption := FStatus.Caption;
   memFLog.Lines.Add(FStatus.Caption);
+
   if (ReceiverCount = 0) then
     FDiscoveryReconnect := False;
 end;
@@ -700,7 +703,8 @@ begin
 
   if not ValidAddress then
     begin
-      ShowMessage('Enter an IPv4 address, for example 192.168.50.103.');
+      FStatus.Caption := 'Enter an IPv4 address, for example 192.168.50.103.';
+      memFLog.Lines.Add(FStatus.Caption);
       Exit;
     end;
 
@@ -963,11 +967,7 @@ begin
     FExpectedPowerReply := '';
     FWorker := TDenonRequest.Create(Trim(edHost.Text),
                                     Commands.ToArray,
-                                    23,
-                                    False,
-                                    False,
-                                    False,
-                                    True);
+                                    23);
 
     FToneRequest := True;
     FTonePending := False;
@@ -1029,9 +1029,7 @@ begin
       FWorker := TDenonRequest.Create(Trim(edHost.Text),
                                       ['SI?',
                                       'CV?'],
-                                      23,
-                                      False,
-                                      True);
+                                      23);
 
       FStatus.Caption := 'Reading front channel levels ...';
       memFLog.Lines.Add('> SI?');
@@ -1056,9 +1054,7 @@ begin
                                       [LeftCommand,
                                        RightCommand,
                                        'CV?'],
-                                      23,
-                                      False,
-                                      True);
+                                      23);
 
       FBalancePending := False;
       FStatus.Caption := 'Setting receiver balance ...';
@@ -1214,10 +1210,7 @@ begin
 
   FWorker := TDenonRequest.Create(Trim(edHost.Text),
                                   Commands,
-                                  23,
-                                  False,
-                                  False,
-                                  True);
+                                  23);
 
   FWorker.OnTerminate := RequestFinished;
   SetVolumeBusy(True);
@@ -1304,8 +1297,7 @@ begin
       FWorker := TDenonRequest.Create(Trim(edHost.Text),
                                       [Command,
                                       'MV?'],
-                                      23,
-                                      True);
+                                      23);
 
       FStatus.Caption := 'Setting volume to ' + VolumeCaption(FDesiredVolume) + ' ...';
       memFLog.Lines.Add('> ' + Command);
@@ -1319,10 +1311,7 @@ begin
                                           ['ZM?',
                                            'Z2?',
                                            'MV?'],
-                                          23,
-                                          True,
-                                          False,
-                                          True);
+                                          23);
 
           FZoneReadPending := False;
           FStatus.Caption := 'Reading receiver volume and zone states ...';
@@ -1333,8 +1322,7 @@ begin
         begin
           FWorker := TDenonRequest.Create(Trim(edHost.Text),
                                           ['MV?'],
-                                          23,
-                                          True);
+                                          23);
 
           FStatus.Caption := 'Reading receiver volume ...';
         end;
@@ -1826,7 +1814,8 @@ begin
 
   if not ValidAddress then
     begin
-      ShowMessage('Enter a valid receiver IPv4 address first.');
+      FStatus.Caption := 'Enter a valid receiver IPv4 address first.';
+      memFLog.Lines.Add(FStatus.Caption);
       Exit;
     end;
 
@@ -1838,7 +1827,7 @@ begin
                    nil,
                    nil,
                    SW_SHOWNORMAL) <= 32) then
-    ShowMessage('Windows could not open the browser. Open ' + URL + ' manually.');
+    begin FStatus.Caption := 'Windows could not open the browser. Open ' + URL + ' manually.'; memFLog.Lines.Add(FStatus.Caption); end;
 end;
 
 
@@ -1928,39 +1917,122 @@ begin
 end;
 
 
+function TRdjHeosRemoteForm.TryReadAudioSettings(out BitrateKbps: Integer;
+                                                 out Channels: Integer): Boolean;
+var
+  Text: string;
+
+begin
+
+  BitrateKbps := 0;
+  Channels := 0;
+
+  Text := Trim(cbxAacBitrate.Text);
+
+  if SameText(Copy(Text,
+                   Length(Text) - 3,
+                   4),
+              'Kbps') then
+    Text := Trim(Copy(Text,
+                      1,
+                      Length(Text) - 4));
+
+  Result := TryStrToInt(Text,
+                        BitrateKbps);
+
+  if not Result then
+    Exit;
+
+  Result := BitrateKbps in [96, 128, 160, 192];
+
+  if SameText(Trim(cbxAacChannels.Text),
+                   'Stereo') then
+    Channels := 2
+  else
+    if SameText(Trim(cbxAacChannels.Text),
+                'Mono') then
+      Channels := 1
+    else
+      Result := False;
+end;
+
+
 procedure TRdjHeosRemoteForm.LoadAudioSettings(const AFileName: string);
 var
-  Ini: TIniFile;
+  Ini: TMemIniFile;
+  ErrorText: string;
   Index: Integer;
+
 begin
+
   FAudioSettingsFile := '';
-  Ini := TIniFile.Create(AFileName);
+  Ini := TMemIniFile.Create('');
+
   try
-    Index := cbxAacBitrate.Items.IndexOf(IntToStr(Ini.ReadInteger('HEOS', 'AacBitrateKbps', 192)));
-    if (Index < 0) then
-      Index := cbxAacBitrate.Items.IndexOf('192');
+    if not TryLoadHeosIni(AFileName,
+                          Ini,
+                          ErrorText) then
+      memFLog.Lines.Add('! HEOS settings: ' + ErrorText);
+
+    case Ini.ReadInteger('HEOS',
+                         'AacBitrateKbps',
+                         192) of
+      96: Index := 0;
+      128: Index := 1;
+      160: Index := 2;
+    else
+      Index := 3;
+    end;
+
     cbxAacBitrate.ItemIndex := Index;
-    if (Ini.ReadInteger('HEOS', 'AacChannels', 2) = 1) then
+
+    if (Ini.ReadInteger('HEOS',
+                        'AacChannels',
+                        2) = 1) then
       cbxAacChannels.ItemIndex := 1
     else
       cbxAacChannels.ItemIndex := 0;
+
   finally
     Ini.Free;
   end;
+
   FAudioSettingsFile := AFileName;
 end;
 
 
 procedure TRdjHeosRemoteForm.AacSettingsChange(Sender: TObject);
 var
-  Ini: TIniFile;
+  Ini: TMemIniFile;
+  ErrorText: string;
+  BitrateKbps: Integer;
+  Channels: Integer;
+
 begin
-  if (FAudioSettingsFile = '') then
+
+  if (FAudioSettingsFile = '') or not TryReadAudioSettings(BitrateKbps, Channels) then
     Exit;
-  Ini := TIniFile.Create(FAudioSettingsFile);
+
+  Ini := TMemIniFile.Create('');
+
   try
-    Ini.WriteInteger('HEOS', 'AacBitrateKbps', StrToInt(cbxAacBitrate.Text));
-    Ini.WriteInteger('HEOS', 'AacChannels', 2 - cbxAacChannels.ItemIndex);
+    if not TryLoadHeosIni(FAudioSettingsFile,
+                          Ini,
+                          ErrorText) then
+      begin
+        memFLog.Lines.Add('! HEOS settings: ' + ErrorText);
+        Exit;
+      end;
+
+    Ini.WriteInteger('HEOS', 'AacBitrateKbps', BitrateKbps);
+    Ini.WriteInteger('HEOS', 'AacChannels', Channels);
+
+    if not TrySaveHeosIni(FAudioSettingsFile,
+                          Ini,
+                          ErrorText,
+                          TEncoding.Unicode) then
+      memFLog.Lines.Add('! HEOS settings: ' + ErrorText);
+
   finally
     Ini.Free;
   end;
@@ -2033,7 +2105,25 @@ end;
 procedure TRdjHeosRemoteForm.ProcessMasterStream();
 var
   Port: Integer;
+  BitrateKbps: Integer;
+  Channels: Integer;
   Text: string;
+
+  procedure FailStream(const Text: string);
+    begin
+
+      FMasterDesired := False;
+      FMasterWaiting := False;
+      FMasterConfirmed := False;
+      FMasterStopPending := FMasterIssued;
+
+      if Assigned(FMasterOutput) then
+        FMasterOutput.Stop();
+
+      memFLog.Lines.Add('! Masterdeck: ' + Text);
+      lblStreamInfo.Caption := Text;
+    end;
+
 
 begin
 
@@ -2075,6 +2165,7 @@ begin
               FMasterConfirmed := False;
               FStreamReceiver := '';
             end;
+
         finally
           FreeAndNil(FHeos);
         end;
@@ -2093,23 +2184,41 @@ begin
       Exit;
 
     if not Assigned(FMasterOutput) then
-      raise EInvalidOperation.Create('The RDJ Masterdeck output is not attached.');
+      begin FailStream('The RDJ Masterdeck output is not attached.'); Exit; end;
 
     if not FMasterOutput.Active() then
       begin
         if not ValidAddress() then
-          raise EInvalidOperation.Create('Enter a valid receiver IPv4 address.');
+          begin
+            FailStream('Enter a valid receiver IPv4 address.');
+            Exit;
+          end;
 
-        if not TryStrToInt(StreamPortEdit.Text, Port) or (Port < 1024) or (Port > 65535) then
-          raise EInvalidOperation.Create('Choose a streaming port between 1024 and 65535.');
+        if not TryStrToInt(StreamPortEdit.Text,
+                           Port) or (Port < 1024) or (Port > 65535) then
+          begin
+            FailStream('Choose a streaming port between 1024 and 65535.');
+            Exit;
+          end;
+
+        if not TryReadAudioSettings(BitrateKbps,
+                                    Channels) then
+          begin
+            FailStream('Choose a supported AAC bitrate and Mono or Stereo channels.');
+            Exit;
+          end;
 
         FStreamReceiver := Trim(edHost.Text);
 
-        FMasterOutput.Start(FStreamReceiver,
+        if Failed(FMasterOutput.Start(FStreamReceiver,
                             Port,
                             Trim(PcAddressEdit.Text),
-                            StrToInt(cbxAacBitrate.Text),
-                            2 - cbxAacChannels.ItemIndex);
+                            BitrateKbps,
+                            Channels)) then
+          begin
+            FailStream(FMasterOutput.ErrorText());
+            Exit;
+          end;
 
         FMasterWaiting := True;
         FMasterConfirmed := False;
@@ -2121,7 +2230,10 @@ begin
     Text := FMasterOutput.ErrorText();
 
     if (Text <> '') then
-      raise EInvalidOperation.Create(Text);
+      begin
+        FailStream(Text);
+        Exit;
+      end;
 
    if FMasterWaiting and FMasterOutput.Ready() then
       begin
@@ -2138,14 +2250,7 @@ begin
   except
     on E: Exception do
       begin
-        FMasterDesired := False;
-        FMasterWaiting := False;
-        FMasterConfirmed := False;
-        FMasterStopPending := FMasterIssued;
-        if Assigned(FMasterOutput) then
-          FMasterOutput.Stop();
-        memFLog.Lines.Add('! Masterdeck: ' + E.Message);
-        lblStreamInfo.Caption := E.Message;
+        FailStream(E.Message);
       end;
   end;
 end;
@@ -2156,8 +2261,7 @@ begin
 
   btnStreamRdjAudio.Enabled := Assigned(FMasterOutput);
   btnStreamRdjAudio.Checked := FMasterDesired;
-  cbxAacBitrate.Enabled := not FMasterDesired and
-    (not Assigned(FMasterOutput) or not FMasterOutput.Active());
+  cbxAacBitrate.Enabled := not FMasterDesired and (not Assigned(FMasterOutput) or not FMasterOutput.Active());
   cbxAacChannels.Enabled := cbxAacBitrate.Enabled;
 end;
 
@@ -2180,7 +2284,12 @@ begin
     end;
 end;
 
+// External
 
-function GetTickCount64; external Kernel32Lib name 'GetTickCount64';
+{$WARN SYMBOL_PLATFORM OFF}
+
+function GetTickCount64; external Kernel32Lib name 'GetTickCount64' {$IF COMPILERVERSION > 20.0} delayed {$ENDIF};
+
+{$WARN SYMBOL_PLATFORM ON}
 
 end.

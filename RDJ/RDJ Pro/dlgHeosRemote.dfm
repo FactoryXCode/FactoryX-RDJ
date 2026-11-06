@@ -29,7 +29,6 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
     Color = 5850948
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = -1
     object Bevel4: TBevel
       Left = 20
       Top = 242
@@ -172,7 +171,7 @@ object RdjHeosRemoteForm: TRdjHeosRemoteForm
       Font.Style = []
       ItemIndex = 3
       ParentFont = False
-      TabOrder = 7
+      TabOrder = 6
       Text = '192 Kbps'
       OnChange = AacSettingsChange
       Items.Strings = (

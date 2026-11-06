@@ -26,13 +26,3 @@ their existing worker threads. This change does not establish a higher safe
 simultaneous deck capacity or address a long audio-processing callback stall.
 Existing per-control peak-meter timers and other form timers are unchanged.
 
-## Checks
-
-`Samples/MfComponents/Tests/Run-GuiRefreshTimerTests.py` exercises Win32 and
-Win64 scheduling, lifetime, streaming and exception handling. Its busy-queue
-case compares the component with a standard VCL timer while posted messages
-keep the queue active. Build RDJ Pro for both targets to verify integration.
-
-The capacity report from the preceding benchmark describes the original
-application. A follow-up load test is needed to quantify this version's GUI
-behavior; the component tests alone do not replace that benchmark.

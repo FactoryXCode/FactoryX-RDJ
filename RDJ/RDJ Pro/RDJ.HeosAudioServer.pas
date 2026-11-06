@@ -78,7 +78,9 @@ type
 
   THEOSAudioServer = class(TThread)
   private
+
     FListener: TSocket;
+    FInitialized: Boolean;
     FPath: string;
     FAddress: string;
     FPort: Word;
@@ -87,6 +89,9 @@ type
     FQueuedBytes: Integer;
     FRequests: Integer;
     FLastError: string;
+
+    function CheckSocket(Code: Integer;
+                         const Operation: string): Boolean;
 
     procedure Serve(Client: TSocket);
     function Pop(out Data: TBytes): Boolean;
@@ -113,6 +118,8 @@ type
     function Url(): string;
     function Requests(): Integer;
     function LastError(): string;
+
+    property Initialized: Boolean read FInitialized;
   end;
 
 
@@ -125,6 +132,18 @@ uses
   System.Diagnostics,
   {Application}
   Heos.Sockets;
+
+function THEOSAudioServer.CheckSocket(Code: Integer;
+                                      const Operation: string): Boolean;
+begin
+
+  Result := Code <> SOCKET_ERROR;
+
+  if not Result then
+    FLastError := Format('%s failed (Windows socket error %d)',
+                         [Operation, WSAGetLastError]);
+end;
+
 
 constructor THEOSAudioServer.Create(const LocalAddress: string;
                                     Port: Word);
@@ -162,16 +181,16 @@ begin
                       IPPROTO_TCP);
 
   if (FListener = INVALID_SOCKET) then
-    SocketCheck(SOCKET_ERROR,
-                'Create audio server');
+    if not CheckSocket(SOCKET_ERROR,
+                'Create audio server') then Exit;
 
   Reuse := 1;
-  SocketCheck(setsockopt(FListener,
+  if not CheckSocket(setsockopt(FListener,
                          SOL_SOCKET,
                          SO_REUSEADDR,
                          PAnsiChar(@Reuse),
                          SizeOf(Reuse)),
-                         'Set audio server socket reuse');
+                         'Set audio server socket reuse') then Exit;
 
   FillChar(Addr,
            SizeOf(Addr),
@@ -182,20 +201,21 @@ begin
   Addr.sin_port := htons(Port);
   Addr.sin_addr.S_addr := inet_addr(PAnsiChar(Host));
 
-  SocketCheck(bind(FListener,
+  if not CheckSocket(bind(FListener,
                    Addr,
                    SizeOf(Addr)),
-                   'Bind audio server');
+                   'Bind audio server') then Exit;
 
   // Port zero lets Windows allocate an available listening port.
   AddrSize := SizeOf(Addr);
-  SocketCheck(getsockname(FListener, Addr, AddrSize),
-                'Read audio server port');
+  if not CheckSocket(getsockname(FListener, Addr, AddrSize),
+                'Read audio server port') then Exit;
   FPort := ntohs(Addr.sin_port);
 
-  SocketCheck(listen(FListener,
+  if not CheckSocket(listen(FListener,
                      4),
-              'Listen for receiver');
+              'Listen for receiver') then Exit;
+  FInitialized := True;
 end;
 
 
@@ -493,6 +513,7 @@ var
   Mode: u_long;
 
 begin
+  if not FInitialized then Exit;
 
   while not Terminated do
     begin

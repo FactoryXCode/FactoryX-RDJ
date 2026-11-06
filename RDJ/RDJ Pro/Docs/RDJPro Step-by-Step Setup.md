@@ -36,7 +36,7 @@ RDJ\RDJ Pro\Controls\RDJControls.dpk
 4. Build/install the TDn controls used by the HEOS Remote window:
 
 ```text
-MfRdjPro\HEOSRemote\Controls\HEOSControls.dpk
+D:\PROJECTS\FactoryX-HEOS-CLI\AVR\Samples\HEOSRemote\Controls\HEOSControls.dpk
 ```
 
 If these TDn controls are already installed from the standalone HEOS Remote,
@@ -126,12 +126,12 @@ D:\PROJECTS\RDJ\RDJ Pro\Controls
 For the integrated HEOS sender, the project also includes:
 
 ```text
-HEOSRemote
-HEOSRemote\Controls
 $(HeosCliRoot)\Source
+$(HeosCliRoot)\AVR\Source
+$(HeosCliRoot)\AVR\Samples\HEOSRemote\Controls
 ```
 
-`HeosCliRoot` is configured as `D:\GitHub\FactoryX-HEOS-CLI`.
+`HeosCliRoot` is configured as `D:\PROJECTS\FactoryX-HEOS-CLI`.
 This project uses the API source from that repository. Change the project
 property only if you move the API checkout. Keep the paths in the project so both Win32 and Win64
 find the matching source; do not copy DCUs between platforms.

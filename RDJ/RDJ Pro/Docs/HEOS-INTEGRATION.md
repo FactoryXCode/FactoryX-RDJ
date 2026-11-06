@@ -32,7 +32,7 @@ when judging a change to RDJ Master Volume.
 
 `RDJ.HeosOutput` copies PCM into a bounded preallocated queue. The render callback does not encode, perform network I/O, access VCL controls or wait for the encoder. A background worker initializes COM/Media Foundation and produces AAC/ADTS. `RDJ.HeosAudioServer` serves that stream on the PC interface routed to the selected receiver, using the PC address and TCP port configured in the HEOS remote. Allow the RDJ application through the private-network firewall if the device cannot fetch the stream.
 
-HEOS Setup offers 96, 128, 160 and 192 kbps AAC-LC, with stereo or mono output. The default is 192 kbps stereo. Choices are saved in the RDJ setup INI under `[HEOS]` and apply when Stream RDJ starts. Stop streaming to edit them. Mono averages left and right after Master gains; the local mix stays stereo. The public broadcast keeps its independent 192 kbps stereo format. ADTS framing and the sample rate are automatic.
+HEOS Setup offers 96, 128, 160 and 192 kbps AAC-LC, with stereo or mono output. The default is 192 kbps stereo. Choices are saved in the RDJ setup INI under `[HEOS]` and apply when Stream RDJ starts. Stop streaming to edit them. Mono averages left and right after Master gains; the local mix stays stereo. The public broadcast reads the same saved AAC settings when starting or retrying; active streams keep their current format. ADTS framing and the sample rate are automatic.
 
 The current RDJ engine uses 44100 Hz stereo float PCM; the sender also accepts 48000 Hz. Changing sample rate while streaming is reported in the HEOS log and requires restarting the sender. Queue overflow drops network-copy blocks instead of delaying local playback; the window displays a dropped-block count.
 
@@ -62,3 +62,19 @@ listeners, with no extra controls. Browser/PWA playback continues using MP4
 fragments. AAC follows broadcast start/stop and Master volume/balance, stays
 independent of private HEOS output and retries failures without stopping MP4.
 See [background AAC setup and technical notes](AUDIO-RADIO.md).
+
+## Live error handling
+
+HEOS output startup returns an HRESULT and exposes the accompanying text through ErrorText. The caller checks the result before reporting streaming as started. Encoder/COM failures retain their HRESULT status, and expected socket failures use checked results. Network failures stop only the HEOS sender, leaving local RDJ playback running.
+
+## Shared API dependency
+
+Open `MfRdjJ.dproj`. Its `HeosCliRoot` property defaults to
+`D:\PROJECTS\FactoryX-HEOS-CLI`. Both Win32 and Win64 compile the shared
+`Source` and `AVR\Source` units, and use TDn controls from
+`AVR\Samples\HEOSRemote\Controls`. Keep one installed HEOSControls package.
+
+`RDJ.HeosControl` only adapts request completion and receiver selection to
+the RDJ form. Discovery, command builders, response matching, timeouts and
+socket I/O come from the shared API. No local HEOSRemote source copy or
+sample transport is compiled. Rebuild RDJ after updating the API checkout.

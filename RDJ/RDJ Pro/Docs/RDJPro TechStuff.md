@@ -141,8 +141,10 @@ power prevents network control.
 Streaming requests are serialized so a stop/restart can be queued while a HEOS
 request is pending. During shutdown, RDJ stops its audio output threads before
 freeing the HEOS window and sender. The window uses VCL DFM resources and TDn
-controls from `HEOSRemote\Controls`; the separate FactoryX-HEOS-CLI repository
-supplies `Heos.Sockets` through the `HeosCliRoot` project property.
+controls from `$(HeosCliRoot)\AVR\Samples\HEOSRemote\Controls`. FactoryX-HEOS-CLI
+supplies `Heos.Cli`, `Heos.Commands`, `Heos.Discovery`, `Heos.Sockets`,
+`Avr.Client` and `Avr.Commands`. `RDJ.HeosControl` adapts their asynchronous
+results to the form; it contains no socket or protocol implementation.
 
 The integration has been built with Delphi XE7 for Win32 and Win64. Local mock
 receiver checks cover the trimmed DFM, AAC delivery, elapsed display, queued
@@ -382,7 +384,7 @@ Main RDJPro files:
 - `RDJ.HeosOutput.pas` queues the Masterdeck PCM copy and manages the AAC worker.
 - `RDJ.HeosAacEncoder.pas` encodes PCM to AAC/ADTS with Media Foundation.
 - `RDJ.HeosAudioServer.pas` serves the live AAC stream directly to the receiver.
-- `HEOSRemote` contains the embedded HEOS/AVR command, socket and discovery units and TDn controls.
+- `RDJ.HeosControl` adapts RDJ request lifecycles to the shared HEOS/AVR API. The project uses FactoryX-HEOS-CLI sources and TDn controls directly; no local HEOSRemote copy is required.
 
 Browser and web-server files:
 
