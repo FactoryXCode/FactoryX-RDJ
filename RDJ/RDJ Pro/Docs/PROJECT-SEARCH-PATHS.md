@@ -21,6 +21,7 @@ These provide the HEOS API, AVR API, TDn controls, MfPack units, Cast units and 
 For the form designer, install these component packages once:
 
 ```text
+E:\PROJECTS\MfPack\Samples\MfComponents\MfComponents.dpk
 E:\PROJECTS\RDJ\Controls\RDJControls.dpk
 E:\PROJECTS\FactoryX-HEOS-CLI\AVR\Samples\HEOSRemote\Controls\HEOSControls.dpk
 ```
