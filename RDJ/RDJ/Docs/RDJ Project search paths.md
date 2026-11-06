@@ -17,7 +17,7 @@ For the form designer, install these component packages once:
 
 ```text
 E:\PROJECTS\MfPack\Samples\MfComponents\MfComponents.dpk
-E:\PROJECTS\RDJ\Controls\RDJControls.dpk
+E:\PROJECTS\FactoryX-RDJ\RDJ\Controls\RDJControls.dpk
 ```
 
 Keep Delphi's inherited library paths. After changing dependencies or updating the API, use **Project > Build**.
