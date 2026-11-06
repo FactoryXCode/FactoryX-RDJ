@@ -56,7 +56,8 @@ Before using this sample make sure, you have all needed components installed (se
 ## Dependencies for Delphi development
 - [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher. 
 - [FactoryX HEOS CLI for Delphi](https://github.com/FactoryXCode/FactoryX-HEOS-CLI), for RDJ Pro HEOS streaming.
-- Delphi XE7 up to and including Delphi 13.1.  
+- Delphi XE7 up to and including Delphi 13.1.
+- Read [here](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RDJ/RDJ%20Pro/Docs/PROJECT-SEARCH-PATHS.md) for IDE Project settings.  
 - Windows 10 22H2 or higher.  
 
 **Important note:**  
