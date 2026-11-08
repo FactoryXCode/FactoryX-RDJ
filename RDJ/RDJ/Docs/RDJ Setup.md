@@ -24,11 +24,14 @@ short installation and router instructions.
 Install Caddy by unpacking the zip (..\MfPack\Samples\MfRdjJ\Binaries\Caddy_PWA.zip)
 By default we advise you to copy the contents to C:\Caddy on a server or your local pc.
 
-To make all work correctly, you should activate port forwarding in your router.
+To make the web server accessible from the internet, configure these port-forwarding rules in your router:
 
-*Service Name	External Port	Internal Port	Internal IP Address  Protocol*
-CaddyHTTP	    80	                80	               192.168.xxx.xxx	    TCP		
-CaddyHTTPS     443                  443                  192.168.xxx.xxx	    TCP
+| Service name | External port | Internal port | Internal IP address | Protocol |
+| --- | --- | --- | --- | --- |
+| CaddyHTTP | 80 | 80 | `192.168.xxx.xxx` | TCP |
+| CaddyHTTPS | 443 | 443 | `192.168.xxx.xxx` | TCP |
+
+Replace `192.168.xxx.xxx` with the local IPv4 address of the computer running Caddy.
 
 **When your router supports DDNS, like ASUS routers, do as follows:**
 DDNS: Enable
