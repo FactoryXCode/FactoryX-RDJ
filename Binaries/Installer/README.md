@@ -1,62 +1,28 @@
 # FactoryX DJSuite
 
-&#x20;
+
 
 DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
 the optional tools needed to broadcast, serve and record a radio station.
-It can be used on a studio PC, server or another recording PC.
-Every installation includes either RDJ or RDJ Pro.
+It can be used on a studio PC, server or another recording PC. Every
+installation includes either RDJ or RDJ Pro.
 
 &#x20;
 
 &#x20;
-
-## RDJ Pro HEOS
-
-The **4.0.0.5** installer includes 32-bit and 64-bit RDJ Pro releases with
-the integrated HEOS Remote, plus updated user and technical guides. Toggle
-**Stream RDJ** to send the live Masterdeck mix to a HEOS receiver. RDJ Master
-Volume affects the stream; HEOS Remote volume independently sets the receiver's
-listening level. HEOS streaming does not require a web-server component.  
-
-&#x20; 
-
-Installer: [FactoryX-DJSuite-4.0.0.5-Setup.exe](FactoryX-DJSuite-4.0.0.5-Setup.exe).  
-
-&#x20;
-
-&#x20;
-
-Version 4.0.0.5 also includes broadcast-recorder recovery, automatic background
-AAC alongside browser/PWA MP4, and corrected FxServe WAN AAC delivery.
-See the [Setup guide](Setup.md) for the optional public AAC configuration.
-
-&#x20; 
-
-&#x20; 
-
-### Refreshed build — 4 November 2026
-
-Version **4.0.0.5** now includes the RDJ Pro microphone toggle, corrected relative
-crossfade for channel/microphone/loopback decks, Masterdeck visualizer recovery,
-and the master EQ response graph with Smooth (30 ms) as its default. RDJ includes
-the updated file browser and shared components. All six FactoryX apps were rebuilt
-for 32-bit and 64-bit. The bundled third-party versions are unchanged.
-
-SHA256: `076480985CA17819B1874973A128B509FD969A7EA603997714C878BA540314E4`
 
 ## What's included
 
-* **RDJ** — audio mixer application that supports Caddy/IceCast if needed.
-* **RDJ Pro** — audio and video broadcasting application.
-* **FxServe** — optional web and broadcast server (preferred for RDJ Pro).
-* **FxServe Admin** — optional FxServe administration tool (preferred for RDJ Pro).
-* **FxRecord** — optional broadcast recorder for desktop or Windows service use (preferred for RDJ Pro).
-* **FxRecord Admin** — optional recorder administration tool (preferred for RDJ Pro).
-* **Caddy** — optional web server (preferred for RDJ).
-* **Icecast** — optional streaming server, installed through its own setup wizard (preferred for RDJ).
+* **RDJ** — audio radio broadcasting application.
+* **RDJ Pro** — audio and video radio broadcasting application.
+* **FxServe** — optional web and broadcast server.
+* **FxServe Admin** — optional FxServe administration tool.
+* **FxRecord** — optional broadcast recorder for desktop or Windows service use.
+* **FxRecord Admin** — optional recorder administration tool.
+* **Caddy** — optional web server.
+* **Icecast** — optional streaming server, installed through its own setup wizard.
 * **Web applications and supporting files** — player, FxAlert, website assets,
-SQLite libraries, setup, user and technical guides.
+SQLite libraries and setup guides.
 
 &#x20;
 
@@ -64,7 +30,7 @@ SQLite libraries, setup, user and technical guides.
 
 The FactoryX applications include **32-bit and 64-bit releases**. Bundled
 Caddy and Icecast packages are 64-bit. Users needing 32-bit versions should
-check the [Caddy](https://caddyserver.com/download) and [Icecast](https://www.icecast.org/download/) sites for compatible downloads and install them separately.
+check the [Caddy](https://caddyserver.com/download) and [Icecast](https://www.icecast.org/download/) sites for compatible downloadsand install them separately.
 
 &#x20;
 
@@ -72,11 +38,12 @@ Setup lets users choose components, application and data folders, recording
 locations, network access and optional service registration. Existing settings,
 customized website files and recordings are preserved.
 
-&#x20;
+See the [user guide](USER-GUIDE.md) for installation instructions and
+[maintenance guide](MAINTAINING.md) for building and updating Setup.
 
-See the [Setup guide](Setup.md) for installation instructions.
 
-&#x20;
+
+
 
 Copyright © FactoryX. All rights reserved.
 
