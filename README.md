@@ -6,7 +6,7 @@ The Mixer is fully adjustable for audio endpoint assignments, mixer decks and lo
 This mixer is primarily intended for live music, but it's capable of internet broadcasting with Caddy/IceCast.
 
 **Note:**  
-Before compiling this sample make sure, you have all needed components installed first (see instructions).
+Before compiling the projects make sure, you have all needed components installed first (see instructions).
 
 
 
@@ -99,5 +99,5 @@ See the user guide for installation instructions.
 
 \---
 
-**(c) FactoryX. All rights reserved.**
+**Copyright (c) FactoryX. All rights reserved.**
 
