@@ -10,7 +10,7 @@
 // Release date: 24-01-2019
 // Language: ENU
 //
-// Version: 4.0.0
+// Version: 4.1.0
 // Description: Single visual component: Trackbar.
 //
 // Company: FactoryX
@@ -21,7 +21,7 @@
 // CHANGE LOG
 // Date       Person              Reason
 // ---------- ------------------- ----------------------------------------------
-// 15/11/2026 All                 Carmel release  SDK 10.0.28000.2705 (Windows 11)
+// 15/11/2026 All                 Eels release  SDK 10.0.28000.2705 (Windows 11)
 //------------------------------------------------------------------------------
 //
 // Remarks: To install the visual components, choose Install in the Project Manager.

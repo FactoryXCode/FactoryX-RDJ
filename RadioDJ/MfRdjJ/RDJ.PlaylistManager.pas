@@ -30,7 +30,7 @@ manage playlist list
 // CHANGE LOG
 // Date       Person              Reason
 // ---------- ------------------- ----------------------------------------------
-// 15/11/2026 All                 Carmel release  SDK 10.0.28000.2705 (Windows 11)
+// 15/11/2026 All                 Eels release  SDK 10.0.28000.2705 (Windows 11)
 //------------------------------------------------------------------------------
 //
 // Remarks: Requires Windows 10 or higher.

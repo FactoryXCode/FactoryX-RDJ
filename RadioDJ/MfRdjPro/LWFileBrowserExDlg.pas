@@ -22,7 +22,7 @@
 // CHANGE LOG
 // Date       Person              Reason
 // ---------- ------------------- ----------------------------------------------
-// 15/11/2026 All                 Carmel release  SDK 10.0.28000.2705 (Windows 11)
+// 15/11/2026 All                 Eels release  SDK 10.0.28000.2705 (Windows 11)
 // 02/11/2026 Carmen              Changed default disk names, to user disk names.
 //------------------------------------------------------------------------------
 //
