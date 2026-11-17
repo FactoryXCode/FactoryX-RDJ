@@ -363,7 +363,7 @@ High-frequency logs are therefore throttled. Important state changes, errors, an
 
 For a stable RDJPro browser broadcast:
 
-1. Use Windows 10 or later.
+1. Use Windows 10 22H2 or later.
 2. Configure the RDJ Pro web-server paths correctly.
 3. Make sure FxServe or Caddy serves the RDJ Pro web folder.
 4. Enable Caddy JSON access logging if its listener count is needed.
@@ -372,6 +372,7 @@ For a stable RDJPro browser broadcast:
 7. Use HTTPS if browsers require secure media or PWA behavior.
 8. Watch `live.json` and `nowplaying.json` when diagnosing browser issues.
 9. Watch RDJ Pro MSE memory heartbeat lines for queue growth or mirror stalls.
+
 
 ## Important Files
 
@@ -428,7 +429,7 @@ The needed hardware as the best configuration is:
 - RDJ Pro has been tested on long runs (max a month), 
 - Hard/software: HP laptop with i7-10510U CPU 1.80GHz (2.30 GHz), 16 gb memory, NVIDIA GeForce MX330 (2 GB) Intel(R) UHD Graphics (128 MB), Windows 11 Pro 64 bit.
 - HP monitor with build-in audio
-- Remote server: HP dual core PC Windows 10
+- Remote server: HP dual core PC Windows 10 24H2
 - Wireless WIFI (on bad router connection, 15% signal strength)
 - Wireless internet 4G and 5G (20% signal strength)
   
