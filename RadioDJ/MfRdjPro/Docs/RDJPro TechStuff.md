@@ -24,7 +24,7 @@ RDJ Pro uses these main Windows and web technologies:
 - Media Foundation Source Reader for video/camera sample capture.
 - Media Foundation Sink Writer and MPEG-4 media sink for MP4/fMP4 encoding.
 - A custom IMFByteStream proxy to observe fragmented MP4 bytes while Media Foundation writes them.
-- FxServe as the small RDJ-focused web server, or Caddy as a general web server and reverse proxy.
+- FxServe as the light weight web server, or Caddy as a general web server and reverse proxy.
 - Browser Media Source Extensions, usually called MSE, for live fMP4 playback in the browser.
 - JSON files for now-playing metadata and the live stream manifest.
 - HEOS CLI and AVR network control, with direct HTTP AAC streaming from the Masterdeck.
