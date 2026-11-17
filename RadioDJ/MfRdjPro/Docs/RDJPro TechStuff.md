@@ -147,7 +147,7 @@ supplies `Heos.Cli`, `Heos.Commands`, `Heos.Discovery`, `Heos.Sockets`,
 `Avr.Client` and `Avr.Commands`. `RDJ.HeosControl` adapts their asynchronous
 results to the form; it contains no socket or protocol implementation.
 
-The integration has been built with Delphi XE7 for Win32 and Win64. Local mock
+The integration has been tested with Delphi XE7 up to 13.1 for Win32 and Win64. Local mock
 receiver checks cover the trimmed DFM, AAC delivery, elapsed display, queued
 restart, close-to-hide and shutdown. Actual receiver buffering and listening
 level depend on the device and network. See [HEOS integration notes](../HEOS-INTEGRATION.md)
