@@ -447,4 +447,4 @@ The public broadcast automatically supplies a separate AAC stream for audio-only
 listeners, with no extra controls. Browser/PWA playback continues using MP4
 fragments. AAC follows broadcast start/stop and Master volume/balance, stays
 independent of private HEOS output and retries failures without stopping MP4.
-See [background AAC setup and technical notes](../AUDIO-RADIO.md).
+See [background AAC setup and technical notes](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RadioDJ/MfRdjPro/Docs/AUDIO-RADIO.md).
