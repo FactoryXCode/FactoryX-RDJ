@@ -103,7 +103,7 @@ customized website files and recordings are preserved.
 
 See the user guide for installation instructions.
 
-# Download the Windows Installer ![here](https://github.com/FactoryXCode/FactoryX-RDJ/releases/download/DJSuite/FactoryX-DJSuite-4.0.0.5-Setup.exe)
+# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-RDJ/releases/download/DJSuite/FactoryX-DJSuite-4.0.0.5-Setup.exe)
 
 \---
 
