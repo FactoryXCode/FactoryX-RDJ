@@ -9,7 +9,7 @@ NOTES:
 This release is updated for compiler version 34 (Delphi 12).  
 The minimum version for your compiler is Delphi XE7.  
 SDK version 10.0.28000.2705 (Win 11)  
-Minimum supported MfPack version: 4.0.0  
+Minimum supported MfPack version: 4.1.0  
   
 A dj mixer app based on MfPack/Media foundation/core audio/WasApi.  
   
