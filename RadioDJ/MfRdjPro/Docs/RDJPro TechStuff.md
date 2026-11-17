@@ -8,7 +8,7 @@ The project is larger than a small sample because it shows how several real-time
 
 ## What RDJ Pro Does
 
-RDJ Pro is an MDI DJ mixer application with channel decks, loopback decks, a microphone deck, an effects deck, an end deck, playlist editing, tag editing, local recording, and browser broadcast support.
+RDJ Pro is an MDI DJ mixer application with up to 16 channel decks, up to 4 loopback decks, a microphone deck, an effects deck, an end deck, playlist editing, tag editing, local recording, and browser broadcast support.
 
 The normal audio path is built around Windows audio devices and MfPack helpers. Deck audio is mixed inside RDJ Pro and sent to the selected master output. A separate PFL/cue/headphone output can be enabled for monitoring.
 
