@@ -8,7 +8,7 @@ The project is larger than a small sample because it shows how several real-time
 
 ## What RDJ Pro Does
 
-RDJ Pro is an MDI DJ mixer application with channel decks, loopback decks, a microphone deck, an effects deck, an end deck, playlist editing, tag editing, local recording, and browser broadcast support.
+RDJ Pro is an MDI DJ mixer application with up to 16 channel decks, up to 4 loopback decks, a microphone deck, an effects deck, an end deck, playlist editing, tag editing, local recording, and browser broadcast support.
 
 The normal audio path is built around Windows audio devices and MfPack helpers. Deck audio is mixed inside RDJ Pro and sent to the selected master output. A separate PFL/cue/headphone output can be enabled for monitoring.
 
@@ -24,9 +24,10 @@ RDJ Pro uses these main Windows and web technologies:
 - Media Foundation Source Reader for video/camera sample capture.
 - Media Foundation Sink Writer and MPEG-4 media sink for MP4/fMP4 encoding.
 - A custom IMFByteStream proxy to observe fragmented MP4 bytes while Media Foundation writes them.
-- FxServe as the small RDJ-focused web server, or Caddy as a general web server and reverse proxy.
+- FxServe as the light weight web server, or Caddy as a general web server and reverse proxy.
 - Browser Media Source Extensions, usually called MSE, for live fMP4 playback in the browser.
 - JSON files for now-playing metadata and the live stream manifest.
+- ChromeCast support for android devices (TV's and speakers) by MfPack Cast V2.
 - HEOS CLI and AVR network control, with direct HTTP AAC streaming from the Masterdeck.
 
 ## Local Audio And Video Flow
@@ -146,7 +147,7 @@ supplies `Heos.Cli`, `Heos.Commands`, `Heos.Discovery`, `Heos.Sockets`,
 `Avr.Client` and `Avr.Commands`. `RDJ.HeosControl` adapts their asynchronous
 results to the form; it contains no socket or protocol implementation.
 
-The integration has been built with Delphi XE7 for Win32 and Win64. Local mock
+The integration has been tested with Delphi XE7 up to 13.1 for Win32 and Win64. Local mock
 receiver checks cover the trimmed DFM, AAC delivery, elapsed display, queued
 restart, close-to-hide and shutdown. Actual receiver buffering and listening
 level depend on the device and network. See [HEOS integration notes](../HEOS-INTEGRATION.md)
@@ -212,7 +213,7 @@ The recorder uses cautious Media Foundation settings:
 
 The important RDJ Pro trick is that the byte stream is not only a file stream. RDJ Pro wraps it in `TRdjProFmp4CaptureByteStream`, which implements `IMFByteStream`.
 
-That wrapper forwards writes to the real Media Foundation file stream, but it also observes the bytes. This lets RDJPro parse top-level MP4 boxes while Media Foundation is writing.
+That wrapper forwards writes to the real Media Foundation file stream, but it also observes the bytes. This lets RDJPro parse top-level MP4 'boxes' while Media Foundation is writing.
 
 The wrapper watches for:
 
@@ -362,7 +363,7 @@ High-frequency logs are therefore throttled. Important state changes, errors, an
 
 For a stable RDJPro browser broadcast:
 
-1. Use Windows 10 or later.
+1. Use Windows 10 22H2 or later.
 2. Configure the RDJ Pro web-server paths correctly.
 3. Make sure FxServe or Caddy serves the RDJ Pro web folder.
 4. Enable Caddy JSON access logging if its listener count is needed.
@@ -371,6 +372,7 @@ For a stable RDJPro browser broadcast:
 7. Use HTTPS if browsers require secure media or PWA behavior.
 8. Watch `live.json` and `nowplaying.json` when diagnosing browser issues.
 9. Watch RDJ Pro MSE memory heartbeat lines for queue growth or mirror stalls.
+
 
 ## Important Files
 
@@ -427,7 +429,7 @@ The needed hardware as the best configuration is:
 - RDJ Pro has been tested on long runs (max a month), 
 - Hard/software: HP laptop with i7-10510U CPU 1.80GHz (2.30 GHz), 16 gb memory, NVIDIA GeForce MX330 (2 GB) Intel(R) UHD Graphics (128 MB), Windows 11 Pro 64 bit.
 - HP monitor with build-in audio
-- Remote server: HP dual core PC Windows 10
+- Remote server: HP dual core PC Windows 10 24H2
 - Wireless WIFI (on bad router connection, 15% signal strength)
 - Wireless internet 4G and 5G (20% signal strength)
   
