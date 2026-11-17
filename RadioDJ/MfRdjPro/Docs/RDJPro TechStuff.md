@@ -27,7 +27,7 @@ RDJ Pro uses these main Windows and web technologies:
 - FxServe as the light weight web server, or Caddy as a general web server and reverse proxy.
 - Browser Media Source Extensions, usually called MSE, for live fMP4 playback in the browser.
 - JSON files for now-playing metadata and the live stream manifest.
-- CromeCast support for android devices (TV's and speakers) by MfPack Cast V2.
+- ChromeCast support for android devices (TV's and speakers) by MfPack Cast V2.
 - HEOS CLI and AVR network control, with direct HTTP AAC streaming from the Masterdeck.
 
 ## Local Audio And Video Flow
