@@ -1,18 +1,26 @@
 ﻿# Radio DJ \& DJSuite
 
-**MfRDJ**  
+MfRDJ and MfRDJ Pro are Delphi projects containing source code and binaries.
+The minimum supported compiler is Delphi XE7.
+
+## MfRDJ  
+
+![](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RadioDJ/Pic/RDJ_Interface_s.png)
+  
 This application is a multi-channel audio mixer with effects.  
 The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
 This mixer is primarily intended for live music, but it's capable of internet broadcasting with Caddy/IceCast.
 
-**Note:**  
-Before compiling the projects make sure, you have all needed components installed first (see instructions).
-
-
-
-**MfRDJ Pro**  
-MfRDJPro is the extended version of MfRDJ.
-
+**Important note:**  
+Before opening the project in the IDE, make sure you have all needed components installed (see instructions).
+  
+  
+  
+## MfRDJ Pro  
+MfRDJPro is the extended version of MfRDJ.  
+  
+![](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RadioDJ/Pic/RDJPro_Interface_s.png)
+  
 Where MfRDJ mainly demonstrates DJ-style audio playback and mixing with MfPack,  
 MfRDJ Pro adds a complete live broadcast layer around the mixer.  
 MfRDJ Pro still provides the familiar RDJ functions: channel decks,  
@@ -41,15 +49,15 @@ FxRecord is designed to run on a local pc or server as a Windows service.
 FxRecordAdmin is a tool that is able to control FxRecord within the local network.
 An FxAlert App running on smartphones or pc's is provided to watch FxRecord and alert admins of the recording/server status.
 
-**Note:**  
-Before using this sample make sure, you have all needed components installed (see instructions).
+**Important note:**  
+Before opening the project in the IDE, make sure you have all needed components installed (see instructions).
 
 
 
 ## Dependencies for Delphi development
 
-* [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.0.0 or higher.
-* Delphi XE2 (minimum recommended version: Delphi XE7) up to and including Delphi 13.1.
+* [**MfPack**](https://github.com/FactoryXCode/MfPack) Version 4.1.0 or higher.
+* Minimum recommended version: Delphi XE7 up to and including Delphi 13.1.
 * Windows 10 (22H2) or higher.
 
 **Important note:**  
@@ -95,7 +103,7 @@ customized website files and recordings are preserved.
 
 See the user guide for installation instructions.
 
-# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.1-Setup.exe)
+# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.5-Setup.exe)
 
 \---
 
