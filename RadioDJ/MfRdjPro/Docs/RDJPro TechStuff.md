@@ -27,6 +27,7 @@ RDJ Pro uses these main Windows and web technologies:
 - FxServe as the light weight web server, or Caddy as a general web server and reverse proxy.
 - Browser Media Source Extensions, usually called MSE, for live fMP4 playback in the browser.
 - JSON files for now-playing metadata and the live stream manifest.
+- CromeCast support for android devices (TV's and speakers) by MfPack Cast V2.
 - HEOS CLI and AVR network control, with direct HTTP AAC streaming from the Masterdeck.
 
 ## Local Audio And Video Flow
@@ -212,7 +213,7 @@ The recorder uses cautious Media Foundation settings:
 
 The important RDJ Pro trick is that the byte stream is not only a file stream. RDJ Pro wraps it in `TRdjProFmp4CaptureByteStream`, which implements `IMFByteStream`.
 
-That wrapper forwards writes to the real Media Foundation file stream, but it also observes the bytes. This lets RDJPro parse top-level MP4 boxes while Media Foundation is writing.
+That wrapper forwards writes to the real Media Foundation file stream, but it also observes the bytes. This lets RDJPro parse top-level MP4 'boxes' while Media Foundation is writing.
 
 The wrapper watches for:
 
