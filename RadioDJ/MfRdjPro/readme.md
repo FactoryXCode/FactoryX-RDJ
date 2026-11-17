@@ -17,8 +17,8 @@ This is the extended MfRdjJ that features audio and video streaming.
 This version does not need Icecast. FxServe or Caddy can serve the browser broadcast.  
   
 What it does:  
-Uses MDI adding channeldecks, loopbackdecks, a microphonedeck,  
-effectsdeck (mft's) and enddeck (pa \& pfl, recorder (saves to WAV or FLAC) and browser broadcasting support),  
+Uses MDI adding channeldecks - up to 16 decks -, loopbackdecks - up to 4 decks -, a microphonedeck,  
+effectsdeck (mft's) and enddeck (pa \& pfl, local recorder (saves to WAV or FLAC) and browser broadcasting support),  
 playlisteditor and a tag editor (currently mp3 only).  
 
 For the latest mixer and EQ changes, see the [4.0.0.5 update notes](Docs/RDJPro-4.0.0.5-Update.md).
