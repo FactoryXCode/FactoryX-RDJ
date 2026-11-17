@@ -57,24 +57,22 @@ proxy features.
 For setup paths, router settings, and switching instructions, see
 [RDJ Web Server Setup](../../FxServe/RDJ-Web-Server-Setup.md).
   
-The aim of this sample project is: Combine all kinds of MfPack (coreAudio WASAPI ) challenges in a single project.  
-Now, the example has become pretty large for a sample but usefull for audio/video knights..  
+The aim of this project is: Combine all kinds of MfPack (coreAudio WASAPI ) challenges in a single project.  
   
 Advised minimum Delphi version: Delphi XE7 and higher.
   
 NOTES:  
   
 * The code is not suitable for starters and knowledge of audio manipulation/algo's is also required.
-* Before opening the project, install the MfRdjJ controls (..\\MfPack\\Samples\\MfRdjPro\\Controls\\RDJControls.dpk)
+* Before opening the project, install the MfRdjJ controls (..\\MfRdjPro\\Controls\\RDJControls.dpk)
 and MfPack MfComponents (..\\MfPack\\Samples\\MfComponents\\MfComponents.dpk)
-Add "..\\MfPack\\Samples\\MfComponents", "..\\MfPack\\Samples\\MfRdjPro\\Controls" and
+Add "..\\MfPack\\Samples\\MfComponents", "..\\MfRdjPro\\Controls" and
 "..\\MfPack\\src" to the RDJ Pro project search path.
 
 For the HEOS window, also install `HEOSRemote\Controls\HEOSControls.dpk` before
-opening its form in the designer. The project includes the embedded HEOS unit and
-control search paths. Keep FactoryX-HEOS-CLI available at the location specified
-by the `HeosCliRoot` project property (see the
-[setup guide](<Docs/RDJPro Step-by-Step Setup.md>)).
+opening its form in the designer. The HEOS CLI repository can be found [here](https://github.com/FactoryXCode/FactoryX-HEOS-CLI)
+The project includes the embedded HEOS unit and control search paths. Keep FactoryX-HEOS-CLI available at the location specified
+by the `HeosCliRoot` project property (see the [setup guide](<Docs/RDJPro Step-by-Step Setup.md>)).
   
 Project: MFPack - Samples - MfRdjPro  
 Project location: https://github.com/FactoryXCode/MfPack  
