@@ -43,6 +43,8 @@ See the [user guide](USER-GUIDE.md) for installation instructions and
 
 
 
+\## Download DJSuite on the 'release' link.
+
 
 
 Copyright © FactoryX. All rights reserved.
