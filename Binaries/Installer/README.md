@@ -2,7 +2,7 @@
 
 
 
-DJSuite is a Windows setup application for installing RDJ or RDJ Pro and
+DJSuite is a Windows setup application for installing the binaries RDJ or RDJ Pro and
 the optional tools needed to broadcast, serve and record a radio station.
 It can be used on a studio PC, server or another recording PC. Every
 installation includes either RDJ or RDJ Pro.
