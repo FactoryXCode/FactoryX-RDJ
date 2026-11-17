@@ -103,7 +103,7 @@ customized website files and recordings are preserved.
 
 See the user guide for installation instructions.
 
-# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.1-Setup.exe)
+# Download the Windows Installer [here](https://github.com/FactoryXCode/FactoryX-Radio-DJ/blob/main/Binaries/Installer/FactoryX-DJSuite-4.0.0.5-Setup.exe)
 
 \---
 
