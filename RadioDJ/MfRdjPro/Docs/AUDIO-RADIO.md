@@ -38,7 +38,7 @@ existing Media Server log reports the AAC error and retry.
 
 FxServe already supports the separate `[Radio]` upstream. Its host and port must
 match the RDJ PC and AAC listener. The verified existing deployment points to
-192.168.50.114:8098 and publishes:
+192.168.50.114:8098 and publishes for example:
 
 `https://factoryxradio.asuscomm.com/radio/live.aac`
 
