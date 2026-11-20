@@ -129,17 +129,17 @@ begin
 
   Result.TrackID := Q.FieldByName('TrackID').AsInteger;
 
-  Result.FullPath := Q.FieldByName('FullPath').AsString;
-  Result.FileName := Q.FieldByName('FileName').AsString;
-  Result.FileExt := Q.FieldByName('FileExt').AsString;
+  Result.FullPath := Q.FieldByName('FullPath').AsWideString;
+  Result.FileName := Q.FieldByName('FileName').AsWideString;
+  Result.FileExt := Q.FieldByName('FileExt').AsWideString;
 
-  Result.Title := Q.FieldByName('Title').AsString;
-  Result.Artist := Q.FieldByName('Artist').AsString;
-  Result.Album := Q.FieldByName('Album').AsString;
-  Result.AlbumArtist := Q.FieldByName('AlbumArtist').AsString;
-  Result.Genre := Q.FieldByName('Genre').AsString;
-  Result.Comment := Q.FieldByName('Comment').AsString;
-  Result.Composer := Q.FieldByName('Composer').AsString;
+  Result.Title := Q.FieldByName('Title').AsWideString;
+  Result.Artist := Q.FieldByName('Artist').AsWideString;
+  Result.Album := Q.FieldByName('Album').AsWideString;
+  Result.AlbumArtist := Q.FieldByName('AlbumArtist').AsWideString;
+  Result.Genre := Q.FieldByName('Genre').AsWideString;
+  Result.Comment := Q.FieldByName('Comment').AsWideString;
+  Result.Composer := Q.FieldByName('Composer').AsWideString;
 
   Result.Year := Q.FieldByName('Year').AsInteger;
   Result.TrackNumber := Q.FieldByName('TrackNumber').AsInteger;
@@ -151,23 +151,23 @@ begin
   Result.SampleRate := Q.FieldByName('SampleRate').AsInteger;
   Result.Channels := Q.FieldByName('Channels').AsInteger;
   Result.BitsPerSample := Q.FieldByName('BitsPerSample').AsInteger;
-  Result.Codec := Q.FieldByName('Codec').AsString;
-  Result.QualityLabel := Q.FieldByName('QualityLabel').AsString;
+  Result.Codec := Q.FieldByName('Codec').AsWideString;
+  Result.QualityLabel := Q.FieldByName('QualityLabel').AsWideString;
 
   Result.BPM := Q.FieldByName('BPM').AsFloat;
-  Result.MusicalKey := Q.FieldByName('MusicalKey').AsString;
+  Result.MusicalKey := Q.FieldByName('MusicalKey').AsWideString;
   Result.GainDb := Q.FieldByName('GainDb').AsFloat;
 
   Result.FileSize := Q.FieldByName('FileSize').AsLargeInt;
 
-  if (Trim(Q.FieldByName('FileModifiedUtc').AsString) <> '') then
-    Result.FileModifiedUtc := StrToDateTimeDef(Q.FieldByName('FileModifiedUtc').AsString, 0);
+  if (Trim(Q.FieldByName('FileModifiedUtc').AsWideString) <> '') then
+    Result.FileModifiedUtc := StrToDateTimeDef(Q.FieldByName('FileModifiedUtc').AsWideString, 0);
 
-  if (Trim(Q.FieldByName('DateAddedUtc').AsString) <> '') then
-    Result.DateAddedUtc := StrToDateTimeDef(Q.FieldByName('DateAddedUtc').AsString, 0);
+  if (Trim(Q.FieldByName('DateAddedUtc').AsWideString) <> '') then
+    Result.DateAddedUtc := StrToDateTimeDef(Q.FieldByName('DateAddedUtc').AsWideString, 0);
 
-  if (Trim(Q.FieldByName('LastScanUtc').AsString) <> '') then
-    Result.LastScanUtc := StrToDateTimeDef(Q.FieldByName('LastScanUtc').AsString, 0);
+  if (Trim(Q.FieldByName('LastScanUtc').AsWideString) <> '') then
+    Result.LastScanUtc := StrToDateTimeDef(Q.FieldByName('LastScanUtc').AsWideString, 0);
 
   Result.Rating := Q.FieldByName('Rating').AsInteger;
   Result.ColorTag := Q.FieldByName('ColorTag').AsInteger;
@@ -186,18 +186,18 @@ begin
 
   Result.TrackID := Q.FieldByName('TrackID').AsInteger;
 
-  Result.FullPath := Q.FieldByName('FullPath').AsString;
+  Result.FullPath := Q.FieldByName('FullPath').AsWideString;
 
-  Result.Title := Q.FieldByName('Title').AsString;
-  Result.Artist := Q.FieldByName('Artist').AsString;
-  Result.Album := Q.FieldByName('Album').AsString;
-  Result.AlbumArtist := Q.FieldByName('AlbumArtist').AsString;
+  Result.Title := Q.FieldByName('Title').AsWideString;
+  Result.Artist := Q.FieldByName('Artist').AsWideString;
+  Result.Album := Q.FieldByName('Album').AsWideString;
+  Result.AlbumArtist := Q.FieldByName('AlbumArtist').AsWideString;
   Result.Year := Q.FieldByName('Year').AsInteger;
-  Result.Genre := Q.FieldByName('Genre').AsString;
+  Result.Genre := Q.FieldByName('Genre').AsWideString;
 
   Result.DurationMs := Q.FieldByName('DurationMs').AsLargeInt;
-  Result.QualityLabel := Q.FieldByName('QualityLabel').AsString;
-  Result.Codec := Q.FieldByName('Codec').AsString;
+  Result.QualityLabel := Q.FieldByName('QualityLabel').AsWideString;
+  Result.Codec := Q.FieldByName('Codec').AsWideString;
   Result.BitrateKbps := Q.FieldByName('BitrateKbps').AsInteger;
   Result.SampleRate := Q.FieldByName('SampleRate').AsInteger;
   Result.Channels := Q.FieldByName('Channels').AsInteger;
@@ -264,7 +264,7 @@ begin
       'FROM Tracks ' +
       'WHERE FullPath = :FullPath';
 
-    Q.ParamByName('FullPath').AsString := AFullPath;
+    Q.ParamByName('FullPath').AsWideString := AFullPath;
     Q.Open;
 
     if not Q.Eof then
@@ -348,7 +348,7 @@ begin
         'ORDER BY Artist, Album, TrackNumber, Title';
 
       S := '%' + Trim(ASearchText) + '%';
-      Q.ParamByName('S').AsString := S;
+      Q.ParamByName('S').AsWideString := S;
 
       Q.Open;
 
@@ -423,7 +423,7 @@ begin
         begin
 
           S := '%' + Trim(ASearchText) + '%';
-          Q.ParamByName('S').AsString := S;
+          Q.ParamByName('S').AsWideString := S;
         end;
 
       Q.Open;
@@ -474,7 +474,7 @@ begin
     while not QSel.Eof do
       begin
 
-        if FileExists(QSel.FieldByName('FullPath').AsString) then
+        if FileExists(QSel.FieldByName('FullPath').AsWideString) then
           Missing := 0
         else
           Missing := 1;
@@ -594,7 +594,7 @@ begin
         begin
 
           TrackID := QSel.FieldByName('TrackID').AsInteger;
-          FullPath := QSel.FieldByName('FullPath').AsString;
+          FullPath := QSel.FieldByName('FullPath').AsWideString;
 
           if (Trim(FullPath) = '') or (not FileExists(FullPath)) then
             begin

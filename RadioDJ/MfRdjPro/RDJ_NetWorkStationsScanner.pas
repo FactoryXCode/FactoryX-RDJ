@@ -109,6 +109,7 @@ type
   private
 
     FResultList: TStringList;
+    FPendingStation: string;
     FCheckedStations: TStringList;
     FOnStationFound: TDiscoveryEvent;
     FOnFinished: TNotifyEvent;
@@ -117,6 +118,7 @@ type
     procedure AddStationToTarget(const AStationName: string);
     procedure FindStations;
     procedure FindStationsShellNetworkFolder;
+    procedure PublishStation();
     procedure DoFinished;
 
   protected
@@ -567,13 +569,17 @@ begin
   // Publish each verified computer immediately instead of waiting for the
   // remaining shell enumeration and its potentially slow network calls.
   if Assigned(FOnStationFound) then
-    Synchronize(procedure
-                begin
-                  if not Terminated then
-                    AddStationToTarget(StationName);
-                end);
+    begin
+      FPendingStation := StationName;
+      Synchronize(PublishStation);
+    end;
 end;
 
+
+procedure TNetworkDiscoveryThread.PublishStation();
+begin
+  if not Terminated then AddStationToTarget(FPendingStation);
+end;
 
 procedure TNetworkDiscoveryThread.DoFinished();
 begin

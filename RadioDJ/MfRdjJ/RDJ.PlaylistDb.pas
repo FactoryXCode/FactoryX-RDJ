@@ -338,7 +338,7 @@ begin
 
     while not Q.Eof do
       begin
-        if SameText(Q.FieldByName('name').AsString,
+        if SameText(Q.FieldByName('name').AsWideString,
                     AColumnName) then
           begin
             Result := True;
@@ -472,7 +472,7 @@ begin
 
     Q.Connection := FConnection;
     Q.SQL.Text := 'SELECT TrackID FROM Tracks WHERE FullPath = :P';
-    Q.ParamByName('P').AsString := AFullPath;
+    Q.ParamByName('P').AsWideString := AFullPath;
     Q.Open;
 
     if not Q.Eof then
@@ -547,15 +547,15 @@ begin
                       'WHERE TrackID = :TrackID';
       end;
 
-    Q.ParamByName('FileName').AsString := ATrack.FileName;
-    Q.ParamByName('FileExt').AsString := ATrack.FileExt;
-    Q.ParamByName('Title').AsString := ATrack.Title;
-    Q.ParamByName('Artist').AsString := ATrack.Artist;
-    Q.ParamByName('Album').AsString := ATrack.Album;
-    Q.ParamByName('AlbumArtist').AsString := ATrack.AlbumArtist;
-    Q.ParamByName('Genre').AsString := ATrack.Genre;
-    Q.ParamByName('Comment').AsString := ATrack.Comment;
-    Q.ParamByName('Composer').AsString := ATrack.Composer;
+    Q.ParamByName('FileName').AsWideString := ATrack.FileName;
+    Q.ParamByName('FileExt').AsWideString := ATrack.FileExt;
+    Q.ParamByName('Title').AsWideString := ATrack.Title;
+    Q.ParamByName('Artist').AsWideString := ATrack.Artist;
+    Q.ParamByName('Album').AsWideString := ATrack.Album;
+    Q.ParamByName('AlbumArtist').AsWideString := ATrack.AlbumArtist;
+    Q.ParamByName('Genre').AsWideString := ATrack.Genre;
+    Q.ParamByName('Comment').AsWideString := ATrack.Comment;
+    Q.ParamByName('Composer').AsWideString := ATrack.Composer;
 
     Q.ParamByName('Year').AsInteger := ATrack.Year;
     Q.ParamByName('TrackNumber').AsInteger := ATrack.TrackNumber;
@@ -567,18 +567,18 @@ begin
     Q.ParamByName('SampleRate').AsInteger := ATrack.SampleRate;
     Q.ParamByName('Channels').AsInteger := ATrack.Channels;
     Q.ParamByName('BitsPerSample').AsInteger := ATrack.BitsPerSample;
-    Q.ParamByName('Codec').AsString := ATrack.Codec;
-    Q.ParamByName('QualityLabel').AsString := ATrack.QualityLabel;
+    Q.ParamByName('Codec').AsWideString := ATrack.Codec;
+    Q.ParamByName('QualityLabel').AsWideString := ATrack.QualityLabel;
 
     Q.ParamByName('BPM').AsFloat := ATrack.BPM;
-    Q.ParamByName('MusicalKey').AsString := ATrack.MusicalKey;
+    Q.ParamByName('MusicalKey').AsWideString := ATrack.MusicalKey;
     Q.ParamByName('GainDb').AsFloat := ATrack.GainDb;
 
     Q.ParamByName('FileSize').AsLargeInt := ATrack.FileSize;
 
-    Q.ParamByName('FileModifiedUtc').AsString := RDJDateTimeToDbStr(ATrack.FileModifiedUtc);
-    Q.ParamByName('DateAddedUtc').AsString := RDJDateTimeToDbStr(ATrack.DateAddedUtc);
-    Q.ParamByName('LastScanUtc').AsString := RDJDateTimeToDbStr(ATrack.LastScanUtc);
+    Q.ParamByName('FileModifiedUtc').AsWideString := RDJDateTimeToDbStr(ATrack.FileModifiedUtc);
+    Q.ParamByName('DateAddedUtc').AsWideString := RDJDateTimeToDbStr(ATrack.DateAddedUtc);
+    Q.ParamByName('LastScanUtc').AsWideString := RDJDateTimeToDbStr(ATrack.LastScanUtc);
 
     Q.ParamByName('Rating').AsInteger := ATrack.Rating;
     Q.ParamByName('ColorTag').AsInteger := ATrack.ColorTag;
@@ -588,7 +588,7 @@ begin
     Q.ParamByName('IsMissing').AsInteger := Ord(ATrack.IsMissing);
 
     if (ExistingID = 0) then
-      Q.ParamByName('FullPath').AsString := ATrack.FullPath
+      Q.ParamByName('FullPath').AsWideString := ATrack.FullPath
     else
       Q.ParamByName('TrackID').AsInteger := ExistingID;
 
@@ -623,10 +623,10 @@ begin
     Q.SQL.Text := 'INSERT INTO Playlists (Name, Notes, CreatedUtc, ModifiedUtc) ' +
                   'VALUES (:Name, :Notes, :CreatedUtc, :ModifiedUtc)';
 
-    Q.ParamByName('Name').AsString := AName;
-    Q.ParamByName('Notes').AsString := ANotes;
-    Q.ParamByName('CreatedUtc').AsString := SNow;
-    Q.ParamByName('ModifiedUtc').AsString := SNow;
+    Q.ParamByName('Name').AsWideString := AName;
+    Q.ParamByName('Notes').AsWideString := ANotes;
+    Q.ParamByName('CreatedUtc').AsWideString := SNow;
+    Q.ParamByName('ModifiedUtc').AsWideString := SNow;
     Q.ExecSQL;
 
     Result := QueryInt('SELECT last_insert_rowid()');
@@ -652,8 +652,8 @@ begin
     Q.SQL.Text := 'UPDATE Playlists SET Name = :Name, ModifiedUtc = :ModifiedUtc ' +
                   'WHERE PlaylistID = :PlaylistID';
 
-    Q.ParamByName('Name').AsString := ANewName;
-    Q.ParamByName('ModifiedUtc').AsString := RDJDateTimeToDbStr(Now);
+    Q.ParamByName('Name').AsWideString := ANewName;
+    Q.ParamByName('ModifiedUtc').AsWideString := RDJDateTimeToDbStr(Now);
     Q.ParamByName('PlaylistID').AsInteger := APlaylistID;
     Q.ExecSQL;
   finally
@@ -734,7 +734,7 @@ begin
     Q.ParamByName('SortOrder').AsInteger := ASortOrder;
     Q.ParamByName('CueInMs').AsLargeInt := ACueInMs;
     Q.ParamByName('CueOutMs').AsLargeInt := ACueOutMs;
-    Q.ParamByName('UserNote').AsString := AUserNote;
+    Q.ParamByName('UserNote').AsWideString := AUserNote;
     Q.ExecSQL;
 
     Result := QueryInt('SELECT last_insert_rowid()');

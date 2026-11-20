@@ -62,9 +62,8 @@ unit ProcessAudioPickerUtils;
 
 interface
 
-uses
-
-  {WinApi}
+uses WinApi.CoreAudioApi.AudioSessionTypes,
+{WinApi}
   WinApi.Windows,
   WinApi.TlHelp32,
   WinApi.ComBaseApi,
@@ -405,7 +404,7 @@ begin
                                        SessionCtrl)) or (SessionCtrl = nil) then
         Continue;
 
-      if Failed(SessionCtrl.GetState(State)) then
+      if Failed(SessionCtrl.GetState(_AudioSessionState(State))) then
         State := AUDIO_SESSION_STATE_EXPIRED;
 
       if (State = AUDIO_SESSION_STATE_EXPIRED) then

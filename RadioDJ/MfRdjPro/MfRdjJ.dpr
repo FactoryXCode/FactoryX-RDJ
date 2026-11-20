@@ -1,7 +1,10 @@
 program MfRdjJ;
 
-uses
-  System.SysUtils,
+uses WinApi.ActiveX.ObjBase,
+WinApi.ComBaseApi,
+System.Win.ComObj,
+System.Math,
+System.SysUtils,
   Vcl.Forms,
   Vcl.Themes,
   Vcl.Styles,
@@ -39,10 +42,10 @@ uses
   RDJ.FilenameParser in 'RDJ.FilenameParser.pas',
   dlgMediaServer in 'dlgMediaServer.pas' {frmMediaServer},
   dlgHeosRemote in 'dlgHeosRemote.pas' {HeosRemoteFrm},
-  Heos in 'HEOSRemote\Heos.pas',
-  HEOSTransport in 'HEOSRemote\HEOSTransport.pas',
-  HEOSSockets in 'HEOSRemote\HEOSSockets.pas',
-  HEOSDiscovery in 'HEOSRemote\HEOSDiscovery.pas',
+  Heos,
+  HEOSTransport,
+  HEOSSockets,
+  HEOSDiscovery,
   RDJ.HeosOutput in 'RDJ.HeosOutput.pas',
   RDJ.HeosAudioServer in 'RDJ.HeosAudioServer.pas',
   RDJ.HeosAacEncoder in 'RDJ.HeosAacEncoder.pas',
@@ -63,7 +66,13 @@ uses
 
 {$R *.res}
 
+var SavedMask:TFPUExceptionMask;
 begin
+ try
+ SavedMask:=GetExceptionMask;
+ SetExceptionMask([exInvalidOp,exDenormalized,exZeroDivide,exOverflow,exUnderflow,exPrecision]);
+ OleCheck(CoInitializeEx(nil,COINIT_APARTMENTTHREADED));
+ try
   RDJLogFmt('Application',
             'Process starting. Executable=%s Log=%s',
             [ParamStr(0),
@@ -80,7 +89,7 @@ begin
       Application.CreateForm(TfrmMediaServer, fMediaServer);
       RDJLog('Application',
              'Initialization complete; entering message loop.');
-      Application.Run;
+      if ParamStr(1)='--smoke' then Application.ProcessMessages else Application.Run;
       RDJLog('Application',
              'Message loop returned.');
     except
@@ -97,4 +106,9 @@ begin
     RDJLog('Application',
            'Process main routine ending.');
   end;
+ finally
+  FreeAndNil(fMediaServer);FreeAndNil(DlgLWFileBrowserEx);FreeAndNil(MainMDIFrm);
+  CoUninitialize;ClearExceptions(False);SetExceptionMask(SavedMask);
+ end;
+ except on E:Exception do begin Writeln('FAIL: '+E.ClassName+': '+E.Message);Halt(1);end;end;
 end.

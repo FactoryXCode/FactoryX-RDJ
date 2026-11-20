@@ -294,18 +294,18 @@ type
 
 {$Region 'Implementation of IAudioSessionEvents'}
     function OnDisplayNameChanged(NewDisplayName: LPCWSTR;
-                                  const EventContext: TGUID): HResult; stdcall;
+                                  EventContext: PGUID): HResult; stdcall;
     function OnIconPathChanged(NewIconPath: LPCWSTR;
-                               const EventContext: TGUID): HResult; stdcall;
+                               EventContext: PGUID): HResult; stdcall;
     function OnSimpleVolumeChanged(NewSimpleVolume: Single;
                                    NewMute: BOOL;
-                                   const EventContext: TGUID): HResult; stdcall;
+                                   EventContext: PGUID): HResult; stdcall;
     function OnChannelVolumeChanged(ChannelCount: UINT;
                                     NewChannelVolumeArray: PSINGLE;
                                     ChangedChannel: UINT;
-                                    const EventContext: TGUID): HResult; stdcall;
+                                    EventContext: PGUID): HResult; stdcall;
     function OnGroupingParamChanged(const NewGroupingParam: TGUID;
-                                    const EventContext: TGUID): HResult; stdcall;
+                                    EventContext: PGUID): HResult; stdcall;
     function OnStateChanged(NewState: AudioSessionState): HResult; stdcall;
     function OnSessionDisconnected(DisconnectReason: AudioSessionDisconnectReason): HResult; stdcall;
 {$EndRegion}
@@ -1438,7 +1438,7 @@ end;
 /// IAudioSessionEvents methods ////////////////////////////////////////////////
 
 function TAudioCapture.OnDisplayNameChanged(NewDisplayName: LPCWSTR;
-                                          const EventContext: TGUID): HResult;
+                                          EventContext: PGUID): HResult;
 begin
 
   Result := S_OK;
@@ -1446,7 +1446,7 @@ end;
 
 
 function TAudioCapture.OnIconPathChanged(NewIconPath: LPCWSTR;
-                                       const EventContext: TGUID): HResult;
+                                       EventContext: PGUID): HResult;
 begin
 
   Result := S_OK;
@@ -1455,7 +1455,7 @@ end;
 
 function TAudioCapture.OnSimpleVolumeChanged(NewSimpleVolume: Single;
                                                    NewMute: BOOL;
-                                                   const EventContext: TGUID): HResult;
+                                                   EventContext: PGUID): HResult;
 begin
 
   Result := S_OK;
@@ -1465,7 +1465,7 @@ end;
 function TAudioCapture.OnChannelVolumeChanged(ChannelCount: UINT;
                                                     NewChannelVolumeArray: PSINGLE;
                                                     ChangedChannel: UINT;
-                                                    const EventContext: TGUID): HResult;
+                                                    EventContext: PGUID): HResult;
 begin
 
   Result := S_OK;
@@ -1473,7 +1473,7 @@ end;
 
 
 function TAudioCapture.OnGroupingParamChanged(const NewGroupingParam: TGUID;
-                                            const EventContext: TGUID): HResult;
+                                            EventContext: PGUID): HResult;
 begin
 
   Result := S_OK;

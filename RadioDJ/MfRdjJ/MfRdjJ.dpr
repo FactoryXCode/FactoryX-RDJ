@@ -1,6 +1,10 @@
 program MfRdjJ;
 
-uses
+uses WinApi.ActiveX.ObjBase,
+WinApi.ComBaseApi,
+System.Win.ComObj,
+System.Math,
+System.SysUtils,
 {$IFDEF madExcept}
 {$ENDIF}
   Vcl.Forms,
@@ -50,7 +54,13 @@ uses
 
 {$R *.res}
 
+var SavedMask:TFPUExceptionMask;
 begin
+ try
+ SavedMask:=GetExceptionMask;
+ SetExceptionMask([exInvalidOp,exDenormalized,exZeroDivide,exOverflow,exUnderflow,exPrecision]);
+ OleCheck(CoInitializeEx(nil,COINIT_APARTMENTTHREADED));
+ try
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.Title := 'RDJ Radio';
@@ -60,7 +70,7 @@ begin
   Application.CreateForm(TfrmMediaServer, fMediaServer);
 
   try
-    Application.Run;
+    if ParamStr(1)='--smoke' then Application.ProcessMessages else Application.Run;
   finally
     // Release FireDAC's process-wide driver state before the memory manager
     // performs its final leak check. Delphi XE7 FireDAC.Phys.SQLiteWrapper
@@ -69,4 +79,9 @@ begin
     FDManager.Close;
     FireDAC.Phys.SQLiteCli.sqlite3_shutdown();
   end;
+ finally
+  FreeAndNil(fMediaServer);FreeAndNil(DlgLWFileBrowserEx);FreeAndNil(MainMDIFrm);
+  CoUninitialize;ClearExceptions(False);SetExceptionMask(SavedMask);
+ end;
+ except on E:Exception do begin Writeln('FAIL: '+E.ClassName+': '+E.Message);Halt(1);end;end;
 end.

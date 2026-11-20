@@ -118,6 +118,6 @@ Caddy Command: caddy.exe run --config "C:\Caddy\Caddy.cff" --adapter caddyfile (
 
 Close Setup (**OK**)
 
-For router settings read  MfRDJ Installation & Setup Guide.md.
+For router settings read  MfRDJ Installation & Setup Guide.md/pdf.
 
 <eof>       

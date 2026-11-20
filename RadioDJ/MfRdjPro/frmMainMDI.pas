@@ -1111,6 +1111,7 @@ end;
 
 procedure TMainMDIFrm.FormCreate(Sender: TObject);
 begin
+  InitializeCriticalSection(FCueBufferLock);
 
   RDJLog('Lifecycle',
          'Main form created.');
@@ -1281,7 +1282,7 @@ begin
   AttachAudioOutputHandlers(FMasterOut);
 
   FCueOut := nil;
-  InitializeCriticalSection(FCueBufferLock);
+
   FCueQueueFramesCapacity := 0;
   FCueQueueReadFrame := 0;
   FCueQueueWriteFrame := 0;

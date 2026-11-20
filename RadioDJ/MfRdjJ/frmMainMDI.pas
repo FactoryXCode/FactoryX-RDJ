@@ -598,6 +598,7 @@ end;
 
 procedure TMainMDIFrm.FormCreate(Sender: TObject);
 begin
+  InitializeCriticalSection(FCueBufferLock);
 
   // Keep audio, video and network broadcasting active while RDJ is running.
   // The display may still switch off according to the Windows power settings.
@@ -690,7 +691,7 @@ begin
   FMasterOut.OnFillPcm := MasterOutFillPcm;
 
   FCueOut := nil;
-  InitializeCriticalSection(FCueBufferLock);
+
   FCueQueueFramesCapacity := 0;
   FCueQueueReadFrame := 0;
   FCueQueueWriteFrame := 0;

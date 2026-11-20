@@ -150,14 +150,14 @@ begin
   Result := RDJEmptyPlaylistInfo;
 
   Result.PlaylistID := Q.FieldByName('PlaylistID').AsInteger;
-  Result.Name := Q.FieldByName('Name').AsString;
-  Result.Notes := Q.FieldByName('Notes').AsString;
+  Result.Name := Q.FieldByName('Name').AsWideString;
+  Result.Notes := Q.FieldByName('Notes').AsWideString;
 
-  if Trim(Q.FieldByName('CreatedUtc').AsString) <> '' then
-    Result.CreatedUtc := StrToDateTimeDef(Q.FieldByName('CreatedUtc').AsString, 0);
+  if Trim(Q.FieldByName('CreatedUtc').AsWideString) <> '' then
+    Result.CreatedUtc := StrToDateTimeDef(Q.FieldByName('CreatedUtc').AsWideString, 0);
 
-  if Trim(Q.FieldByName('ModifiedUtc').AsString) <> '' then
-    Result.ModifiedUtc := StrToDateTimeDef(Q.FieldByName('ModifiedUtc').AsString, 0);
+  if Trim(Q.FieldByName('ModifiedUtc').AsWideString) <> '' then
+    Result.ModifiedUtc := StrToDateTimeDef(Q.FieldByName('ModifiedUtc').AsWideString, 0);
 end;
 
 
@@ -173,20 +173,20 @@ begin
 
   Result.CueInMs := Q.FieldByName('CueInMs').AsLargeInt;
   Result.CueOutMs := Q.FieldByName('CueOutMs').AsLargeInt;
-  Result.UserNote := Q.FieldByName('UserNote').AsString;
+  Result.UserNote := Q.FieldByName('UserNote').AsWideString;
 
   Result.Track.TrackID := Q.FieldByName('TrackID').AsInteger;
-  Result.Track.FullPath := Q.FieldByName('FullPath').AsString;
-  Result.Track.FileName := Q.FieldByName('FileName').AsString;
-  Result.Track.FileExt := Q.FieldByName('FileExt').AsString;
+  Result.Track.FullPath := Q.FieldByName('FullPath').AsWideString;
+  Result.Track.FileName := Q.FieldByName('FileName').AsWideString;
+  Result.Track.FileExt := Q.FieldByName('FileExt').AsWideString;
 
-  Result.Track.Title := Q.FieldByName('Title').AsString;
-  Result.Track.Artist := Q.FieldByName('Artist').AsString;
-  Result.Track.Album := Q.FieldByName('Album').AsString;
-  Result.Track.AlbumArtist := Q.FieldByName('AlbumArtist').AsString;
-  Result.Track.Genre := Q.FieldByName('Genre').AsString;
-  Result.Track.Comment := Q.FieldByName('Comment').AsString;
-  Result.Track.Composer := Q.FieldByName('Composer').AsString;
+  Result.Track.Title := Q.FieldByName('Title').AsWideString;
+  Result.Track.Artist := Q.FieldByName('Artist').AsWideString;
+  Result.Track.Album := Q.FieldByName('Album').AsWideString;
+  Result.Track.AlbumArtist := Q.FieldByName('AlbumArtist').AsWideString;
+  Result.Track.Genre := Q.FieldByName('Genre').AsWideString;
+  Result.Track.Comment := Q.FieldByName('Comment').AsWideString;
+  Result.Track.Composer := Q.FieldByName('Composer').AsWideString;
 
   Result.Track.Year := Q.FieldByName('Year').AsInteger;
   Result.Track.TrackNumber := Q.FieldByName('TrackNumber').AsInteger;
@@ -198,19 +198,19 @@ begin
   Result.Track.Channels := Q.FieldByName('Channels').AsInteger;
 
   Result.Track.BPM := Q.FieldByName('BPM').AsFloat;
-  Result.Track.MusicalKey := Q.FieldByName('MusicalKey').AsString;
+  Result.Track.MusicalKey := Q.FieldByName('MusicalKey').AsWideString;
   Result.Track.GainDb := Q.FieldByName('GainDb').AsFloat;
 
   Result.Track.FileSize := Q.FieldByName('FileSize').AsLargeInt;
 
-  if Trim(Q.FieldByName('FileModifiedUtc').AsString) <> '' then
-    Result.Track.FileModifiedUtc := StrToDateTimeDef(Q.FieldByName('FileModifiedUtc').AsString, 0);
+  if Trim(Q.FieldByName('FileModifiedUtc').AsWideString) <> '' then
+    Result.Track.FileModifiedUtc := StrToDateTimeDef(Q.FieldByName('FileModifiedUtc').AsWideString, 0);
 
-  if Trim(Q.FieldByName('DateAddedUtc').AsString) <> '' then
-    Result.Track.DateAddedUtc := StrToDateTimeDef(Q.FieldByName('DateAddedUtc').AsString, 0);
+  if Trim(Q.FieldByName('DateAddedUtc').AsWideString) <> '' then
+    Result.Track.DateAddedUtc := StrToDateTimeDef(Q.FieldByName('DateAddedUtc').AsWideString, 0);
 
-  if Trim(Q.FieldByName('LastScanUtc').AsString) <> '' then
-    Result.Track.LastScanUtc := StrToDateTimeDef(Q.FieldByName('LastScanUtc').AsString, 0);
+  if Trim(Q.FieldByName('LastScanUtc').AsWideString) <> '' then
+    Result.Track.LastScanUtc := StrToDateTimeDef(Q.FieldByName('LastScanUtc').AsWideString, 0);
 
   Result.Track.Rating := Q.FieldByName('Rating').AsInteger;
   Result.Track.ColorTag := Q.FieldByName('ColorTag').AsInteger;
