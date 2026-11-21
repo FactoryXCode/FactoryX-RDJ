@@ -1252,7 +1252,7 @@ begin
     Exit(hr);
 
   hr := NewSourceReader.SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM,
-                                            0,
+                                            nil,
                                             OutputMediaType);
   if FAILED(hr) then
     Exit(hr);

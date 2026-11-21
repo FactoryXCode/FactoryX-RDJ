@@ -2415,7 +2415,7 @@ begin
     end;
 
   Result := FVideoSampleReader.SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM,
-                                                   0,
+                                                   nil,
                                                    InputType);
   if FAILED(Result) then
     Exit;

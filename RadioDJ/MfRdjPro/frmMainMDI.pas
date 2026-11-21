@@ -766,7 +766,7 @@ begin
     begin
       RDJLog('Shutdown',
              'Destroying media server form: begin.');
-      FMediaServer.Free;
+      FreeAndNil(FMediaServer);
       RDJLog('Shutdown',
              'Destroying media server form: complete.');
     end;
