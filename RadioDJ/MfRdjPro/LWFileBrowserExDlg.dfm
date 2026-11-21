@@ -208,7 +208,6 @@ object LWFileBrowserExDlg: TLWFileBrowserExDlg
     ParentBackground = False
     ParentDoubleBuffered = False
     TabOrder = 1
-    ExplicitTop = 563
     object lblSelectedFile: TLabel
       Left = 14
       Top = 15
