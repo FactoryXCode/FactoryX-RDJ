@@ -8,7 +8,7 @@ The minimum supported compiler is Delphi XE7.
 ![](https://github.com/FactoryXCode/FactoryX-RDJ/blob/main/RadioDJ/Pic/RDJ_Interface_s.png)
   
 This application is a multi-channel audio mixer with effects.  
-The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.
+The Mixer is fully adjustable for audio endpoint assignments, mixer decks and loopback decks.  
 This mixer is primarily intended for live music, but it's capable of internet broadcasting with Caddy/IceCast.
 
 **Important note:**  
